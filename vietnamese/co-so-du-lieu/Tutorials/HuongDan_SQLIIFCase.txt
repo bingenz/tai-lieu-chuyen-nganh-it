@@ -1,0 +1,16 @@
+SELECT IIF(Obsolete = 'N' or InStock = 'Y', 1, 0) as Saleable, * FROM Product
+
+SELECT CASE <variable> WHEN <value>      THEN <returnvalue>
+                       WHEN <othervalue> THEN <returnthis>
+                                         ELSE <returndefaultcase>
+       END AS <newcolumnname>
+FROM <table>
+
+SELECT
+    FirstName, LastName,
+    Salary, DOB,
+    CASE Gender
+        WHEN 'M' THEN 'Male'
+        WHEN 'F' THEN 'Female'
+    END
+FROM Employees

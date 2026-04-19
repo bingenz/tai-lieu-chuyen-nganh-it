@@ -1,17 +1,15 @@
 # TaiLieuChuyenNganh
 
-Kho tai lieu chuyen nganh duoc sap xep theo ngon ngu va nhom mon hoc.
+Kho tai lieu chuyen nganh duoc sap xep theo mon hoc.
 
 ## Cau truc hien tai
 
-- `vietnamese/`: tai lieu tieng Viet, chia theo tung mon hoc.
-- `english/`: de san cho ban tieng Anh, se bo sung sau.
+- `vietnamese/co-so-du-lieu/`
+- `vietnamese/co-so-lap-trinh-java/`
+- `vietnamese/kien-truc-may-tinh/`
+- `vietnamese/ky-thuat-lap-trinh-java/`
 
-## Danh muc tieng Viet
+## Ghi chu
 
-- `vietnamese/co-so-du-lieu/CoSoDuLieu.zip`
-- `vietnamese/co-so-lap-trinh-java/CoSoLapTrinhJava.zip`
-- `vietnamese/kien-truc-may-tinh/KienTrucMayTinh.zip`
-- `vietnamese/ky-thuat-lap-trinh-java/KyThuatLapTrinhJava.zip`
-
-English content will be added later.
+- Tai lieu da duoc doi ten de de tim kiem hon.
+- Noi dung tieng Anh se bo sung sau.
