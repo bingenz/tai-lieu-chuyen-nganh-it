@@ -1,16 +1,17 @@
-## Môn học hiện có
+## Giới thiệu
 
-- `Co_So_Du_Lieu/`
-- `Co_So_Lap_Trinh_Java/`
-- `Kien_Truc_May_Tinh/`
-- `Ky_Thuat_Lap_Trinh_Java/`
+- Mình là sinh viên Khoa Học Máy Tính
+- Đây là repo tổng hợp tài liệu môn cơ sở ngành
+- Tài liệu sẽ tiếp tục được cập nhật thêm theo quá trình học và tổng hợp
 
 ---
 
-## Ghi chú
+## Môn học hiện có
 
-- Tài liệu sẽ tiếp tục được cập nhật thêm theo quá trình học và tổng hợp
-- Repo có thể bổ sung nhiều môn học mới trong các lần cập nhật sau
+- Cơ sở dữ liệu
+- Cơ sở lập trình Java
+- Kiến trúc máy tính
+- Kỹ thuật lập trình Java
 
 ---
 
