@@ -1,16 +1,4 @@
-## Giới thiệu
-
-- Mình là sinh viên Khoa Học Máy Tính
-- Đây là repo tổng hợp tài liệu tham khảo, tài liệu sẽ tiếp tục được cập nhật thêm theo quá trình học và tổng hợp
-
----
-
-## Môn học hiện có
-
-- Cơ sở dữ liệu
-- Cơ sở lập trình Java
-- Kiến trúc máy tính
-- Kỹ thuật lập trình Java
+## Tài liệu Khoa học Máy tính
 
 ---
 
