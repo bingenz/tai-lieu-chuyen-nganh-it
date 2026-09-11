@@ -1,0 +1,1906 @@
+<!DOCTYPE html>
+
+<html lang="vi">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1, viewport-fit=cover" name="viewport"/>
+<title>Trắc nghiệm HĐH - Chương 3 - Đã check PDF gốc</title>
+<style>
+    :root {
+      --bg: #f6f7fb;
+      --card: #ffffff;
+      --text: #111827;
+      --muted: #5b6475;
+      --line: #e5e7eb;
+      --blue: #1d4ed8;
+      --blue-soft: #eaf1ff;
+      --correct-bg: #dcfce7;
+      --correct-border: #16a34a;
+      --red: #b42318;
+      --red-soft: #fff1f2;
+      --green: #0f766e;
+      --shadow: 0 10px 30px rgba(15, 23, 42, .08);
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+      font-size: 16px;
+      line-height: 1.55;
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
+    }
+    .wrap {
+      width: min(980px, 100%);
+      margin: 0 auto;
+      padding: 14px 12px 84px;
+    }
+    header {
+      background: linear-gradient(135deg, #eaf1ff, #ffffff 58%, #fff8d6);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 16px 14px;
+      box-shadow: var(--shadow);
+      margin-bottom: 16px;
+    }
+    h1 {
+      margin: 0 0 8px;
+      color: #0b4aa2;
+      font-size: clamp(22px, 6vw, 34px);
+      line-height: 1.12;
+      letter-spacing: -.03em;
+    }
+    .subtitle {
+      margin: 0;
+      color: var(--muted);
+      font-size: 15px;
+    }
+    .toolbar {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 6px;
+      background: rgba(246, 247, 251, .92);
+      backdrop-filter: blur(10px);
+      padding: 8px 0;
+      margin: 6px 0 10px;
+    }
+    .toolbar-row {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+      overflow-x: auto;
+      padding-bottom: 2px;
+      scrollbar-width: thin;
+      white-space: nowrap;
+    }
+    input[type="search"] {
+      width: 100%;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 12px 14px;
+      font-size: 16px;
+      background: #fff;
+      color: var(--text);
+      outline: none;
+    }
+    input[type="search"]:focus {
+      border-color: var(--blue);
+      box-shadow: 0 0 0 3px rgba(29, 78, 216, .12);
+    }
+    button, .pill-link {
+      flex: 0 0 auto;
+      border: 1px solid var(--line);
+      background: #fff;
+      color: var(--text);
+      border-radius: 999px;
+      padding: 8px 11px;
+      font-size: 13px;
+      font-weight: 700;
+      text-decoration: none;
+      cursor: pointer;
+      box-shadow: 0 2px 8px rgba(15,23,42,.05);
+    }
+    button:active, .pill-link:active { transform: translateY(1px); }
+    .notice {
+      border: 1px solid #fecdd3;
+      background: var(--red-soft);
+      color: var(--red);
+      border-radius: 12px;
+      padding: 10px 12px;
+      margin: 12px 0 16px;
+      font-weight: 700;
+    }
+    .answer-key {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      padding: 12px;
+      margin: 0 0 16px;
+      box-shadow: var(--shadow);
+    }
+    .answer-key h2 {
+      margin: 0 0 12px;
+      font-size: 19px;
+    }
+    .key-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 6px;
+    }
+    .key {
+      min-height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      border: 1px solid #bbf7d0;
+      background: #f0fdf4;
+      border-radius: 12px;
+      color: #166534;
+      text-decoration: none;
+      font-weight: 800;
+      text-align: center;
+      line-height: 1.15;
+    }
+    .key b { color: #111827; }
+    .key span { font-size: 15px; }
+    .key small { font-size: 10px; color: var(--red); }
+    .wrongkey { background: var(--red-soft); border-color: #fecdd3; color: var(--red); grid-column: span 2; }
+    .question-card {
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 14px 12px;
+      margin: 12px 0;
+      box-shadow: var(--shadow);
+      scroll-margin-top: 86px;
+    }
+    .question-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+      margin-bottom: 8px;
+    }
+    .q-number {
+      display: inline-flex;
+      align-items: center;
+      min-height: 30px;
+      border-radius: 999px;
+      background: var(--blue-soft);
+      color: var(--blue);
+      padding: 4px 10px;
+      font-size: 12px;
+      font-weight: 900;
+    }
+    .back-top {
+      color: var(--muted);
+      font-size: 12px;
+      text-decoration: none;
+      font-weight: 700;
+    }
+    .question-card h2 {
+      margin: 0 0 10px;
+      font-size: clamp(16px, 4.4vw, 23px);
+      line-height: 1.3;
+      letter-spacing: -.01em;
+    }
+    .options {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: grid;
+      gap: 8px;
+    }
+    .option {
+      display: grid;
+      grid-template-columns: 34px 1fr;
+      align-items: start;
+      gap: 8px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 10px;
+      background: #fff;
+      font-size: clamp(15px, 4.2vw, 19px);
+      line-height: 1.35;
+      position: relative;
+    }
+    .letter {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: #f3f4f6;
+      font-size: 16px;
+      font-weight: 900;
+      color: #374151;
+    }
+    .correct {
+      border: 2px solid var(--correct-border);
+      background: var(--correct-bg);
+      box-shadow: 0 6px 16px rgba(22, 163, 74, .12);
+      font-weight: 900;
+      color: #052e16;
+    }
+    .correct .letter {
+      background: var(--correct-border);
+      color: #fff;
+    }
+    .special-note {
+      margin-top: 10px;
+      border-left: 4px solid var(--red);
+      background: var(--red-soft);
+      color: var(--red);
+      border-radius: 10px;
+      padding: 8px 10px;
+      font-size: 13px;
+      font-weight: 700;
+    }
+    details {
+      margin-top: 10px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 8px 10px;
+      background: #fbfbfd;
+    }
+    summary {
+      cursor: pointer;
+      color: var(--blue);
+      font-weight: 900;
+      font-size: 15px;
+    }
+    details p {
+      margin: 8px 0 0;
+      color: #243042;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+    .hidden { display: none !important; }
+    footer {
+      color: var(--muted);
+      text-align: center;
+      font-size: 12px;
+      padding: 24px 0 8px;
+    }
+
+    .floating-top {
+      position: fixed;
+      right: 14px;
+      bottom: 18px;
+      z-index: 30;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 44px;
+      height: 44px;
+      padding: 0 12px;
+      border: 0;
+      border-radius: 999px;
+      background: #1f2937;
+      color: #fff;
+      font-size: 13px;
+      font-weight: 800;
+      box-shadow: 0 10px 24px rgba(15,23,42,.22);
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(8px);
+      transition: opacity .18s ease, transform .18s ease, visibility .18s ease;
+    }
+    .floating-top.show {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+    }
+
+    .process-table-wrap {
+      overflow-x: auto;
+      margin: 8px 0 10px;
+    }
+    .process-table {
+      width: auto;
+      border-collapse: collapse;
+      background: #bbf7d0;
+      color: #064e3b;
+      font-size: 13px;
+      font-weight: 700;
+      border-radius: 10px;
+      overflow: hidden;
+    }
+    .process-table th, .process-table td {
+      border: 1px solid rgba(5, 150, 105, .25);
+      padding: 4px 8px;
+      text-align: left;
+      white-space: nowrap;
+    }
+    .question-card h2 { white-space: pre-line; }
+    @media (max-width: 480px) {
+      .back-top { display: none; }
+      .notice { font-size: 13px; }
+      .answer-key h2 { font-size: 18px; }
+      .key-grid { grid-template-columns: repeat(4, 1fr); }
+      .wrongkey { grid-column: span 2; }
+      .floating-top { right: 12px; bottom: 14px; height: 40px; min-width: 40px; font-size: 12px; }
+    }
+    @media (min-width: 760px) {
+      .wrap { padding-left: 24px; padding-right: 24px; }
+      .toolbar { grid-template-columns: 1fr auto; align-items: center; }
+      .key-grid { grid-template-columns: repeat(10, 1fr); }
+      .wrongkey { grid-column: span 2; }
+      .question-card { padding: 18px; }
+      .option { grid-template-columns: 38px 1fr auto; }
+    }
+    @media print {
+      body { background: #fff; font-size: 14px; }
+      .toolbar, .back-top { display: none !important; }
+      header, .answer-key, .question-card { box-shadow: none; break-inside: avoid; }
+      details { break-inside: avoid; }
+    }
+  </style>
+</head>
+<body>
+<main class="wrap" id="top">
+<header>
+<h1>Trắc nghiệm HĐH - Chương 3</h1>
+<p class="subtitle">Bản HTML đã kiểm tra lại theo PDF gốc: nội dung câu hỏi và lựa chọn được chỉnh khớp với đề, đáp án đúng tô xanh lá, giải thích nằm dưới từng câu.</p>
+</header>
+<section aria-label="Công cụ xem bài" class="toolbar">
+<input autocomplete="off" id="searchBox" placeholder="Tìm câu, ví dụ: SJF, Round Robin, Câu 30..." type="search"/>
+<div class="toolbar-row">
+<button id="expandAll" type="button">Mở giải thích</button>
+<button id="collapseAll" type="button">Ẩn giải thích</button>
+<button onclick="window.print()" type="button">In / lưu PDF</button>
+</div>
+</section>
+<div class="notice">Lưu ý: Câu 30 trong file gốc không có lựa chọn đúng theo công thức chuẩn. Kết quả đúng là 3, nhưng A-D không có đáp án 3.</div>
+<div class="notice" style="background:#ecfeff;border-color:#99f6e4;color:#0f766e;">Đã đối chiếu lại 50 câu với PDF gốc. Câu 30 vẫn được ghi riêng vì theo công thức chuẩn kết quả là 3, nhưng đề không có lựa chọn 3.</div>
+<section class="answer-key">
+<h2>Bảng đáp án nhanh</h2>
+<div class="key-grid">
+<a class="key" href="#q1"><b>1</b><span>A</span></a>
+<a class="key" href="#q2"><b>2</b><span>B</span></a>
+<a class="key" href="#q3"><b>3</b><span>D</span></a>
+<a class="key" href="#q4"><b>4</b><span>A</span></a>
+<a class="key" href="#q5"><b>5</b><span>B</span></a>
+<a class="key" href="#q6"><b>6</b><span>A</span></a>
+<a class="key" href="#q7"><b>7</b><span>A</span></a>
+<a class="key" href="#q8"><b>8</b><span>C</span></a>
+<a class="key" href="#q9"><b>9</b><span>D</span></a>
+<a class="key" href="#q10"><b>10</b><span>C</span></a>
+<a class="key" href="#q11"><b>11</b><span>A</span></a>
+<a class="key" href="#q12"><b>12</b><span>D</span></a>
+<a class="key" href="#q13"><b>13</b><span>B</span></a>
+<a class="key" href="#q14"><b>14</b><span>A</span></a>
+<a class="key" href="#q15"><b>15</b><span>A</span></a>
+<a class="key" href="#q16"><b>16</b><span>B</span></a>
+<a class="key" href="#q17"><b>17</b><span>C</span></a>
+<a class="key" href="#q18"><b>18</b><span>D</span></a>
+<a class="key" href="#q19"><b>19</b><span>C</span></a>
+<a class="key" href="#q20"><b>20</b><span>B</span></a>
+<a class="key" href="#q21"><b>21</b><span>C</span></a>
+<a class="key" href="#q22"><b>22</b><span>C</span></a>
+<a class="key" href="#q23"><b>23</b><span>C</span></a>
+<a class="key" href="#q24"><b>24</b><span>D</span></a>
+<a class="key" href="#q25"><b>25</b><span>A</span></a>
+<a class="key" href="#q26"><b>26</b><span>A</span></a>
+<a class="key" href="#q27"><b>27</b><span>D</span></a>
+<a class="key" href="#q28"><b>28</b><span>B</span></a>
+<a class="key" href="#q29"><b>29</b><span>D</span></a>
+<a class="key wrongkey" href="#q30"><b>30</b><span>Không có lựa chọn đúng<br/><small>Đúng = 3</small></span></a>
+<a class="key" href="#q31"><b>31</b><span>A</span></a>
+<a class="key" href="#q32"><b>32</b><span>D</span></a>
+<a class="key" href="#q33"><b>33</b><span>A</span></a>
+<a class="key" href="#q34"><b>34</b><span>D</span></a>
+<a class="key" href="#q35"><b>35</b><span>C</span></a>
+<a class="key" href="#q36"><b>36</b><span>B</span></a>
+<a class="key" href="#q37"><b>37</b><span>C</span></a>
+<a class="key" href="#q38"><b>38</b><span>A</span></a>
+<a class="key" href="#q39"><b>39</b><span>B</span></a>
+<a class="key" href="#q40"><b>40</b><span>C</span></a>
+<a class="key" href="#q41"><b>41</b><span>B</span></a>
+<a class="key" href="#q42"><b>42</b><span>C</span></a>
+<a class="key" href="#q43"><b>43</b><span>B</span></a>
+<a class="key" href="#q44"><b>44</b><span>A</span></a>
+<a class="key" href="#q45"><b>45</b><span>C</span></a>
+<a class="key" href="#q46"><b>46</b><span>A</span></a>
+<a class="key" href="#q47"><b>47</b><span>D</span></a>
+<a class="key" href="#q48"><b>48</b><span>C</span></a>
+<a class="key" href="#q49"><b>49</b><span>A</span></a>
+<a class="key" href="#q50"><b>50</b><span>C</span></a>
+</div>
+</section>
+<section aria-label="Danh sách câu hỏi" id="questions">
+<article class="question-card" data-answer="A" id="q1">
+<div class="question-head">
+<div class="q-number">Câu 1</div>
+<a class="back-top" href="#top">↑ Đầu trang</a>
+</div>
+<h2>Thuật ngữ “thông lượng” của một CPU là gì?</h2>
+<ol aria-label="Các lựa chọn câu 1" class="options">
+<li class="option correct">
+<span class="letter">A</span>
+<span class="option-text">là số lượng tiến trình mà CPU hoàn thành trên một đơn vị thời gian</span>
+</li>
+<li class="option">
+<span class="letter">B</span>
+<span class="option-text">là số dữ liệu truy xuất từ CPU đến RAM trong một đơn vị thời gian</span>
+</li>
+<li class="option">
+<span class="letter">C</span>
+<span class="option-text">là số phép toán CPU thực hiện trong một đơn vị thời gian</span>
+</li>
+<li class="option">
+<span class="letter">D</span>
+<span class="option-text">là số tài nguyên mà CPU sử dụng trong một đơn vị thời gian</span>
+</li>
+</ol>
+<details open="">
+<summary>Giải thích ngắn gọn</summary>
+<p>Thông lượng (throughput) là số tiến trình hoàn thành trong một đơn vị thời gian. B nói về truyền dữ liệu CPU-RAM, C nói về tốc độ phép toán, D nói về mức dùng tài nguyên nên không đúng định nghĩa throughput.</p>
+</details>
+</article>
+<article class="question-card" data-answer="B" id="q2">
+<div class="question-head">
+<div class="q-number">Câu 2</div>
+<a class="back-top" href="#top">↑ Đầu trang</a>
+</div>
+<h2>Đâu không phải là vai trò của hệ điều hành trong quản lý tiến trình?</h2>
+<ol aria-label="Các lựa chọn câu 2" class="options">
+<li class="option">
+<span class="letter">A</span>
+<span class="option-text">Tạo và hủy các tiến trình của người sử dụng và của hệ thống</span>
+</li>
+<li class="option correct">
+<span class="letter">B</span>
+<span class="option-text">Điều khiển bộ nhớ vật lý cho việc nạp tiến trình.</span>
+</li>
+<li class="option">
+<span class="letter">C</span>
+<span class="option-text">Cung cấp các cơ chế đồng bộ tiến trình.</span>
+</li>
+<li class="option">
+<span class="letter">D</span>
+<span class="option-text">Cung cấp các cơ chế giao tiếp giữa các tiến trình.</span>
+</li>
+</ol>
+<details open="">
+<summary>Giải thích ngắn gọn</summary>
+<p>Quản lý bộ nhớ vật lý thuộc mảng quản lý bộ nhớ, không phải vai trò trực tiếp của quản lý tiến trình. A, C, D đều là các nhiệm vụ quen thuộc trong quản lý tiến trình.</p>
+</details>
+</article>
+<article class="question-card" data-answer="D" id="q3">
+<div class="question-head">
+<div class="q-number">Câu 3</div>
+<a class="back-top" href="#top">↑ Đầu trang</a>
+</div>
+<h2>Đâu không phải là lý do để Hệ điều hành thực hiện điều phối tiến trình (hay định thời / lập lịch cho CPU)?</h2>
+<ol aria-label="Các lựa chọn câu 3" class="options">
+<li class="option">
+<span class="letter">A</span>
+<span class="option-text">Thực thi nhiều chương trình đồng thời để tăng hiệu suất hệ thống.</span>
+</li>
+<li class="option">
+<span class="letter">B</span>
+<span class="option-text">Tại mỗi thời điểm, một CPU chỉ thực thi được một process.</span>
+</li>
+<li class="option">
+<span class="letter">C</span>
+<span class="option-text">Trong các process chạy đồng thời, có những process cần ưu tiên hơn.</span>
+</li>
+<li class="option correct">
+<span class="letter">D</span>
+<span class="option-text">Bộ nhớ RAM không đủ để chạy nhiều tiến trình cùng lúc.</span>
+</li>
+</ol>
+<details open="">
+<summary>Giải thích ngắn gọn</summary>
+<p>Điều phối CPU nhằm chọn tiến trình được chạy trên CPU, xử lý cạnh tranh CPU và ưu tiên. Thiếu RAM là vấn đề quản lý bộ nhớ/swapping, không phải lý do chính của CPU scheduling.</p>
+</details>
+</article>
+<article class="question-card" data-answer="A" id="q4">
+<div class="question-head">
+<div class="q-number">Câu 4</div>
+<a class="back-top" href="#top">↑ Đầu trang</a>
+</div>
+<h2>Để thực hiện điều phối tiến trình (hay định thời / lập lịch cho CPU), các tiến trình thực thi cần phải:</h2>
+<ol aria-label="Các lựa chọn câu 4" class="options">
+<li class="option correct">
+<span class="letter">A</span>
+<span class="option-text">đưa các tiến trình vào hàng đợi Ready.</span>
+</li>
+<li class="option">
+<span class="letter">B</span>
+<span class="option-text">đưa các tiến trình vào hàng đợi I/O</span>
+</li>
+<li class="option">
+<span class="letter">C</span>
+<span class="option-text">đưa các tiến trình vào bộ nhớ phụ.</span>
+</li>
+<li class="option">
+<span class="letter">D</span>
+<span class="option-text">đưa các tiến trình vào CPU.</span>
+</li>
+</ol>
+<details open="">
+<summary>Giải thích ngắn gọn</summary>
+<p>CPU scheduler chọn tiến trình từ Ready queue. I/O queue dành cho tiến trình đang chờ nhập/xuất, bộ nhớ phụ liên quan swapping, còn CPU là nơi thực thi sau khi đã được chọn.</p>
+</details>
+</article>
+<article class="question-card" data-answer="B" id="q5">
+<div class="question-head">
+<div class="q-number">Câu 5</div>
+<a class="back-top" href="#top">↑ Đầu trang</a>
+</div>
+<h2>Điều phối tiến trình (hay định thời / lập lịch cho CPU) của Hệ điều hành là gì?</h2>
+<ol aria-label="Các lựa chọn câu 5" class="options">
+<li class="option">
+<span class="letter">A</span>
+<span class="option-text">là việc chọn thời điểm cho CPU thực thi một process nào đó từ I/O queue</span>
+</li>
+<li class="option correct">
+<span class="letter">B</span>
+<span class="option-text">là việc chọn thời điểm cho CPU thực thi một process nào đó từ Ready queue.</span>
+</li>
+<li class="option">
+<span class="letter">C</span>
+<span class="option-text">là việc chọn thời điểm cho Hệ điều hành thực thi một process.</span>
+</li>
+<li class="option">
+<span class="letter">D</span>
+<span class="option-text">là việc chọn thời điểm cho Hệ điều hành nạp Process vào bộ nhớ.</span>
+</li>
+</ol>
+<details open="">
+<summary>Giải thích ngắn gọn</summary>
+<p>Lập lịch CPU chọn tiến trình đang sẵn sàng trong Ready queue để cấp CPU. A sai vì I/O queue là chờ I/O; C diễn đạt sai chủ thể; D là nạp vào bộ nhớ, không phải cấp CPU.</p>
+</details>
+</article>
+<article class="question-card" data-answer="A" id="q6">
+<div class="question-head">
+<div class="q-number">Câu 6</div>
+<a class="back-top" href="#top">↑ Đầu trang</a>
+</div>
+<h2>Bộ định thời nào dùng cho việc quyết định chọn lựa tiến trình đưa vào CPU thực thi?</h2>
+<ol aria-label="Các lựa chọn câu 6" class="options">
+<li class="option correct">
+<span class="letter">A</span>
+<span class="option-text">Bộ định thời CPU (CPU scheduler).</span>
+</li>
+<li class="option">
+<span class="letter">B</span>
+<span class="option-text">Bộ định thời công việc (Job scheduler).</span>
+</li>
+<li class="option">
+<span class="letter">C</span>
+<span class="option-text">Bộ định thời trung hạn (Medium-term scheduler).</span>
+</li>
+<li class="option">
+<span class="letter">D</span>
+<span class="option-text">Bộ định thời thiết bị (Device scheduler).</span>
+</li>
+</ol>
+<details open="">
+<summary>Giải thích ngắn gọn</summary>
+<p>CPU scheduler chọn tiến trình từ Ready queue để chạy. Job scheduler chọn công việc đưa vào hệ thống, medium-term scheduler liên quan swapping, device scheduler liên quan thiết bị I/O.</p>
+</details>
+</article>
+<article class="question-card" data-answer="A" id="q7">
+<div class="question-head">
+<div class="q-number">Câu 7</div>
+<a class="back-top" href="#top">↑ Đầu trang</a>
+</div>
+<h2>Bộ định thời nào dùng cho việc quyết định thời hạn (during) thực thi tiến trình của CPU?</h2>
+<ol aria-label="Các lựa chọn câu 7" class="options">
+<li class="option correct">
+<span class="letter">A</span>
+<span class="option-text">Bộ định thời CPU (CPU scheduler).</span>
+</li>
+<li class="option">
+<span class="letter">B</span>
+<span class="option-text">Bộ định thời công việc (Job scheduler).</span>
+</li>
+<li class="option">
+<span class="letter">C</span>
+<span class="option-text">Bộ định thời trung hạn (Medium-term scheduler).</span>
+</li>
+<li class="option">
+<span class="letter">D</span>
+<span class="option-text">Bộ định thời thiết bị (Device scheduler).</span>
+</li>
+</ol>
+<details open="">
+<summary>Giải thích ngắn gọn</summary>
+<p>Các quyết định cấp CPU và thời điểm/độ dài lần cấp CPU thuộc CPU scheduler. Các bộ định thời còn lại xử lý công việc, swapping hoặc thiết bị I/O.</p>
+</details>
+</article>
+<article class="question-card" data-answer="C" id="q8">
+<div class="question-head">
+<div class="q-number">Câu 8</div>
+<a class="back-top" href="#top">↑ Đầu trang</a>
+</div>
+<h2>Bộ định thời nào quyết định thời điểm chuyển một tiến trình từ bộ nhớ sang bộ nhớ phụ (kỹ thuật Swapping).</h2>
+<ol aria-label="Các lựa chọn câu 8" class="options">
+<li class="option">
+<span class="letter">A</span>
+<span class="option-text">Bộ định thời CPU (CPU scheduler).</span>
+</li>
+<li class="option">
+<span class="letter">B</span>
+<span class="option-text">Bộ định thời công việc (Job scheduler).</span>
+</li>
+<li class="option correct">
+<span class="letter">C</span>
+<span class="option-text">Bộ định thời trung hạn (Medium-term scheduler).</span>
+</li>
+<li class="option">
+<span class="letter">D</span>
+<span class="option-text">Bộ định thời thiết bị (Device scheduler).</span>
+</li>
+</ol>
+<details open="">
+<summary>Giải thích ngắn gọn</summary>
+<p>Medium-term scheduler quản lý việc tạm đưa tiến trình ra/vào bộ nhớ chính bằng swapping. CPU scheduler chỉ chọn tiến trình chạy; job scheduler chọn job vào hệ thống; device scheduler xử lý I/O.</p>
+</details>
+</article>
+<article class="question-card" data-answer="D" id="q9">
+<div class="question-head">
+<div class="q-number">Câu 9</div>
+<a class="back-top" href="#top">↑ Đầu trang</a>
+</div>
+<h2>Hệ điều hành điều phối tiến trình theo hướng vì lợi ích cho người dùng (User-oriented), tiêu chí nào KHÔNG thuộc hướng này?</h2>
+<ol aria-label="Các lựa chọn câu 9" class="options">
+<li class="option">
+<span class="letter">A</span>
+<span class="option-text">Thời gian đáp ứng (Response time) sao cho nhanh nhất.</span>
+</li>
+<li class="option">
+<span class="letter">B</span>
+<span class="option-text">Thời gian quay vòng (Turnaround time) sao cho nhanh nhất.</span>
+</li>
+<li class="option">
+<span class="letter">C</span>
+<span class="option-text">Thời gian chờ (Waiting time) sao cho ít nhất.</span>
+</li>
+<li class="option correct">
+<span class="letter">D</span>
+<span class="option-text">Thông lượng (throughput) tiến trình sao cho ít nhất.</span>
+</li>
+</ol>
+<details open="">
+<summary>Giải thích ngắn gọn</summary>
+<p>Response time, turnaround time và waiting time ảnh hưởng trực tiếp cảm nhận người dùng. Throughput là tiêu chí hệ thống và phải càng nhiều càng tốt, không phải càng ít.</p>
+</details>
+</article>
+<article class="question-card" data-answer="C" id="q10">
+<div class="question-head">
+<div class="q-number">Câu 10</div>
+<a class="back-top" href="#top">↑ Đầu trang</a>
+</div>
+<h2>Hệ điều hành điều phối tiến trình theo hướng vì lợi ích của hệ thống (System-oriented), tiêu chí nào KHÔNG thuộc hướng này?</h2>
+<ol aria-label="Các lựa chọn câu 10" class="options">
+<li class="option">
+<span class="letter">A</span>
+<span class="option-text">Sử dụng CPU (processor utilization): sao cho hiệu quả nhất.</span>
+</li>
+<li class="option">
+<span class="letter">B</span>
+<span class="option-text">Công bằng (fairness) nhất đối với các tiến trình.</span>
+</li>
+<li class="option correct">
+<span class="letter">C</span>
+<span class="option-text">Thời gian chờ (Waiting time) sao cho dài nhất.</span>
+</li>
+<li class="option">
+<span class="letter">D</span>
+<span class="option-text">Thông lượng (throughput) tiến trình sao cho nhiều nhất.</span>
+</li>
+</ol>
+<details open="">
+<summary>Giải thích ngắn gọn</summary>
+<p>Hệ thống cần dùng CPU hiệu quả, công bằng và throughput cao. Waiting time dài là điều xấu, không phải mục tiêu tối ưu.</p>
+</details>
+</article>
+<article class="question-card" data-answer="A" id="q11">
+<div class="question-head">
+<div class="q-number">Câu 11</div>
+<a class="back-top" href="#top">↑ Đầu trang</a>
+</div>
+<h2>Với mỗi giải thuật điều phối tiến trình, cần phải trình bày 2 yếu tố nào?</h2>
+<ol aria-label="Các lựa chọn câu 11" class="options">
+<li class="option correct">
+<span class="letter">A</span>
+<span class="option-text">Selection function và Decision mode</span>
+</li>
+<li class="option">
+<span class="letter">B</span>
+<span class="option-text">Response time và Turnaround time</span>
+</li>
+<li class="option">
+<span class="letter">C</span>
+<span class="option-text">Selection function và Response time</span>
+</li>
+<li class="option">
+<span class="letter">D</span>
+<span class="option-text">Waiting time và Throughput</span>
+</li>
+</ol>
+<details open="">
+<summary>Giải thích ngắn gọn</summary>
+<p>Một giải thuật lập lịch cần nêu hàm lựa chọn tiến trình (selection function) và chế độ quyết định có/không trưng dụng (decision mode). Các phương án B, C, D chỉ là tiêu chí đánh giá hoặc trộn lẫn tiêu chí.</p>
+</details>
+</article>
+<article class="question-card" data-answer="D" id="q12">
+<div class="question-head">
+<div class="q-number">Câu 12</div>
+<a class="back-top" href="#top">↑ Đầu trang</a>
+</div>
+<h2>Những chỉ số nào dưới đây KHÔNG dùng để đánh giá hiệu quả của một giải thuật điều phối tiến trình?</h2>
+<ol aria-label="Các lựa chọn câu 12" class="options">
+<li class="option">
+<span class="letter">A</span>
+<span class="option-text">thời gian đợi của tiến trình trong hệ thống.</span>
+</li>
+<li class="option">
+<span class="letter">B</span>
+<span class="option-text">thời gian tiến trình được CPU phục vụ.</span>
+</li>
+<li class="option">
+<span class="letter">C</span>
+<span class="option-text">thời gian hoàn thành thực thi tiến trình.</span>
+</li>
+<li class="option correct">
+<span class="letter">D</span>
+<span class="option-text">thời gian tiến trình được nạp vào bộ nhớ.</span>
+</li>
+</ol>
+<details open="">
+<summary>Giải thích ngắn gọn</summary>
+<p>Các tiêu chí đánh giá lập lịch xoay quanh chờ, đáp ứng, hoàn thành/quay vòng, sử dụng CPU, throughput. Thời gian nạp vào bộ nhớ thuộc quản lý bộ nhớ nên không phải tiêu chí đánh giá CPU scheduling.</p>
+</details>
+</article>
+<article class="question-card" data-answer="B" id="q13">
+<div class="question-head">
+<div class="q-number">Câu 13</div>
+<a class="back-top" href="#top">↑ Đầu trang</a>
+</div>
+<h2>Chế độ “Preemptive” trong điều phối tiến trình là gì?</h2>
+<ol aria-label="Các lựa chọn câu 13" class="options">
+<li class="option">
+<span class="letter">A</span>
+<span class="option-text">Tiến trình không trả CPU cho đến khi nó hoàn thành.</span>
+</li>
+<li class="option correct">
+<span class="letter">B</span>
+<span class="option-text">Tiến trình trả CPU ngay khi giải thuật điều phối của Hệ điều hành yêu cầu.</span>
+</li>
+<li class="option">
+<span class="letter">C</span>
+<span class="option-text">Tiến trình chiếm dụng bộ nhớ trong quá trình thi hành.</span>
+</li>
+<li class="option">
+<span class="letter">D</span>
+<span class="option-text">Tiến trình giải phóng bộ nhớ khi giải thuật điều phối của Hệ điều hành yêu cầu.</span>
+</li>
+</ol>
+<details open="">
+<summary>Giải thích ngắn gọn</summary>
+<p>Preemptive cho phép hệ điều hành thu hồi CPU từ tiến trình đang chạy khi cần. A là non-preemptive; C và D nói về bộ nhớ, không phải cơ chế thu hồi CPU.</p>
+</details>
+</article>
+<article class="question-card" data-answer="A" id="q14">
+<div class="question-head">
+<div class="q-number">Câu 14</div>
+<a class="back-top" href="#top">↑ Đầu trang</a>
+</div>
+<h2>Chế độ “Non-Preemptive” trong điều phối tiến trình là gì?</h2>
+<ol aria-label="Các lựa chọn câu 14" class="options">
+<li class="option correct">
+<span class="letter">A</span>
+<span class="option-text">Tiến trình không trả CPU cho đến khi nó hoàn thành.</span>
+</li>
+<li class="option">
+<span class="letter">B</span>
+<span class="option-text">Tiến trình trả CPU ngay khi giải thuật điều phối của Hệ điều hành yêu cầu.</span>
+</li>
+<li class="option">
+<span class="letter">C</span>
+<span class="option-text">Tiến trình chiếm dụng bộ nhớ trong quá trình thi hành.</span>
+</li>
+<li class="option">
+<span class="letter">D</span>
+<span class="option-text">Tiến trình giải phóng bộ nhớ khi giải thuật điều phối của Hệ điều hành yêu cầu.</span>
+</li>
+</ol>
+<details open="">
+<summary>Giải thích ngắn gọn</summary>
+<p>Non-preemptive nghĩa là hệ điều hành không cưỡng bức thu hồi CPU; tiến trình giữ CPU cho đến khi xong hoặc tự nhường/chặn. B là preemptive; C, D không nói về định thời CPU.</p>
+</details>
+</article>
+<article class="question-card" data-answer="A" id="q15">
+<div class="question-head">
+<div class="q-number">Câu 15</div>
+<a class="back-top" href="#top">↑ Đầu trang</a>
+</div>
+<h2>Nguyên tắc chọn tiến trình từ hàng đợi Ready vào cho CPU thực thi của giải thuật điều phối FCFS (First-Come, First-Served) là gì?</h2>
+<ol aria-label="Các lựa chọn câu 15" class="options">
+<li class="option correct">
+<span class="letter">A</span>
+<span class="option-text">Tiến trình Pi vào Ready queue trước sẽ được cấp CPU trước.</span>
+</li>
+<li class="option">
+<span class="letter">B</span>
+<span class="option-text">Tiến trình Pi có thời gian chiếm dụng CPU ít nhất sẽ được cấp CPU trước.</span>
+</li>
+<li class="option">
+<span class="letter">C</span>
+<span class="option-text">Tiến trình Pi có thời gian chiếm dụng CPU ít hơn thời gian còn lại của “process đang chạy” sẽ được cấp CPU.</span>
+</li>
+<li class="option">
+<span class="letter">D</span>
+<span class="option-text">Tiến trình Pi trong Ready queue có độ ưu tiên tốt nhất sẽ được cấp CPU trước</span>
+</li>
+</ol>
+<details open="">
+<summary>Giải thích ngắn gọn</summary>
+<p>FCFS phục vụ theo thứ tự đến trước. B là SJF, C là SRTF, D là Priority scheduling.</p>
+</details>
+</article>
+<article class="question-card" data-answer="B" id="q16">
+<div class="question-head">
+<div class="q-number">Câu 16</div>
+<a class="back-top" href="#top">↑ Đầu trang</a>
+</div>
+<h2>Nguyên tắc chọn tiến trình từ hàng đợi Ready vào cho CPU thực thi của giải thuật điều phối SJF (Shortest Job First) là gì?</h2>
+<ol aria-label="Các lựa chọn câu 16" class="options">
+<li class="option">
+<span class="letter">A</span>
+<span class="option-text">Tiến trình Pi vào Ready queue trước sẽ được cấp CPU trước.</span>
+</li>
+<li class="option correct">
+<span class="letter">B</span>
+<span class="option-text">Tiến trình Pi có thời gian chiếm dụng CPU ít nhất sẽ được cấp CPU trước.</span>
+</li>
+<li class="option">
+<span class="letter">C</span>
+<span class="option-text">Tiến trình Pi có thời gian chiếm dụng CPU ít hơn thời gian còn lại của “process đang chạy” sẽ được cấp CPU.</span>
+</li>
+<li class="option">
+<span class="letter">D</span>
+<span class="option-text">Tiến trình Pi trong Ready queue có độ ưu tiên tốt nhất sẽ được cấp CPU trước.</span>
+</li>
+</ol>
+<details open="">
+<summary>Giải thích ngắn gọn</summary>
+<p>SJF chọn tiến trình có CPU burst ngắn nhất. A là FCFS, C là SRTF dạng trưng dụng, D là Priority.</p>
+</details>
+</article>
+<article class="question-card" data-answer="C" id="q17">
+<div class="question-head">
+<div class="q-number">Câu 17</div>
+<a class="back-top" href="#top">↑ Đầu trang</a>
+</div>
+<h2>Nguyên tắc chọn tiến trình từ hàng đợi Ready vào cho CPU thực thi của giải thuật điều phối SRTF (Shortest Remaining Time First) là gì?</h2>
+<ol aria-label="Các lựa chọn câu 17" class="options">
+<li class="option">
+<span class="letter">A</span>
+<span class="option-text">Tiến trình Pi vào Ready queue trước sẽ được cấp CPU trước.</span>
+</li>
+<li class="option">
+<span class="letter">B</span>
+<span class="option-text">Tiến trình Pi có thời gian chiếm dụng CPU ít nhất sẽ được cấp CPU trước.</span>
+</li>
+<li class="option correct">
+<span class="letter">C</span>
+<span class="option-text">Tiến trình Pi có thời gian chiếm dụng CPU ít hơn thời gian còn lại của “process đang chạy” sẽ được cấp CPU.</span>
+</li>
+<li class="option">
+<span class="letter">D</span>
+<span class="option-text">Tiến trình Pi trong Ready queue có độ ưu tiên tốt nhất sẽ được cấp CPU trước.</span>
+</li>
+</ol>
+<details open="">
+<summary>Giải thích ngắn gọn</summary>
+<p>SRTF là SJF có trưng dụng: nếu tiến trình mới có thời gian còn lại ngắn hơn tiến trình đang chạy, CPU có thể bị thu hồi. A là FCFS, B là SJF không trưng dụng, D là Priority.</p>
+</details>
+</article>
+<article class="question-card" data-answer="D" id="q18">
+<div class="question-head">
+<div class="q-number">Câu 18</div>
+<a class="back-top" href="#top">↑ Đầu trang</a>
+</div>
+<h2>Nguyên tắc chọn tiến trình từ hàng đợi Ready vào cho CPU thực thi của giải thuật điều phối Priority là gì?</h2>
+<ol aria-label="Các lựa chọn câu 18" class="options">
+<li class="option">
+<span class="letter">A</span>
+<span class="option-text">Tiến trình Pi vào Ready queue trước sẽ được cấp CPU trước.</span>
+</li>
+<li class="option">
+<span class="letter">B</span>
+<span class="option-text">Tiến trình Pi có thời gian chiếm dụng CPU ít nhất sẽ được cấp CPU trước.</span>
+</li>
+<li class="option">
+<span class="letter">C</span>
+<span class="option-text">Tiến trình Pi có thời gian chiếm dụng CPU ít hơn thời gian còn lại của “process đang chạy” sẽ được cấp CPU.</span>
+</li>
+<li class="option correct">
+<span class="letter">D</span>
+<span class="option-text">Tiến trình Pi trong Ready queue có độ ưu tiên tốt nhất sẽ được cấp CPU trước.</span>
+</li>
+</ol>
+<details open="">
+<summary>Giải thích ngắn gọn</summary>
+<p>Priority scheduling chọn tiến trình có độ ưu tiên tốt nhất. A là FCFS, B là SJF, C là SRTF.</p>
+</details>
+</article>
+<article class="question-card" data-answer="C" id="q19">
+<div class="question-head">
+<div class="q-number">Câu 19</div>
+<a class="back-top" href="#top">↑ Đầu trang</a>
+</div>
+<h2>Đối với giải thuật điều phối tiến trình FCFS và SJF, “thời gian chờ” và “thời gian đáp ứng” của một tiến trình là như thế nào?</h2>
+<ol aria-label="Các lựa chọn câu 19" class="options">
+<li class="option">
+<span class="letter">A</span>
+<span class="option-text">“thời gian chờ” lớn hơn “thời gian đáp ứng”.</span>
+</li>
+<li class="option">
+<span class="letter">B</span>
+<span class="option-text">“thời gian chờ” nhỏ hơn “thời gian đáp ứng”.</span>
+</li>
+<li class="option correct">
+<span class="letter">C</span>
+<span class="option-text">“thời gian chờ” bằng “thời gian đáp ứng”.</span>
+</li>
+<li class="option">
+<span class="letter">D</span>
+<span class="option-text">“thời gian chờ” và “thời gian đáp ứng” có sự khác biệt giữa FCFS và SJF.</span>
+</li>
+</ol>
+<details open="">
+<summary>Giải thích ngắn gọn</summary>
+<p>Với FCFS và SJF không trưng dụng, tiến trình khi bắt đầu được CPU phục vụ thường chạy một mạch, nên thời gian đáp ứng bằng thời gian chờ đến lần chạy đầu tiên. A, B, D không đúng cho trường hợp này.</p>
+</details>
+</article>
+<article class="question-card" data-answer="B" id="q20">
+<div class="question-head">
+<div class="q-number">Câu 20</div>
+<a class="back-top" href="#top">↑ Đầu trang</a>
+</div>
+<h2>Cho ba tiến trình P1, P2, P3 với Burst time tương ứng là: 24,3,3. Cho biết “thời gian chờ” của tiến trình P2 theo giải thuật điều phối tiến trình FCFS:</h2>
+<ol aria-label="Các lựa chọn câu 20" class="options">
+<li class="option">
+<span class="letter">A</span>
+<span class="option-text">0</span>
+</li>
+<li class="option correct">
+<span class="letter">B</span>
+<span class="option-text">24</span>
+</li>
+<li class="option">
+<span class="letter">C</span>
+<span class="option-text">27</span>
+</li>
+<li class="option">
+<span class="letter">D</span>
+<span class="option-text">30</span>
+</li>
+</ol>
+<details open="">
+<summary>Giải thích ngắn gọn</summary>
+<p>FCFS chạy theo thứ tự P1 -&gt; P2 -&gt; P3. P2 phải chờ P1 chạy xong 24 đơn vị, nên waiting time của P2 là 24. Các số 0, 27, 30 không phải thời gian chờ của P2.</p>
+</details>
+</article>
+<article class="question-card" data-answer="C" id="q21">
+<div class="question-head">
+<div class="q-number">Câu 21</div>
+<a class="back-top" href="#top">↑ Đầu trang</a>
+</div>
+<h2>Cho ba tiến trình P1, P2, P3 với Burst time tương ứng là: 24,3,3. Cho biết “thời gian chờ” của tiến trình P3 theo giải thuật điều phối tiến trình FCFS:</h2>
+<ol aria-label="Các lựa chọn câu 21" class="options">
+<li class="option">
+<span class="letter">A</span>
+<span class="option-text">0</span>
+</li>
+<li class="option">
+<span class="letter">B</span>
+<span class="option-text">24</span>
+</li>
+<li class="option correct">
+<span class="letter">C</span>
+<span class="option-text">27</span>
+</li>
+<li class="option">
+<span class="letter">D</span>
+<span class="option-text">30</span>
+</li>
+</ol>
+<details open="">
+<summary>Giải thích ngắn gọn</summary>
+<p>P3 phải chờ P1 và P2 chạy xong: 24 + 3 = 27. Vì vậy C đúng; 0 là của P1, 24 là của P2, 30 là tổng burst time.</p>
+</details>
+</article>
+<article class="question-card" data-answer="C" id="q22">
+<div class="question-head">
+<div class="q-number">Câu 22</div>
+<a class="back-top" href="#top">↑ Đầu trang</a>
+</div>
+<h2>Cho ba tiến trình P1, P2, P3 với các Burst time tương ứng là: 24,3,3. Xác định “thời gian chờ trung bình” theo giải thuật điều phối tiến trình FCFS:</h2>
+<ol aria-label="Các lựa chọn câu 22" class="options">
+<li class="option">
+<span class="letter">A</span>
+<span class="option-text">3</span>
+</li>
+<li class="option">
+<span class="letter">B</span>
+<span class="option-text">24</span>
+</li>
+<li class="option correct">
+<span class="letter">C</span>
+<span class="option-text">17</span>
+</li>
+<li class="option">
+<span class="letter">D</span>
+<span class="option-text">30</span>
+</li>
+</ol>
+<details open="">
+<summary>Giải thích ngắn gọn</summary>
+<p>Waiting time lần lượt là P1=0, P2=24, P3=27. Trung bình = (0+24+27)/3 = 17. Các lựa chọn khác không phải giá trị trung bình.</p>
+</details>
+</article>
+<article class="question-card" data-answer="C" id="q23">
+<div class="question-head">
+<div class="q-number">Câu 23</div>
+<a class="back-top" href="#top">↑ Đầu trang</a>
+</div>
+<h2>Cho ba tiến trình P1, P2, P3 với Burst time tương ứng là: 24,3,3. Cho biết “thời gian đáp ứng” của tiến trình P3 theo giải thuật điều phối tiến trình FCFS:</h2>
+<ol aria-label="Các lựa chọn câu 23" class="options">
+<li class="option">
+<span class="letter">A</span>
+<span class="option-text">0</span>
+</li>
+<li class="option">
+<span class="letter">B</span>
+<span class="option-text">24</span>
+</li>
+<li class="option correct">
+<span class="letter">C</span>
+<span class="option-text">27</span>
+</li>
+<li class="option">
+<span class="letter">D</span>
+<span class="option-text">30</span>
+</li>
+</ol>
+<details open="">
+<summary>Giải thích ngắn gọn</summary>
+<p>Với FCFS không trưng dụng, response time của P3 bằng thời gian chờ đến lần đầu được CPU: 24 + 3 = 27. Các phương án khác không đúng cho P3.</p>
+</details>
+</article>
+<article class="question-card" data-answer="D" id="q24">
+<div class="question-head">
+<div class="q-number">Câu 24</div>
+<a class="back-top" href="#top">↑ Đầu trang</a>
+</div>
+<h2>Cho ba tiến trình P1, P2, P3 với Burst time tương ứng là: 24,3,4. Cho biết “thời gian chờ” của tiến trình P1 theo giải thuật điều phối tiến trình SJF:</h2>
+<ol aria-label="Các lựa chọn câu 24" class="options">
+<li class="option">
+<span class="letter">A</span>
+<span class="option-text">0</span>
+</li>
+<li class="option">
+<span class="letter">B</span>
+<span class="option-text">24</span>
+</li>
+<li class="option">
+<span class="letter">C</span>
+<span class="option-text">27</span>
+</li>
+<li class="option correct">
+<span class="letter">D</span>
+<span class="option-text">7</span>
+</li>
+</ol>
+<details open="">
+<summary>Giải thích ngắn gọn</summary>
+<p>SJF xếp P2(3) -&gt; P3(4) -&gt; P1(24). P1 chờ P2 và P3: 3 + 4 = 7. Vì vậy D đúng.</p>
+</details>
+</article>
+<article class="question-card" data-answer="A" id="q25">
+<div class="question-head">
+<div class="q-number">Câu 25</div>
+<a class="back-top" href="#top">↑ Đầu trang</a>
+</div>
+<h2>Cho ba tiến trình P1, P2, P3 với Burst time tương ứng là: 24,3,4. Cho biết “thời gian chờ” của tiến trình P2 theo giải thuật điều phối tiến trình SJF:</h2>
+<ol aria-label="Các lựa chọn câu 25" class="options">
+<li class="option correct">
+<span class="letter">A</span>
+<span class="option-text">0</span>
+</li>
+<li class="option">
+<span class="letter">B</span>
+<span class="option-text">24</span>
+</li>
+<li class="option">
+<span class="letter">C</span>
+<span class="option-text">27</span>
+</li>
+<li class="option">
+<span class="letter">D</span>
+<span class="option-text">7</span>
+</li>
+</ol>
+<details open="">
+<summary>Giải thích ngắn gọn</summary>
+<p>P2 có burst ngắn nhất nên được chạy đầu tiên, chờ 0. Các số 24, 27, 7 không phải waiting time của P2.</p>
+</details>
+</article>
+<article class="question-card" data-answer="A" id="q26">
+<div class="question-head">
+<div class="q-number">Câu 26</div>
+<a class="back-top" href="#top">↑ Đầu trang</a>
+</div>
+<h2>Cho ba tiến trình P1, P2, P3 với Burst time tương ứng là: 24,3,4. Cho biết “thời gian chờ” của tiến trình P3 theo giải thuật điều phối tiến trình SJF:</h2>
+<ol aria-label="Các lựa chọn câu 26" class="options">
+<li class="option correct">
+<span class="letter">A</span>
+<span class="option-text">3</span>
+</li>
+<li class="option">
+<span class="letter">B</span>
+<span class="option-text">24</span>
+</li>
+<li class="option">
+<span class="letter">C</span>
+<span class="option-text">27</span>
+</li>
+<li class="option">
+<span class="letter">D</span>
+<span class="option-text">6</span>
+</li>
+</ol>
+<details open="">
+<summary>Giải thích ngắn gọn</summary>
+<p>Thứ tự SJF là P2 -&gt; P3 -&gt; P1, nên P3 chỉ chờ P2 chạy 3 đơn vị. B, C, D không đúng.</p>
+</details>
+</article>
+<article class="question-card" data-answer="D" id="q27">
+<div class="question-head">
+<div class="q-number">Câu 27</div>
+<a class="back-top" href="#top">↑ Đầu trang</a>
+</div>
+<h2>Cho ba tiến trình P1, P2, P3 với các Burst time tương ứng là: 24,3,3. Xác định “thời gian chờ trung bình” theo giải thuật điều phối tiến trình SJF:</h2>
+<ol aria-label="Các lựa chọn câu 27" class="options">
+<li class="option">
+<span class="letter">A</span>
+<span class="option-text">6</span>
+</li>
+<li class="option">
+<span class="letter">B</span>
+<span class="option-text">10</span>
+</li>
+<li class="option">
+<span class="letter">C</span>
+<span class="option-text">17</span>
+</li>
+<li class="option correct">
+<span class="letter">D</span>
+<span class="option-text">3</span>
+</li>
+</ol>
+<details open="">
+<summary>Giải thích ngắn gọn</summary>
+<p>Hai tiến trình ngắn P2 và P3 chạy trước, rồi P1. Waiting time có thể là 0, 3, 6; trung bình = 9/3 = 3. Vì vậy D đúng.</p>
+</details>
+</article>
+<article class="question-card" data-answer="B" id="q28">
+<div class="question-head">
+<div class="q-number">Câu 28</div>
+<a class="back-top" href="#top">↑ Đầu trang</a>
+</div>
+<h2>Bảng dưới thể hiện danh sách các tiến trình trong hàng đợi. Hãy cho biết trình tự CPU thực thi tiến trình theo giải thuật điều phối SJF (Shortest Job First):</h2><div class="process-table-wrap"><table aria-label="Bảng tiến trình" class="process-table"><thead><tr><th>Process</th><th>Arrival Time</th><th>Burst Time</th></tr></thead><tbody><tr><td>P1</td><td>0</td><td>7</td></tr><tr><td>P2</td><td>2</td><td>4</td></tr><tr><td>P3</td><td>4</td><td>1</td></tr><tr><td>P4</td><td>5</td><td>4</td></tr></tbody></table></div>
+<ol aria-label="Các lựa chọn câu 28" class="options">
+<li class="option">
+<span class="letter">A</span>
+<span class="option-text">P3 &gt; P2 &gt; P4 &gt; P1</span>
+</li>
+<li class="option correct">
+<span class="letter">B</span>
+<span class="option-text">P1 &gt; P3 &gt; P2 &gt; P4</span>
+</li>
+<li class="option">
+<span class="letter">C</span>
+<span class="option-text">P3 &gt; P2 &gt; P1 &gt; P4</span>
+</li>
+<li class="option">
+<span class="letter">D</span>
+<span class="option-text">P1 &gt; P2 &gt; P3 &gt; P4</span>
+</li>
+</ol>
+<details open="">
+<summary>Giải thích ngắn gọn</summary>
+<p>SJF không trưng dụng: tại t=0 chỉ có P1 nên P1 chạy trước đến t=7; sau đó chọn burst ngắn nhất là P3, rồi P2 và P4. Vì vậy thứ tự là P1 -&gt; P3 -&gt; P2 -&gt; P4.</p>
+</details>
+</article>
+<article class="question-card" data-answer="D" id="q29">
+<div class="question-head">
+<div class="q-number">Câu 29</div>
+<a class="back-top" href="#top">↑ Đầu trang</a>
+</div>
+<h2>Bảng dưới thể hiện danh sách các tiến trình trong hàng đợi. Hãy cho biết trình tự CPU thực thi tiến trình theo giải thuật điều phối SRTF (Shortest Remaining Time First):</h2><div class="process-table-wrap"><table aria-label="Bảng tiến trình" class="process-table"><thead><tr><th>Process</th><th>Arrival Time</th><th>Burst Time</th></tr></thead><tbody><tr><td>P1</td><td>0</td><td>7</td></tr><tr><td>P2</td><td>2</td><td>4</td></tr><tr><td>P3</td><td>4</td><td>1</td></tr><tr><td>P4</td><td>5</td><td>4</td></tr></tbody></table></div>
+<ol aria-label="Các lựa chọn câu 29" class="options">
+<li class="option">
+<span class="letter">A</span>
+<span class="option-text">P3 &gt; P2 &gt; P4 &gt; P1</span>
+</li>
+<li class="option">
+<span class="letter">B</span>
+<span class="option-text">P1 &gt; P3 &gt; P2 &gt; P4 &gt; P4 &gt; P1</span>
+</li>
+<li class="option">
+<span class="letter">C</span>
+<span class="option-text">P3 &gt; P2 &gt; P1 &gt; P4</span>
+</li>
+<li class="option correct">
+<span class="letter">D</span>
+<span class="option-text">P1 &gt; P2 &gt; P3 &gt; P2 &gt; P4 &gt; P1</span>
+</li>
+</ol>
+<details open="">
+<summary>Giải thích ngắn gọn</summary>
+<p>SRTF có trưng dụng: P1 chạy 0-2, P2 chạy 2-4, P3 chạy 4-5, P2 chạy tiếp 5-7, P4 chạy 7-11, P1 chạy 11-16. Chuỗi là P1 -&gt; P2 -&gt; P3 -&gt; P2 -&gt; P4 -&gt; P1.</p>
+</details>
+</article>
+<article class="question-card" data-answer="Không có lựa chọn đúng trong A-D; kết quả đúng là 3" id="q30">
+<div class="question-head">
+<div class="q-number">Câu 30</div>
+<a class="back-top" href="#top">↑ Đầu trang</a>
+</div>
+<h2>Bảng dưới thể hiện danh sách các tiến trình trong hàng đợi. Hãy cho biết “thời gian chờ” của tiến trình P3 theo giải thuật điều phối SJF (Shortest Job First):</h2><div class="process-table-wrap"><table aria-label="Bảng tiến trình" class="process-table"><thead><tr><th>Process</th><th>Arrival Time</th><th>Burst Time</th></tr></thead><tbody><tr><td>P1</td><td>0</td><td>7</td></tr><tr><td>P2</td><td>2</td><td>4</td></tr><tr><td>P3</td><td>4</td><td>1</td></tr><tr><td>P4</td><td>5</td><td>4</td></tr></tbody></table></div>
+<ol aria-label="Các lựa chọn câu 30" class="options">
+<li class="option">
+<span class="letter">A</span>
+<span class="option-text">0</span>
+</li>
+<li class="option">
+<span class="letter">B</span>
+<span class="option-text">7</span>
+</li>
+<li class="option">
+<span class="letter">C</span>
+<span class="option-text">11</span>
+</li>
+<li class="option">
+<span class="letter">D</span>
+<span class="option-text">12</span>
+</li>
+</ol>
+<div class="special-note no-choice"><b>Câu này không có lựa chọn đúng trong A-D.</b><br/>Kết quả đúng theo công thức chuẩn: <b>3</b>.</div>
+<details open="">
+<summary>Giải thích ngắn gọn</summary>
+<p>Theo công thức chuẩn waiting time = thời điểm bắt đầu chạy - arrival time. Với SJF: P1 chạy 0-7, P3 bắt đầu ở t=7 và arrival của P3 là 4, nên waiting time = 7 - 4 = 3. File gốc không có lựa chọn 3; nếu đề bắt buộc chọn B=7 thì đó là thời điểm bắt đầu chạy, không phải thời gian chờ chuẩn.</p>
+</details>
+</article>
+<article class="question-card" data-answer="A" id="q31">
+<div class="question-head">
+<div class="q-number">Câu 31</div>
+<a class="back-top" href="#top">↑ Đầu trang</a>
+</div>
+<h2>Bảng dưới thể hiện danh sách các tiến trình trong hàng đợi. Hãy cho biết “thời gian đáp ứng” của tiến trình P2 theo giải thuật điều phối SRTF (Shortest Remaining Time First):</h2><div class="process-table-wrap"><table aria-label="Bảng tiến trình" class="process-table"><thead><tr><th>Process</th><th>Arrival Time</th><th>Burst Time</th></tr></thead><tbody><tr><td>P1</td><td>0</td><td>7</td></tr><tr><td>P2</td><td>2</td><td>4</td></tr><tr><td>P3</td><td>4</td><td>1</td></tr><tr><td>P4</td><td>5</td><td>4</td></tr></tbody></table></div>
+<ol aria-label="Các lựa chọn câu 31" class="options">
+<li class="option correct">
+<span class="letter">A</span>
+<span class="option-text">0</span>
+</li>
+<li class="option">
+<span class="letter">B</span>
+<span class="option-text">7</span>
+</li>
+<li class="option">
+<span class="letter">C</span>
+<span class="option-text">11</span>
+</li>
+<li class="option">
+<span class="letter">D</span>
+<span class="option-text">9</span>
+</li>
+</ol>
+<details open="">
+<summary>Giải thích ngắn gọn</summary>
+<p>P2 đến ở t=2 và được CPU ngay tại t=2, nên response time = 2 - 2 = 0. Các giá trị 7, 11, 9 là các mốc khác, không phải response time.</p>
+</details>
+</article>
+<article class="question-card" data-answer="D" id="q32">
+<div class="question-head">
+<div class="q-number">Câu 32</div>
+<a class="back-top" href="#top">↑ Đầu trang</a>
+</div>
+<h2>Bảng dưới thể hiện danh sách các tiến trình trong hàng đợi. Hãy cho biết “thời gian chờ” của tiến trình P2 theo giải thuật điều phối SRTF (Shortest Remaining Time First):</h2><div class="process-table-wrap"><table aria-label="Bảng tiến trình" class="process-table"><thead><tr><th>Process</th><th>Arrival Time</th><th>Burst Time</th></tr></thead><tbody><tr><td>P1</td><td>0</td><td>7</td></tr><tr><td>P2</td><td>2</td><td>4</td></tr><tr><td>P3</td><td>4</td><td>1</td></tr><tr><td>P4</td><td>5</td><td>4</td></tr></tbody></table></div>
+<ol aria-label="Các lựa chọn câu 32" class="options">
+<li class="option">
+<span class="letter">A</span>
+<span class="option-text">0</span>
+</li>
+<li class="option">
+<span class="letter">B</span>
+<span class="option-text">7</span>
+</li>
+<li class="option">
+<span class="letter">C</span>
+<span class="option-text">11</span>
+</li>
+<li class="option correct">
+<span class="letter">D</span>
+<span class="option-text">1</span>
+</li>
+</ol>
+<details open="">
+<summary>Giải thích ngắn gọn</summary>
+<p>P2 hoàn thành ở t=7, arrival=2, burst=4. Waiting time = completion - arrival - burst = 7 - 2 - 4 = 1. Vì vậy D đúng.</p>
+</details>
+</article>
+<article class="question-card" data-answer="A" id="q33">
+<div class="question-head">
+<div class="q-number">Câu 33</div>
+<a class="back-top" href="#top">↑ Đầu trang</a>
+</div>
+<h2>Bảng dưới thể hiện danh sách các tiến trình trong hàng đợi. Hãy cho biết “thời gian chờ” của tiến trình P3 theo giải thuật điều phối SRTF (Shortest Remaining Time First):</h2><div class="process-table-wrap"><table aria-label="Bảng tiến trình" class="process-table"><thead><tr><th>Process</th><th>Arrival Time</th><th>Burst Time</th></tr></thead><tbody><tr><td>P1</td><td>0</td><td>7</td></tr><tr><td>P2</td><td>2</td><td>4</td></tr><tr><td>P3</td><td>4</td><td>1</td></tr><tr><td>P4</td><td>5</td><td>4</td></tr></tbody></table></div>
+<ol aria-label="Các lựa chọn câu 33" class="options">
+<li class="option correct">
+<span class="letter">A</span>
+<span class="option-text">0</span>
+</li>
+<li class="option">
+<span class="letter">B</span>
+<span class="option-text">7</span>
+</li>
+<li class="option">
+<span class="letter">C</span>
+<span class="option-text">11</span>
+</li>
+<li class="option">
+<span class="letter">D</span>
+<span class="option-text">12</span>
+</li>
+</ol>
+<details open="">
+<summary>Giải thích ngắn gọn</summary>
+<p>P3 đến ở t=4 và được chạy ngay từ t=4 đến t=5, nên không phải chờ: waiting time = 0. Các mốc 7, 11, 12 không đúng.</p>
+</details>
+</article>
+<article class="question-card" data-answer="D" id="q34">
+<div class="question-head">
+<div class="q-number">Câu 34</div>
+<a class="back-top" href="#top">↑ Đầu trang</a>
+</div>
+<h2>Giải thuật điều phối tiến trình nào sau đây có sử dụng kỹ thuật Swapping?</h2>
+<ol aria-label="Các lựa chọn câu 34" class="options">
+<li class="option">
+<span class="letter">A</span>
+<span class="option-text">Đến trước phục vụ trước (FIFO).</span>
+</li>
+<li class="option">
+<span class="letter">B</span>
+<span class="option-text">Round-robin và độ ưu tiên.</span>
+</li>
+<li class="option">
+<span class="letter">C</span>
+<span class="option-text">Công việc ngắn định thời trước (SJF).</span>
+</li>
+<li class="option correct">
+<span class="letter">D</span>
+<span class="option-text">Không dùng giải thuật.</span>
+</li>
+</ol>
+<details open="">
+<summary>Giải thích ngắn gọn</summary>
+<p>Swapping thuộc chức năng của bộ định thời trung hạn/quản lý bộ nhớ, không phải bản chất của các giải thuật CPU như FCFS, Round Robin, Priority hay SJF.</p>
+</details>
+</article>
+<article class="question-card" data-answer="C" id="q35">
+<div class="question-head">
+<div class="q-number">Câu 35</div>
+<a class="back-top" href="#top">↑ Đầu trang</a>
+</div>
+<h2>Trong giải thuật điều phối tiến trình “Round Robin”, CPU thực thi các tiến trình trong hàng đợi Ready theo thứ tự nào?</h2>
+<ol aria-label="Các lựa chọn câu 35" class="options">
+<li class="option">
+<span class="letter">A</span>
+<span class="option-text">Từ đầu Queue đến cuối Queue.</span>
+</li>
+<li class="option">
+<span class="letter">B</span>
+<span class="option-text">Từ cuối Queue lên đầu Queue.</span>
+</li>
+<li class="option correct">
+<span class="letter">C</span>
+<span class="option-text">Xoay vòng lần lượt sau một thời gian xác định (quantum time)</span>
+</li>
+<li class="option">
+<span class="letter">D</span>
+<span class="option-text">Xoay vòng khi thực thi hoàn thành cho một tiến trình.</span>
+</li>
+</ol>
+<details open="">
+<summary>Giải thích ngắn gọn</summary>
+<p>Round Robin cấp CPU theo vòng, mỗi tiến trình được một time quantum. A chưa nói đến quantum, B sai chiều, D sai vì RR không cần đợi tiến trình hoàn thành.</p>
+</details>
+</article>
+<article class="question-card" data-answer="B" id="q36">
+<div class="question-head">
+<div class="q-number">Câu 36</div>
+<a class="back-top" href="#top">↑ Đầu trang</a>
+</div>
+<h2>Trong giải thuật điều phối tiến trình “Round Robin”, khi CPU thực thi tiến trình hết quantum time thì:</h2>
+<ol aria-label="Các lựa chọn câu 36" class="options">
+<li class="option">
+<span class="letter">A</span>
+<span class="option-text">Tiến trình sẽ được cấp tiếp một quantum time mới.</span>
+</li>
+<li class="option correct">
+<span class="letter">B</span>
+<span class="option-text">Tiến trình sẽ đưa về cuối Hàng đợi Ready.</span>
+</li>
+<li class="option">
+<span class="letter">C</span>
+<span class="option-text">Tiến trình sẽ đưa về đầu hàng đợi công việc (Job queue).</span>
+</li>
+<li class="option">
+<span class="letter">D</span>
+<span class="option-text">Tiến trình sẽ đưa vào bộ nhớ phụ.</span>
+</li>
+</ol>
+<details open="">
+<summary>Giải thích ngắn gọn</summary>
+<p>Khi hết quantum mà chưa xong, tiến trình bị đưa về cuối Ready queue để chờ lượt sau. A sai vì không được cấp ngay liên tục; C và D không thuộc cơ chế Round Robin.</p>
+</details>
+</article>
+<article class="question-card" data-answer="C" id="q37">
+<div class="question-head">
+<div class="q-number">Câu 37</div>
+<a class="back-top" href="#top">↑ Đầu trang</a>
+</div>
+<h2>Trong giải thuật điều phối tiến trình “Round Robin”, ngoài sự kiện hết quantum time, hệ điều hành thu hồi CPU của tiến trình khi nào?</h2>
+<ol aria-label="Các lựa chọn câu 37" class="options">
+<li class="option">
+<span class="letter">A</span>
+<span class="option-text">Khi tiến trình có độ ưu tiên thấp hơn tiến trình kế tiếp.</span>
+</li>
+<li class="option">
+<span class="letter">B</span>
+<span class="option-text">Khi tiến trình có thời gian thực thi dài hơn quantum time.</span>
+</li>
+<li class="option correct">
+<span class="letter">C</span>
+<span class="option-text">Khi tiến trình vào trạng thái Blocked hoặc tiến trình kết thúc.</span>
+</li>
+<li class="option">
+<span class="letter">D</span>
+<span class="option-text">Khi tiến trình có độ ưu tiên lớn.</span>
+</li>
+</ol>
+<details open="">
+<summary>Giải thích ngắn gọn</summary>
+<p>Nếu tiến trình chờ I/O/sự kiện (Blocked) hoặc đã kết thúc thì nó không thể tiếp tục giữ CPU. A và D thuộc Priority, B chỉ mô tả điều kiện liên quan quantum chứ không phải sự kiện ngoài quantum.</p>
+</details>
+</article>
+<article class="question-card" data-answer="A" id="q38">
+<div class="question-head">
+<div class="q-number">Câu 38</div>
+<a class="back-top" href="#top">↑ Đầu trang</a>
+</div>
+<h2>Trong giải thuật điều phối tiến trình “Preemptive Priority” (độ ưu tiên – cho phép trưng dụng), hệ điều hành thu hồi CPU khi tiến trình:</h2>
+<ol aria-label="Các lựa chọn câu 38" class="options">
+<li class="option correct">
+<span class="letter">A</span>
+<span class="option-text">có độ ưu tiên thấp hơn tiến trình mới đưa vào.</span>
+</li>
+<li class="option">
+<span class="letter">B</span>
+<span class="option-text">có thời gian thực thi dài hơn quantum time.</span>
+</li>
+<li class="option">
+<span class="letter">C</span>
+<span class="option-text">bị chặn hoặc kết thúc trước khi hết quantum time.</span>
+</li>
+<li class="option">
+<span class="letter">D</span>
+<span class="option-text">Có thời gian thực thi ngắn.</span>
+</li>
+</ol>
+<details open="">
+<summary>Giải thích ngắn gọn</summary>
+<p>Preemptive Priority thu hồi CPU khi có tiến trình mới có ưu tiên cao hơn tiến trình đang chạy. B là Round Robin, C là trường hợp tự rời CPU, D không phải tiêu chí của Priority.</p>
+</details>
+</article>
+<article class="question-card" data-answer="B" id="q39">
+<div class="question-head">
+<div class="q-number">Câu 39</div>
+<a class="back-top" href="#top">↑ Đầu trang</a>
+</div>
+<h2>Đối với những tiến trình có Burst time nhỏ, giải thuật điều phối tiến trình nào dưới đây cho thời gian chờ thấp nhất?</h2>
+<ol aria-label="Các lựa chọn câu 39" class="options">
+<li class="option">
+<span class="letter">A</span>
+<span class="option-text">First-Come, First-Served Scheduling</span>
+</li>
+<li class="option correct">
+<span class="letter">B</span>
+<span class="option-text">Shortest-Job-First Scheduling</span>
+</li>
+<li class="option">
+<span class="letter">C</span>
+<span class="option-text">Priority-scheduling</span>
+</li>
+<li class="option">
+<span class="letter">D</span>
+<span class="option-text">Multilevel queue-scheduling</span>
+</li>
+</ol>
+<details open="">
+<summary>Giải thích ngắn gọn</summary>
+<p>SJF ưu tiên tiến trình có burst nhỏ, nhờ vậy giảm waiting time trung bình. FCFS không xét burst, Priority xét độ ưu tiên, Multilevel Queue chia nhóm hàng đợi.</p>
+</details>
+</article>
+<article class="question-card" data-answer="C" id="q40">
+<div class="question-head">
+<div class="q-number">Câu 40</div>
+<a class="back-top" href="#top">↑ Đầu trang</a>
+</div>
+<h2>Đối với những tiến trình có Burst time nhỏ, giải thuật điều phối tiến trình SJF (Shortest Job First) có ưu điểm nào?</h2>
+<ol aria-label="Các lựa chọn câu 40" class="options">
+<li class="option">
+<span class="letter">A</span>
+<span class="option-text">Định thời đơn giản nhất.</span>
+</li>
+<li class="option">
+<span class="letter">B</span>
+<span class="option-text">Không cần biết trước thời gian chạy công việc.</span>
+</li>
+<li class="option correct">
+<span class="letter">C</span>
+<span class="option-text">Thời gian chờ đợi trung bình nhỏ nhất.</span>
+</li>
+<li class="option">
+<span class="letter">D</span>
+<span class="option-text">Định thời tương đối phức tạp.</span>
+</li>
+</ol>
+<details open="">
+<summary>Giải thích ngắn gọn</summary>
+<p>Ưu điểm nổi bật của SJF là tối ưu/giảm thời gian chờ trung bình. A không phải ưu điểm chính, B sai vì SJF cần ước lượng burst time, D là nhược điểm hơn là ưu điểm.</p>
+</details>
+</article>
+<article class="question-card" data-answer="B" id="q41">
+<div class="question-head">
+<div class="q-number">Câu 41</div>
+<a class="back-top" href="#top">↑ Đầu trang</a>
+</div>
+<h2>Với các hệ điều hành sử dụng luồng nhân (kernel threads) và luồng người dùng (User thread), giải thuật điều phối CPU áp dụng cho loại thread nào?</h2>
+<ol aria-label="Các lựa chọn câu 41" class="options">
+<li class="option">
+<span class="letter">A</span>
+<span class="option-text">user threads.</span>
+</li>
+<li class="option correct">
+<span class="letter">B</span>
+<span class="option-text">kernel threads.</span>
+</li>
+<li class="option">
+<span class="letter">C</span>
+<span class="option-text">kernel threads và user threads.</span>
+</li>
+<li class="option">
+<span class="letter">D</span>
+<span class="option-text">Tùy theo người sử dụng.</span>
+</li>
+</ol>
+<details open="">
+<summary>Giải thích ngắn gọn</summary>
+<p>CPU scheduler của hệ điều hành nhìn thấy và lập lịch các kernel threads. User threads do thư viện luồng quản lý ở mức người dùng, không phải đối tượng trực tiếp của CPU scheduler kernel.</p>
+</details>
+</article>
+<article class="question-card" data-answer="C" id="q42">
+<div class="question-head">
+<div class="q-number">Câu 42</div>
+<a class="back-top" href="#top">↑ Đầu trang</a>
+</div>
+<h2>Với hệ điều hành dùng mô hình ánh xạ Many-to-One và Many-to-Many, thư viện luồng (thread library) có vai trò gì?</h2>
+<ol aria-label="Các lựa chọn câu 42" class="options">
+<li class="option">
+<span class="letter">A</span>
+<span class="option-text">Tra cứu danh mục các luồng (thread).</span>
+</li>
+<li class="option">
+<span class="letter">B</span>
+<span class="option-text">Định thời cho luồng nhân (kernel threads).</span>
+</li>
+<li class="option correct">
+<span class="letter">C</span>
+<span class="option-text">Định thời cho luồng người dùng (user threads).</span>
+</li>
+<li class="option">
+<span class="letter">D</span>
+<span class="option-text">Định thời cho luồng nhân (kernel threads) và người dùng (user threads).</span>
+</li>
+</ol>
+<details open="">
+<summary>Giải thích ngắn gọn</summary>
+<p>Trong các mô hình có user-level scheduling, thư viện luồng định thời user threads. Kernel scheduler định thời kernel threads, nên B và D không đúng vai trò của thread library; A quá chung chung.</p>
+</details>
+</article>
+<article class="question-card" data-answer="B" id="q43">
+<div class="question-head">
+<div class="q-number">Câu 43</div>
+<a class="back-top" href="#top">↑ Đầu trang</a>
+</div>
+<h2>Trong các mô hình ánh xạ user thread vào kernel thread, mô hình nào chỉ xảy ra tranh chấp CPU tại các kernel threads?</h2>
+<ol aria-label="Các lựa chọn câu 43" class="options">
+<li class="option">
+<span class="letter">A</span>
+<span class="option-text">Mô hình One-to-Many.</span>
+</li>
+<li class="option correct">
+<span class="letter">B</span>
+<span class="option-text">Mô hình One-to-One.</span>
+</li>
+<li class="option">
+<span class="letter">C</span>
+<span class="option-text">Mô hình Many-to-Many.</span>
+</li>
+<li class="option">
+<span class="letter">D</span>
+<span class="option-text">Mô hình Many-to-One.</span>
+</li>
+</ol>
+<details open="">
+<summary>Giải thích ngắn gọn</summary>
+<p>Ở mô hình One-to-One, mỗi user thread tương ứng một kernel thread, nên việc cạnh tranh CPU do kernel thực hiện giữa các kernel threads. Many-to-One và Many-to-Many còn có phần lập lịch user-level.</p>
+</details>
+</article>
+<article class="question-card" data-answer="A" id="q44">
+<div class="question-head">
+<div class="q-number">Câu 44</div>
+<a class="back-top" href="#top">↑ Đầu trang</a>
+</div>
+<h2>Một Hệ điều hành chia hàng đợi Ready thành 2 hàng đợi con:
+- Foreground queue: chứa các process hiển thị trên màn hình.
+- Background queue: chứa các process chạy nền hoặc dạng Service.
+Hệ điều hành trên sẽ chọn giải thuật điều phối đa hàng đợi (Multilevel Queue Scheduling) nào cho hợp lý?</h2>
+<ol aria-label="Các lựa chọn câu 44" class="options">
+<li class="option correct">
+<span class="letter">A</span>
+<span class="option-text">Fixed priority scheduling.</span>
+</li>
+<li class="option">
+<span class="letter">B</span>
+<span class="option-text">Priority scheduling.</span>
+</li>
+<li class="option">
+<span class="letter">C</span>
+<span class="option-text">Time slice scheduling.</span>
+</li>
+<li class="option">
+<span class="letter">D</span>
+<span class="option-text">Round Robin scheduling.</span>
+</li>
+</ol>
+<details open="">
+<summary>Giải thích ngắn gọn</summary>
+<p>Foreground thường cần ưu tiên cao hơn background để phản hồi tốt cho người dùng, nên fixed priority giữa các queue là lựa chọn hợp lý. Priority/Round Robin là giải thuật cho tiến trình hoặc trong từng queue; time slice phù hợp khi muốn chia CPU theo tỷ lệ giữa nhiều queue.</p>
+</details>
+</article>
+<article class="question-card" data-answer="C" id="q45">
+<div class="question-head">
+<div class="q-number">Câu 45</div>
+<a class="back-top" href="#top">↑ Đầu trang</a>
+</div>
+<h2>Một Hệ điều hành chia hàng đợi Ready thành nhiều hàng đợi con. Mỗi hàng đợi con dùng chứa những process có quan hệ chung. Hệ điều hành trên sẽ chọn giải thuật điều phối đa hàng đợi (Multilevel Queue Scheduling) nào cho hợp lý?</h2>
+<ol aria-label="Các lựa chọn câu 45" class="options">
+<li class="option">
+<span class="letter">A</span>
+<span class="option-text">Fixed priority scheduling.</span>
+</li>
+<li class="option">
+<span class="letter">B</span>
+<span class="option-text">Priority scheduling.</span>
+</li>
+<li class="option correct">
+<span class="letter">C</span>
+<span class="option-text">Time slice scheduling.</span>
+</li>
+<li class="option">
+<span class="letter">D</span>
+<span class="option-text">Round Robin scheduling.</span>
+</li>
+</ol>
+<details open="">
+<summary>Giải thích ngắn gọn</summary>
+<p>Khi có nhiều queue theo nhóm quan hệ chung, time slice giúp chia CPU cho các queue theo tỷ lệ, tránh để một nhóm chiếm hết CPU. A có thể gây đói cho queue ưu tiên thấp; B và D không phải cách phân phối CPU giữa nhiều queue trong trường hợp này.</p>
+</details>
+</article>
+<article class="question-card" data-answer="A" id="q46">
+<div class="question-head">
+<div class="q-number">Câu 46</div>
+<a class="back-top" href="#top">↑ Đầu trang</a>
+</div>
+<h2>Trong giải thuật định thời “đa bộ xử lý không đối xứng” (Asymmetric multiprocessing), có bao nhiêu bộ xử lý tham gia định thời và xử lý nhập/xuất?</h2>
+<ol aria-label="Các lựa chọn câu 46" class="options">
+<li class="option correct">
+<span class="letter">A</span>
+<span class="option-text">Một bộ xử lý.</span>
+</li>
+<li class="option">
+<span class="letter">B</span>
+<span class="option-text">Hai bộ xử lý.</span>
+</li>
+<li class="option">
+<span class="letter">C</span>
+<span class="option-text">Bốn bộ xử lý.</span>
+</li>
+<li class="option">
+<span class="letter">D</span>
+<span class="option-text">Tất cả các bộ xử lý của hệ thống.</span>
+</li>
+</ol>
+<details open="">
+<summary>Giải thích ngắn gọn</summary>
+<p>Asymmetric multiprocessing thường có một processor chủ điều khiển scheduling và I/O. Các processor khác thực hiện công việc được giao, nên B, C, D không đúng.</p>
+</details>
+</article>
+<article class="question-card" data-answer="D" id="q47">
+<div class="question-head">
+<div class="q-number">Câu 47</div>
+<a class="back-top" href="#top">↑ Đầu trang</a>
+</div>
+<h2>Trong giải thuật định thời “đa bộ xử lý đối xứng” (Symmetric multiprocessing), có bao nhiêu bộ xử lý tham gia định thời cho tiến trình?</h2>
+<ol aria-label="Các lựa chọn câu 47" class="options">
+<li class="option">
+<span class="letter">A</span>
+<span class="option-text">Một bộ xử lý.</span>
+</li>
+<li class="option">
+<span class="letter">B</span>
+<span class="option-text">Hai bộ xử lý.</span>
+</li>
+<li class="option">
+<span class="letter">C</span>
+<span class="option-text">Bốn bộ xử lý.</span>
+</li>
+<li class="option correct">
+<span class="letter">D</span>
+<span class="option-text">Mỗi bộ xử lý tự định thời cho mình.</span>
+</li>
+</ol>
+<details open="">
+<summary>Giải thích ngắn gọn</summary>
+<p>Trong SMP, các processor ngang hàng và mỗi processor có thể tự lập lịch để chọn tiến trình/luồng chạy. A, B, C chỉ nêu số cố định nên không đúng bản chất SMP.</p>
+</details>
+</article>
+<article class="question-card" data-answer="C" id="q48">
+<div class="question-head">
+<div class="q-number">Câu 48</div>
+<a class="back-top" href="#top">↑ Đầu trang</a>
+</div>
+<h2>Trong phương pháp định thời “đa bộ xử lý đối xứng”, có thể có các loại hàng đợi Ready nào?</h2>
+<ol aria-label="Các lựa chọn câu 48" class="options">
+<li class="option">
+<span class="letter">A</span>
+<span class="option-text">Hàng đợi chung cho tất cả bộ xử lý.</span>
+</li>
+<li class="option">
+<span class="letter">B</span>
+<span class="option-text">Hàng đợi riêng của mỗi bộ xử lý.</span>
+</li>
+<li class="option correct">
+<span class="letter">C</span>
+<span class="option-text">Có cả hàng đợi chung và các hàng đợi riêng.</span>
+</li>
+<li class="option">
+<span class="letter">D</span>
+<span class="option-text">Không có hàng đợi.</span>
+</li>
+</ol>
+<details open="">
+<summary>Giải thích ngắn gọn</summary>
+<p>SMP có thể dùng một ready queue chung hoặc mỗi processor có queue riêng. Vì vậy phương án bao quát đúng là có cả hai kiểu; D sai vì vẫn cần hàng đợi ready.</p>
+</details>
+</article>
+<article class="question-card" data-answer="A" id="q49">
+<div class="question-head">
+<div class="q-number">Câu 49</div>
+<a class="back-top" href="#top">↑ Đầu trang</a>
+</div>
+<h2>Những nguyên tắc nào được sử dụng khi điều phối tiến trình cho hệ thống đa bộ xử lý?</h2>
+<ol aria-label="Các lựa chọn câu 49" class="options">
+<li class="option correct">
+<span class="letter">A</span>
+<span class="option-text">Nguyên tắc Một bộ xử lý; nguyên tắc Cân bằng tải.</span>
+</li>
+<li class="option">
+<span class="letter">B</span>
+<span class="option-text">Nguyên tắc Chia sẻ thời gian; nguyên tắc FIFO.</span>
+</li>
+<li class="option">
+<span class="letter">C</span>
+<span class="option-text">Nguyên tắc Độ ưu tiên.</span>
+</li>
+<li class="option">
+<span class="letter">D</span>
+<span class="option-text">Nguyên tắc Chia sẻ thời gian thực.</span>
+</li>
+</ol>
+<details open="">
+<summary>Giải thích ngắn gọn</summary>
+<p>Lập lịch đa bộ xử lý quan tâm đến gắn tiến trình với processor/processor affinity và cân bằng tải giữa các CPU. B, C, D là các chính sách lập lịch đơn lẻ, không đủ mô tả vấn đề đa bộ xử lý.</p>
+</details>
+</article>
+<article class="question-card" data-answer="C" id="q50">
+<div class="question-head">
+<div class="q-number">Câu 50</div>
+<a class="back-top" href="#top">↑ Đầu trang</a>
+</div>
+<h2>Khi điều phối tiến trình cho hệ thống đa bộ xử lý, phương pháp nào dưới đây được thực hiện để đảm bảo cân bằng tải (Load Balance) cho các CPU?</h2>
+<ol aria-label="Các lựa chọn câu 50" class="options">
+<li class="option">
+<span class="letter">A</span>
+<span class="option-text">Push migration (đẩy công việc ra khỏi CPU).</span>
+</li>
+<li class="option">
+<span class="letter">B</span>
+<span class="option-text">Pull migration (lấy công việc vào CPU).</span>
+</li>
+<li class="option correct">
+<span class="letter">C</span>
+<span class="option-text">Push migration và Pull migration.</span>
+</li>
+<li class="option">
+<span class="letter">D</span>
+<span class="option-text">So sánh và điều chỉnh tải.</span>
+</li>
+</ol>
+<details open="">
+<summary>Giải thích ngắn gọn</summary>
+<p>Load balancing có thể thực hiện bằng push migration (đẩy việc khỏi CPU quá tải) và pull migration (CPU rảnh kéo việc về). A hoặc B chỉ nêu một chiều; D là mô tả chung chứ không phải tên hai phương pháp cụ thể.</p>
+</details>
+</article>
+</section>
+<footer>File HTML đã được đối chiếu lại với PDF gốc Chương 3 - Điều phối tiến trình.</footer>
+</main>
+<button aria-label="Quay về đầu trang" class="floating-top" id="backToTopBtn" type="button">↑ Đầu trang</button>
+<script>
+    const searchBox = document.getElementById('searchBox');
+    const cards = Array.from(document.querySelectorAll('.question-card'));
+    searchBox.addEventListener('input', () => {
+      const q = searchBox.value.trim().toLowerCase();
+      cards.forEach(card => {
+        const text = card.textContent.toLowerCase();
+        card.classList.toggle('hidden', q && !text.includes(q));
+      });
+    });
+    document.getElementById('expandAll').addEventListener('click', () => {
+      document.querySelectorAll('details').forEach(d => d.open = true);
+    });
+    document.getElementById('collapseAll').addEventListener('click', () => {
+      document.querySelectorAll('details').forEach(d => d.open = false);
+    });
+
+    const backToTopBtn = document.getElementById('backToTopBtn');
+    const toggleBackToTop = () => {
+      backToTopBtn.classList.toggle('show', window.scrollY > 320);
+    };
+    window.addEventListener('scroll', toggleBackToTop, { passive: true });
+    toggleBackToTop();
+    backToTopBtn.addEventListener('click', () => {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lab 3b - QuanLyNhanSu</title>
+  <style>
+    :root {
+      --bg: #f4f6fb;
+      --paper: #ffffff;
+      --text: #1f2937;
+      --muted: #6b7280;
+      --line: #e5e7eb;
+      --primary: #2563eb;
+      --primary-soft: #eff6ff;
+      --code-bg: #0f172a;
+      --code-text: #e5e7eb;
+      --tag: #dbeafe;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.55;
+    }
+
+    .page {
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 24px 14px 48px;
+    }
+
+    .cover {
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 22px;
+      margin-bottom: 16px;
+      box-shadow: 0 8px 24px rgba(15, 23, 42, 0.06);
+    }
+
+    .cover h1 {
+      margin: 0 0 8px;
+      font-size: 26px;
+      text-align: center;
+      color: #111827;
+      letter-spacing: -0.02em;
+    }
+
+    .cover p {
+      margin: 4px 0;
+      text-align: center;
+      color: var(--muted);
+    }
+
+    .info {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 18px;
+    }
+
+    .info div {
+      border: 1px dashed #cbd5e1;
+      border-radius: 12px;
+      padding: 10px 12px;
+      color: #374151;
+      background: #f8fafc;
+    }
+
+    .section {
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 18px;
+      margin-bottom: 16px;
+      box-shadow: 0 8px 24px rgba(15, 23, 42, 0.04);
+    }
+
+    h2 {
+      margin: 0 0 12px;
+      font-size: 20px;
+      color: #111827;
+      border-left: 5px solid var(--primary);
+      padding-left: 10px;
+    }
+
+    h3 {
+      margin: 0 0 8px;
+      font-size: 17px;
+      color: #111827;
+    }
+
+    .question {
+      margin: 14px 0;
+      padding: 14px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: #ffffff;
+    }
+
+    .question-title {
+      display: flex;
+      gap: 8px;
+      align-items: flex-start;
+      margin-bottom: 8px;
+      font-weight: 700;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-width: 58px;
+      padding: 3px 8px;
+      border-radius: 999px;
+      background: var(--tag);
+      color: #1d4ed8;
+      font-size: 13px;
+      white-space: nowrap;
+    }
+
+    .desc {
+      color: #374151;
+    }
+
+    pre {
+      margin: 10px 0 0;
+      padding: 14px;
+      overflow-x: auto;
+      border-radius: 12px;
+      background: var(--code-bg);
+      color: var(--code-text);
+      font-family: Consolas, "Courier New", monospace;
+      font-size: 14px;
+      line-height: 1.5;
+      white-space: pre;
+    }
+
+    code {
+      font-family: Consolas, "Courier New", monospace;
+    }
+
+    .note {
+      padding: 12px 14px;
+      border-radius: 12px;
+      background: var(--primary-soft);
+      border: 1px solid #bfdbfe;
+      color: #1e3a8a;
+      margin: 10px 0;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 12px 0;
+      font-size: 14px;
+      overflow: hidden;
+      border-radius: 12px;
+    }
+
+    th, td {
+      border: 1px solid var(--line);
+      padding: 8px 10px;
+      text-align: left;
+    }
+
+    th {
+      background: #f1f5f9;
+    }
+
+    .toc {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin-top: 10px;
+    }
+
+    .toc a {
+      text-decoration: none;
+      color: #1d4ed8;
+      background: #eff6ff;
+      border: 1px solid #bfdbfe;
+      padding: 8px 10px;
+      border-radius: 10px;
+      font-size: 14px;
+      text-align: center;
+    }
+
+    @media (max-width: 720px) {
+      .page {
+        padding: 14px 10px 34px;
+      }
+
+      .cover {
+        padding: 18px 14px;
+        border-radius: 14px;
+      }
+
+      .cover h1 {
+        font-size: 22px;
+      }
+
+      .section {
+        padding: 14px;
+        border-radius: 14px;
+      }
+
+      .info {
+        grid-template-columns: 1fr;
+      }
+
+      .toc {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      pre {
+        font-size: 12.5px;
+        padding: 12px;
+      }
+
+      .question {
+        padding: 12px;
+      }
+    }
+
+    @media print {
+      body {
+        background: white;
+      }
+
+      .page {
+        max-width: none;
+        padding: 0;
+      }
+
+      .cover, .section, .question {
+        box-shadow: none;
+        break-inside: avoid;
+      }
+
+      pre {
+        white-space: pre-wrap;
+      }
+
+      .toc {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <section class="cover">
+      <h1>Lab 3b - Cơ sở dữ liệu QuanLyNhanSu</h1>
+      <p>Bài làm SQL hoàn chỉnh</p>
+      <p>Môn: Hệ quản trị cơ sở dữ liệu</p>
+
+      <div class="info">
+        <div><strong>Họ và tên:</strong> Thuận</div>
+        <div><strong>MSSV:</strong> 2500016989</div>
+      </div>
+
+      <div class="toc">
+        <a href="#tao-csdl">Tạo CSDL</a>
+        <a href="#nhap-du-lieu">Nhập dữ liệu</a>
+        <a href="#cau-1-5">Câu 1 - 5</a>
+        <a href="#cau-6-10">Câu 6 - 10</a>
+        <a href="#cau-11-15">Câu 11 - 15</a>
+        <a href="#toan-bo">Toàn bộ SQL</a>
+      </div>
+    </section>
+
+    <section class="section" id="tao-csdl">
+      <h2>1. Tạo cơ sở dữ liệu và các bảng</h2>
+      <div class="note">
+        Bài làm sử dụng cú pháp SQL Server. Nếu dùng MySQL thì có thể bỏ chữ <code>GO</code> và đổi <code>NVARCHAR</code> thành <code>VARCHAR</code> hoặc <code>TEXT</code> tùy yêu cầu.
+      </div>
+
+<pre><code>CREATE DATABASE QuanLyNhanSu;
+GO
+
+USE QuanLyNhanSu;
+GO
+
+CREATE TABLE PHONGBAN (
+    PHG INT PRIMARY KEY,
+    TENPHG NVARCHAR(50)
+);
+
+CREATE TABLE NHANVIEN (
+    HONV NVARCHAR(30),
+    TENLOT NVARCHAR(30),
+    TENNV NVARCHAR(30),
+    PHAI NVARCHAR(5),
+    LUONG FLOAT,
+    MANV CHAR(9) PRIMARY KEY,
+    NGSINH DATE,
+    DIACHI NVARCHAR(100),
+    PHG INT,
+    FOREIGN KEY (PHG) REFERENCES PHONGBAN(PHG)
+);
+
+CREATE TABLE DEAN (
+    TENDA NVARCHAR(50),
+    MADA INT PRIMARY KEY,
+    DDIEM_DA NVARCHAR(50),
+    PHG INT,
+    FOREIGN KEY (PHG) REFERENCES PHONGBAN(PHG)
+);
+
+CREATE TABLE PHANCONG (
+    MANV CHAR(9),
+    MADA INT,
+    SOGIO FLOAT,
+    PRIMARY KEY (MANV, MADA),
+    FOREIGN KEY (MANV) REFERENCES NHANVIEN(MANV),
+    FOREIGN KEY (MADA) REFERENCES DEAN(MADA)
+);</code></pre>
+    </section>
+
+    <section class="section" id="nhap-du-lieu">
+      <h2>2. Nhập dữ liệu ban đầu theo đề</h2>
+
+<pre><code>INSERT INTO PHONGBAN (PHG, TENPHG) VALUES
+(1, N'Nhân sự'),
+(2, N'Kế hoạch'),
+(3, N'Kinh doanh'),
+(4, N'Marketing'),
+(5, N'Kế toán');
+
+INSERT INTO NHANVIEN (HONV, TENLOT, TENNV, PHAI, LUONG, MANV, NGSINH, DIACHI, PHG) VALUES
+(N'Đinh', N'Lê', N'Tiên', N'Nam', 4000, '123456789', '1965-09-01', N'Nguyễn Trãi, Q5', 1),
+(N'Nguyễn', N'Thị', N'Loan', N'Nữ', 2500, '333445555', '1955-08-12', N'Nguyễn Huệ, Q1', 5),
+(N'Nguyễn', N'Lan', N'Anh', N'Nữ', 4300, '666884444', '1962-09-15', N'Lê Lợi, Q1', 5),
+(N'Trần', N'Thanh', N'Tâm', N'Nam', 3800, '453453453', '1972-07-31', N'Trần Não, Q2', 2);
+
+INSERT INTO DEAN (TENDA, MADA, DDIEM_DA, PHG) VALUES
+(N'Sản phẩm X', 1, N'Quy Nhơn', 5),
+(N'Sản phẩm Y', 2, N'Nha Trang', 5),
+(N'Sản phẩm Z', 3, N'TP HCM', 5),
+(N'Tin học hóa', 10, N'Bình Dương', 4);
+
+INSERT INTO PHANCONG (MANV, MADA, SOGIO) VALUES
+('123456789', 1, 32.0),
+('123456789', 2, 8.0),
+('666884444', 3, 40.0),
+('453453453', 1, 20.0);</code></pre>
+    </section>
+
+    <section class="section" id="cau-1-5">
+      <h2>3. Trả lời câu 1 đến câu 5</h2>
+
+      <div class="question">
+        <div class="question-title"><span class="badge">Câu 1</span><span class="desc">Cập nhập thêm 5 mẫu tin tự chọn vào bảng NHANVIEN.</span></div>
+<pre><code>INSERT INTO NHANVIEN (HONV, TENLOT, TENNV, PHAI, LUONG, MANV, NGSINH, DIACHI, PHG) VALUES
+(N'Lê', N'Văn', N'An', N'Nam', 3200, '111111111', '1998-03-12', N'CMT8, Q3', 3),
+(N'Phạm', N'Thị', N'Hoa', N'Nữ', 4700, '222222222', '1997-06-20', N'Nguyễn Văn Cừ, Q5', 4),
+(N'Trần', N'Minh', N'Khang', N'Nam', 2800, '444444444', '1999-11-05', N'Lê Văn Sỹ, Q3', 2),
+(N'Võ', N'Ngọc', N'Mai', N'Nữ', 5100, '555555555', '1996-01-25', N'Nguyễn Đình Chiểu, Q1', 5),
+(N'Hoàng', N'Gia', N'Bảo', N'Nam', 3600, '777777777', '2000-09-09', N'Điện Biên Phủ, Q10', 1);</code></pre>
+      </div>
+
+      <div class="question">
+        <div class="question-title"><span class="badge">Câu 2</span><span class="desc">Hiển thị tất cả thông tin của bảng NHANVIEN.</span></div>
+<pre><code>SELECT *
+FROM NHANVIEN;</code></pre>
+      </div>
+
+      <div class="question">
+        <div class="question-title"><span class="badge">Câu 3</span><span class="desc">Hiển thị thông tin của những nhân viên ở phòng số 5, sắp thứ tự theo tên nhân viên giảm dần.</span></div>
+<pre><code>SELECT *
+FROM NHANVIEN
+WHERE PHG = 5
+ORDER BY TENNV DESC;</code></pre>
+      </div>
+
+      <div class="question">
+        <div class="question-title"><span class="badge">Câu 4</span><span class="desc">Hiển thị mã nhân viên, họ nhân viên, tên lót và tên nhân viên của những nhân viên ở phòng số 5 và có lương từ 3000 trở lên.</span></div>
+<pre><code>SELECT MANV, HONV, TENLOT, TENNV
+FROM NHANVIEN
+WHERE PHG = 5 AND LUONG &gt;= 3000;</code></pre>
+      </div>
+
+      <div class="question">
+        <div class="question-title"><span class="badge">Câu 5</span><span class="desc">Hiển thị mã nhân viên, tên nhân viên của những nhân viên có lương từ 3000 đến 5000.</span></div>
+<pre><code>SELECT MANV, TENNV
+FROM NHANVIEN
+WHERE LUONG BETWEEN 3000 AND 5000;</code></pre>
+      </div>
+    </section>
+
+    <section class="section" id="cau-6-10">
+      <h2>4. Trả lời câu 6 đến câu 10</h2>
+
+      <div class="question">
+        <div class="question-title"><span class="badge">Câu 6</span><span class="desc">Hiển thị thông tin của những nhân viên ở địa chỉ có tên đường là Nguyễn.</span></div>
+<pre><code>SELECT *
+FROM NHANVIEN
+WHERE DIACHI LIKE N'Nguyễn%';</code></pre>
+      </div>
+
+      <div class="question">
+        <div class="question-title"><span class="badge">Câu 7</span><span class="desc">Cho biết số lượng nhân viên.</span></div>
+<pre><code>SELECT COUNT(*) AS SoLuongNhanVien
+FROM NHANVIEN;</code></pre>
+      </div>
+
+      <div class="question">
+        <div class="question-title"><span class="badge">Câu 8</span><span class="desc">Cho biết số lượng nhân viên trong từng phòng ban.</span></div>
+<pre><code>SELECT PB.PHG, PB.TENPHG, COUNT(NV.MANV) AS SoLuongNhanVien
+FROM PHONGBAN PB
+LEFT JOIN NHANVIEN NV ON PB.PHG = NV.PHG
+GROUP BY PB.PHG, PB.TENPHG;</code></pre>
+      </div>
+
+      <div class="question">
+        <div class="question-title"><span class="badge">Câu 9</span><span class="desc">Cho biết số lượng nhân viên trong từng phòng ban, chỉ hiển thị những phòng ban có từ 2 nhân viên trở lên.</span></div>
+<pre><code>SELECT PB.PHG, PB.TENPHG, COUNT(NV.MANV) AS SoLuongNhanVien
+FROM PHONGBAN PB
+JOIN NHANVIEN NV ON PB.PHG = NV.PHG
+GROUP BY PB.PHG, PB.TENPHG
+HAVING COUNT(NV.MANV) &gt;= 2;</code></pre>
+      </div>
+
+      <div class="question">
+        <div class="question-title"><span class="badge">Câu 10</span><span class="desc">Hiển thị thông tin về mã nhân viên, tên nhân viên và tên phòng ban ở phòng kế toán.</span></div>
+<pre><code>SELECT NV.MANV, NV.TENNV, PB.TENPHG
+FROM NHANVIEN NV
+JOIN PHONGBAN PB ON NV.PHG = PB.PHG
+WHERE PB.TENPHG = N'Kế toán';</code></pre>
+      </div>
+    </section>
+
+    <section class="section" id="cau-11-15">
+      <h2>5. Trả lời câu 11 đến câu 15</h2>
+
+      <div class="question">
+        <div class="question-title"><span class="badge">Câu 11</span><span class="desc">Thêm nhân viên mới: Lê, Ngọc, Yến, Nữ, 4500, 987654321, 07/11/2000, CMT8 Q3, 3.</span></div>
+<pre><code>INSERT INTO NHANVIEN (HONV, TENLOT, TENNV, PHAI, LUONG, MANV, NGSINH, DIACHI, PHG)
+VALUES (N'Lê', N'Ngọc', N'Yến', N'Nữ', 4500, '987654321', '2000-11-07', N'CMT8 Q3', 3);</code></pre>
+      </div>
+
+      <div class="question">
+        <div class="question-title"><span class="badge">Câu 12</span><span class="desc">Sửa thông tin của nhân viên mới Lê Ngọc Yến là thuộc Phòng 4.</span></div>
+<pre><code>UPDATE NHANVIEN
+SET PHG = 4
+WHERE MANV = '987654321';</code></pre>
+      </div>
+
+      <div class="question">
+        <div class="question-title"><span class="badge">Câu 13</span><span class="desc">Xóa các phòng ban không có nhân viên.</span></div>
+<pre><code>DELETE FROM PHONGBAN
+WHERE PHG NOT IN (
+    SELECT DISTINCT PHG
+    FROM NHANVIEN
+    WHERE PHG IS NOT NULL
+);</code></pre>
+      </div>
+
+      <div class="question">
+        <div class="question-title"><span class="badge">Câu 14</span><span class="desc">Xóa các đề án chưa phân công nhân viên.</span></div>
+<pre><code>DELETE FROM DEAN
+WHERE MADA NOT IN (
+    SELECT DISTINCT MADA
+    FROM PHANCONG
+);</code></pre>
+      </div>
+
+      <div class="question">
+        <div class="question-title"><span class="badge">Câu 15</span><span class="desc">Hiển thị thông tin các nhân viên phòng Kế toán, bao gồm: Mã nhân viên, Họ và tên, Phái, Lương và Tên phòng.</span></div>
+<pre><code>SELECT
+    NV.MANV,
+    NV.HONV + N' ' + NV.TENLOT + N' ' + NV.TENNV AS HoVaTen,
+    NV.PHAI,
+    NV.LUONG,
+    PB.TENPHG
+FROM NHANVIEN NV
+JOIN PHONGBAN PB ON NV.PHG = PB.PHG
+WHERE PB.TENPHG = N'Kế toán';</code></pre>
+      </div>
+    </section>
+
+    <section class="section" id="toan-bo">
+      <h2>6. Toàn bộ mã SQL gộp chung</h2>
+      <p>Có thể chạy lần lượt đoạn bên dưới trong SQL Server.</p>
+
+<pre><code>CREATE DATABASE QuanLyNhanSu;
+GO
+
+USE QuanLyNhanSu;
+GO
+
+CREATE TABLE PHONGBAN (
+    PHG INT PRIMARY KEY,
+    TENPHG NVARCHAR(50)
+);
+
+CREATE TABLE NHANVIEN (
+    HONV NVARCHAR(30),
+    TENLOT NVARCHAR(30),
+    TENNV NVARCHAR(30),
+    PHAI NVARCHAR(5),
+    LUONG FLOAT,
+    MANV CHAR(9) PRIMARY KEY,
+    NGSINH DATE,
+    DIACHI NVARCHAR(100),
+    PHG INT,
+    FOREIGN KEY (PHG) REFERENCES PHONGBAN(PHG)
+);
+
+CREATE TABLE DEAN (
+    TENDA NVARCHAR(50),
+    MADA INT PRIMARY KEY,
+    DDIEM_DA NVARCHAR(50),
+    PHG INT,
+    FOREIGN KEY (PHG) REFERENCES PHONGBAN(PHG)
+);
+
+CREATE TABLE PHANCONG (
+    MANV CHAR(9),
+    MADA INT,
+    SOGIO FLOAT,
+    PRIMARY KEY (MANV, MADA),
+    FOREIGN KEY (MANV) REFERENCES NHANVIEN(MANV),
+    FOREIGN KEY (MADA) REFERENCES DEAN(MADA)
+);
+
+INSERT INTO PHONGBAN (PHG, TENPHG) VALUES
+(1, N'Nhân sự'),
+(2, N'Kế hoạch'),
+(3, N'Kinh doanh'),
+(4, N'Marketing'),
+(5, N'Kế toán');
+
+INSERT INTO NHANVIEN (HONV, TENLOT, TENNV, PHAI, LUONG, MANV, NGSINH, DIACHI, PHG) VALUES
+(N'Đinh', N'Lê', N'Tiên', N'Nam', 4000, '123456789', '1965-09-01', N'Nguyễn Trãi, Q5', 1),
+(N'Nguyễn', N'Thị', N'Loan', N'Nữ', 2500, '333445555', '1955-08-12', N'Nguyễn Huệ, Q1', 5),
+(N'Nguyễn', N'Lan', N'Anh', N'Nữ', 4300, '666884444', '1962-09-15', N'Lê Lợi, Q1', 5),
+(N'Trần', N'Thanh', N'Tâm', N'Nam', 3800, '453453453', '1972-07-31', N'Trần Não, Q2', 2);
+
+INSERT INTO DEAN (TENDA, MADA, DDIEM_DA, PHG) VALUES
+(N'Sản phẩm X', 1, N'Quy Nhơn', 5),
+(N'Sản phẩm Y', 2, N'Nha Trang', 5),
+(N'Sản phẩm Z', 3, N'TP HCM', 5),
+(N'Tin học hóa', 10, N'Bình Dương', 4);
+
+INSERT INTO PHANCONG (MANV, MADA, SOGIO) VALUES
+('123456789', 1, 32.0),
+('123456789', 2, 8.0),
+('666884444', 3, 40.0),
+('453453453', 1, 20.0);
+
+-- Câu 1
+INSERT INTO NHANVIEN (HONV, TENLOT, TENNV, PHAI, LUONG, MANV, NGSINH, DIACHI, PHG) VALUES
+(N'Lê', N'Văn', N'An', N'Nam', 3200, '111111111', '1998-03-12', N'CMT8, Q3', 3),
+(N'Phạm', N'Thị', N'Hoa', N'Nữ', 4700, '222222222', '1997-06-20', N'Nguyễn Văn Cừ, Q5', 4),
+(N'Trần', N'Minh', N'Khang', N'Nam', 2800, '444444444', '1999-11-05', N'Lê Văn Sỹ, Q3', 2),
+(N'Võ', N'Ngọc', N'Mai', N'Nữ', 5100, '555555555', '1996-01-25', N'Nguyễn Đình Chiểu, Q1', 5),
+(N'Hoàng', N'Gia', N'Bảo', N'Nam', 3600, '777777777', '2000-09-09', N'Điện Biên Phủ, Q10', 1);
+
+-- Câu 2
+SELECT *
+FROM NHANVIEN;
+
+-- Câu 3
+SELECT *
+FROM NHANVIEN
+WHERE PHG = 5
+ORDER BY TENNV DESC;
+
+-- Câu 4
+SELECT MANV, HONV, TENLOT, TENNV
+FROM NHANVIEN
+WHERE PHG = 5 AND LUONG &gt;= 3000;
+
+-- Câu 5
+SELECT MANV, TENNV
+FROM NHANVIEN
+WHERE LUONG BETWEEN 3000 AND 5000;
+
+-- Câu 6
+SELECT *
+FROM NHANVIEN
+WHERE DIACHI LIKE N'Nguyễn%';
+
+-- Câu 7
+SELECT COUNT(*) AS SoLuongNhanVien
+FROM NHANVIEN;
+
+-- Câu 8
+SELECT PB.PHG, PB.TENPHG, COUNT(NV.MANV) AS SoLuongNhanVien
+FROM PHONGBAN PB
+LEFT JOIN NHANVIEN NV ON PB.PHG = NV.PHG
+GROUP BY PB.PHG, PB.TENPHG;
+
+-- Câu 9
+SELECT PB.PHG, PB.TENPHG, COUNT(NV.MANV) AS SoLuongNhanVien
+FROM PHONGBAN PB
+JOIN NHANVIEN NV ON PB.PHG = NV.PHG
+GROUP BY PB.PHG, PB.TENPHG
+HAVING COUNT(NV.MANV) &gt;= 2;
+
+-- Câu 10
+SELECT NV.MANV, NV.TENNV, PB.TENPHG
+FROM NHANVIEN NV
+JOIN PHONGBAN PB ON NV.PHG = PB.PHG
+WHERE PB.TENPHG = N'Kế toán';
+
+-- Câu 11
+INSERT INTO NHANVIEN (HONV, TENLOT, TENNV, PHAI, LUONG, MANV, NGSINH, DIACHI, PHG)
+VALUES (N'Lê', N'Ngọc', N'Yến', N'Nữ', 4500, '987654321', '2000-11-07', N'CMT8 Q3', 3);
+
+-- Câu 12
+UPDATE NHANVIEN
+SET PHG = 4
+WHERE MANV = '987654321';
+
+-- Câu 13
+DELETE FROM PHONGBAN
+WHERE PHG NOT IN (
+    SELECT DISTINCT PHG
+    FROM NHANVIEN
+    WHERE PHG IS NOT NULL
+);
+
+-- Câu 14
+DELETE FROM DEAN
+WHERE MADA NOT IN (
+    SELECT DISTINCT MADA
+    FROM PHANCONG
+);
+
+-- Câu 15
+SELECT
+    NV.MANV,
+    NV.HONV + N' ' + NV.TENLOT + N' ' + NV.TENNV AS HoVaTen,
+    NV.PHAI,
+    NV.LUONG,
+    PB.TENPHG
+FROM NHANVIEN NV
+JOIN PHONGBAN PB ON NV.PHG = PB.PHG
+WHERE PB.TENPHG = N'Kế toán';</code></pre>
+    </section>
+  </main>
+</body>
+</html>

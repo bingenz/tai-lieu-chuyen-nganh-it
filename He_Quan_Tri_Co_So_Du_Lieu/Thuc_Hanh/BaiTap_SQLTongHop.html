@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bài tập SQL - Hệ quản trị CSDL</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: #f1f5f9;
+      color: #111827;
+      font-family: "Times New Roman", Times, serif;
+      line-height: 1.45;
+    }
+
+    .page {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 14px;
+    }
+
+    .paper {
+      background: #fff;
+      border: 1px solid #d1d5db;
+      border-radius: 12px;
+      padding: 18px;
+      box-shadow: 0 8px 22px rgba(15, 23, 42, 0.08);
+    }
+
+    h1 {
+      text-align: center;
+      font-size: 22px;
+      margin: 0 0 6px;
+      text-transform: uppercase;
+    }
+
+    .sub {
+      text-align: center;
+      font-size: 15px;
+      margin-bottom: 18px;
+    }
+
+    .schema {
+      border: 1px solid #cbd5e1;
+      border-radius: 10px;
+      padding: 12px;
+      margin-bottom: 18px;
+      background: #f8fafc;
+      font-family: Arial, sans-serif;
+      font-size: 15px;
+      line-height: 1.65;
+    }
+
+    .schema b {
+      font-weight: 800;
+    }
+
+    .pk {
+      font-weight: 700;
+      text-decoration: underline;
+    }
+
+    .note {
+      font-size: 15px;
+      padding: 10px 12px;
+      background: #fff7ed;
+      border-left: 4px solid #f97316;
+      border-radius: 8px;
+      margin-bottom: 18px;
+    }
+
+    .question {
+      margin: 18px 0 24px;
+      padding-bottom: 18px;
+      border-bottom: 1px dashed #cbd5e1;
+    }
+
+    .question:last-child {
+      border-bottom: none;
+      padding-bottom: 0;
+    }
+
+    .q-title {
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .q-text {
+      font-size: 18px;
+      margin-bottom: 10px;
+    }
+
+    .answer-label {
+      font-size: 17px;
+      font-weight: 700;
+      margin: 8px 0 6px;
+    }
+
+    pre {
+      margin: 0;
+      padding: 12px;
+      border-radius: 10px;
+      background: #f8fafc;
+      border: 1px solid #dbe3ef;
+      overflow-x: auto;
+      white-space: pre;
+      font-family: "Consolas", "Courier New", monospace;
+      font-size: 14px;
+      line-height: 1.55;
+    }
+
+    .explain {
+      font-size: 15px;
+      margin-top: 8px;
+      color: #374151;
+    }
+
+    .small {
+      font-size: 14px;
+      color: #4b5563;
+    }
+
+    @media (max-width: 520px) {
+      .page {
+        padding: 8px;
+      }
+
+      .paper {
+        padding: 14px;
+        border-radius: 10px;
+      }
+
+      h1 {
+        font-size: 19px;
+      }
+
+      .schema {
+        font-size: 13px;
+        padding: 10px;
+      }
+
+      .q-title,
+      .q-text {
+        font-size: 16px;
+      }
+
+      pre {
+        font-size: 12.5px;
+        padding: 10px;
+      }
+    }
+
+    @media print {
+      body {
+        background: #fff;
+      }
+
+      .page {
+        max-width: none;
+        padding: 0;
+      }
+
+      .paper {
+        border: none;
+        box-shadow: none;
+        border-radius: 0;
+      }
+
+      .question {
+        break-inside: avoid;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <div class="paper">
+      <h1>Bài tập SQL</h1>
+      <div class="sub">Môn: Hệ quản trị cơ sở dữ liệu</div>
+
+      <div class="schema">
+        <div><b>DocGia</b>(<span class="pk">MaDG</span>, TenDg)</div>
+        <div><b>Sach</b>(<span class="pk">MaS</span>, TenS, MaLoai)</div>
+        <div><b>Loai</b>(<span class="pk">MaLoai</span>, TenLoai)</div>
+        <div><b>PhieuMuon</b>(<span class="pk">SoPM</span>, MaDG, NgayM)</div>
+        <div><b>CTMuon</b>(<span class="pk">SoPM</span>, <span class="pk">MaS</span>, NgayT)</div>
+      </div>
+
+      <div class="note">
+        Theo đề: <b>date()</b> là ngày hiện tại. Nếu sách chưa trả thì <b>NgayT IS NULL</b>.
+      </div>
+
+      <div class="question">
+        <div class="q-title">Câu 1:</div>
+        <div class="q-text">In ra TenDg mượn sách hơn 15 ngày mà chưa trả.</div>
+        <div class="answer-label">Bài làm:</div>
+<pre>SELECT DISTINCT DG.TenDg
+FROM DocGia DG
+JOIN PhieuMuon PM ON DG.MaDG = PM.MaDG
+JOIN CTMuon CT ON PM.SoPM = CT.SoPM
+WHERE CT.NgayT IS NULL
+  AND date() - PM.NgayM &gt; 15;</pre>
+        <div class="explain">Lấy độc giả có sách chưa trả, tức là <b>NgayT IS NULL</b>, và số ngày từ ngày mượn đến hiện tại lớn hơn 15.</div>
+      </div>
+
+      <div class="question">
+        <div class="q-title">Câu 2:</div>
+        <div class="q-text">In ra TenDg đã từng trả sách trễ hạn, tức là trả sau hơn 15 ngày.</div>
+        <div class="answer-label">Bài làm:</div>
+<pre>SELECT DISTINCT DG.TenDg
+FROM DocGia DG
+JOIN PhieuMuon PM ON DG.MaDG = PM.MaDG
+JOIN CTMuon CT ON PM.SoPM = CT.SoPM
+WHERE CT.NgayT IS NOT NULL
+  AND CT.NgayT - PM.NgayM &gt; 15;</pre>
+        <div class="explain">Sách đã trả thì <b>NgayT IS NOT NULL</b>. Trễ hạn khi ngày trả trừ ngày mượn lớn hơn 15 ngày.</div>
+      </div>
+
+      <div class="question">
+        <div class="q-title">Câu 3:</div>
+        <div class="q-text">In ra TenDg chưa mượn sách bao giờ.</div>
+        <div class="answer-label">Bài làm:</div>
+<pre>SELECT DG.TenDg
+FROM DocGia DG
+WHERE NOT EXISTS (
+    SELECT *
+    FROM PhieuMuon PM
+    WHERE PM.MaDG = DG.MaDG
+);</pre>
+        <div class="explain">Dùng <b>NOT EXISTS</b> để lấy độc giả không có phiếu mượn nào trong bảng PhieuMuon.</div>
+      </div>
+
+      <div class="question">
+        <div class="q-title">Câu 4:</div>
+        <div class="q-text">In ra TenS chưa độc giả nào mượn.</div>
+        <div class="answer-label">Bài làm:</div>
+<pre>SELECT S.TenS
+FROM Sach S
+WHERE NOT EXISTS (
+    SELECT *
+    FROM CTMuon CT
+    WHERE CT.MaS = S.MaS
+);</pre>
+        <div class="explain">Dùng <b>NOT EXISTS</b> để lấy sách không xuất hiện trong bảng CTMuon, nghĩa là chưa có ai mượn.</div>
+      </div>
+
+      <p class="small">
+        Ghi chú: DG, PM, CT, S là bí danh của bảng. Dùng bí danh giúp câu SQL ngắn, rõ và tránh nhầm cột khi JOIN nhiều bảng.
+      </p>
+    </div>
+  </div>
+</body>
+</html>

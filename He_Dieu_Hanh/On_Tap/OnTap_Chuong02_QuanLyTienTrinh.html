@@ -1,0 +1,1019 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Trắc nghiệm HĐH - Chương 2: Quản lý tiến trình</title>
+<style>
+  :root {
+    --bg: #f3f4f6;
+    --card: #ffffff;
+    --text: #111827;
+    --muted: #6b7280;
+    --line: #e5e7eb;
+    --green-bg: #dcfce7;
+    --green-border: #16a34a;
+    --green-text: #14532d;
+    --blue: #2563eb;
+    --shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+    font-size: 15px;
+    line-height: 1.45;
+  }
+  .wrap {
+    width: min(100%, 860px);
+    margin: 0 auto;
+    padding: 14px 12px 84px;
+  }
+  header {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    padding: 16px;
+    box-shadow: var(--shadow);
+    margin-bottom: 12px;
+  }
+  h1 {
+    font-size: 20px;
+    line-height: 1.25;
+    margin: 0 0 6px;
+    color: #1d4ed8;
+  }
+  .subtitle { margin: 0; color: var(--muted); font-size: 13px; }
+  .toolbar {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    background: rgba(243,244,246,0.96);
+    backdrop-filter: blur(10px);
+    padding: 8px 0 10px;
+    margin-bottom: 10px;
+  }
+  .search-box {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+  #search {
+    width: 100%;
+    border: 1px solid var(--line);
+    background: #fff;
+    border-radius: 999px;
+    padding: 11px 13px;
+    font-size: 14px;
+    outline: none;
+  }
+  #search:focus { border-color: #93c5fd; box-shadow: 0 0 0 3px rgba(147,197,253,.35); }
+  .btn-row {
+    display: flex;
+    gap: 8px;
+    margin-top: 8px;
+    flex-wrap: wrap;
+  }
+  button, .small-pill {
+    border: 1px solid var(--line);
+    background: #fff;
+    border-radius: 999px;
+    padding: 8px 12px;
+    font-size: 13px;
+    color: #111827;
+  }
+  button:active, .ans-jump:active { transform: translateY(1px); }
+  .count { color: var(--muted); font-size: 13px; align-self: center; margin-left: auto; }
+  .answer-panel {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    padding: 14px;
+    box-shadow: var(--shadow);
+    margin-bottom: 12px;
+  }
+  .panel-title {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+    align-items: baseline;
+    margin-bottom: 10px;
+  }
+  .panel-title h2 { font-size: 16px; margin: 0; }
+  .panel-title span { color: var(--muted); font-size: 12px; }
+  .answers-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(72px, 1fr));
+    gap: 8px;
+  }
+  .ans-jump {
+    text-decoration: none;
+    color: var(--text);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 8px 9px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #fff;
+    min-height: 38px;
+  }
+  .ans-jump span { font-size: 12px; color: var(--muted); }
+  .ans-jump strong { color: var(--green-text); font-size: 14px; }
+  .card {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    padding: 14px;
+    box-shadow: var(--shadow);
+    margin-bottom: 12px;
+    scroll-margin-top: 96px;
+  }
+  .q-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+  .q-head h2 { margin: 0 0 6px; font-size: 16px; }
+  .mini-link { color: var(--blue); text-decoration: none; font-size: 12px; white-space: nowrap; }
+  .question-text, .after-media { margin: 0 0 12px; font-weight: 500; }
+  .options { display: grid; gap: 8px; }
+  .option {
+    display: grid;
+    grid-template-columns: 30px 1fr;
+    gap: 2px;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 9px 10px;
+    background: #fff;
+  }
+  .option.correct {
+    background: var(--green-bg);
+    border-color: var(--green-border);
+    color: var(--green-text);
+    font-weight: 650;
+  }
+  .letter { font-weight: 700; }
+  .toggle-one { margin-top: 10px; }
+  .explanation {
+    margin-top: 10px;
+    border-top: 1px dashed #d1d5db;
+    padding-top: 10px;
+    color: #374151;
+  }
+  .ex-title { font-weight: 700; color: #111827; margin-bottom: 4px; }
+  .explanation p { margin: 0; }
+  .diagram-wrap {
+    border: 1px solid var(--line);
+    background: #fff;
+    border-radius: 14px;
+    margin: 8px 0 12px;
+    padding: 8px;
+    overflow-x: auto;
+  }
+  .timeline { width: 100%; min-width: 440px; height: auto; display: block; }
+  .diagram-img { width: 100%; min-width: 440px; height: auto; display: block; border-radius: 10px; }
+  .bar, .cap { stroke: #111827; stroke-width: 5; stroke-linecap: square; }
+  .proc-label { font-family: Georgia, serif; font-weight: 700; font-size: 24px; }
+  .time-label { font-family: Georgia, serif; font-weight: 700; font-size: 26px; }
+  .hidden-by-search { display: none; }
+  .top-btn {
+    position: fixed;
+    right: 14px;
+    bottom: 18px;
+    z-index: 30;
+    text-decoration: none;
+    color: #fff;
+    background: #111827;
+    border-radius: 999px;
+    padding: 11px 14px;
+    font-size: 13px;
+    box-shadow: 0 8px 20px rgba(0,0,0,.22);
+  }
+  .note {
+    margin-top: 10px;
+    padding: 10px 12px;
+    border-radius: 14px;
+    background: #f9fafb;
+    border: 1px solid var(--line);
+    color: #4b5563;
+    font-size: 13px;
+  }
+  mark { background: #e0f2fe; color: inherit; padding: 0 2px; border-radius: 3px; }
+  @media (max-width: 420px) {
+    body { font-size: 14px; }
+    .wrap { padding-left: 10px; padding-right: 10px; }
+    header, .answer-panel, .card { border-radius: 16px; padding: 13px; }
+    h1 { font-size: 18px; }
+    .answers-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 7px; }
+    .ans-jump { flex-direction: column; gap: 1px; padding: 6px 4px; min-height: 42px; }
+    .option { grid-template-columns: 26px 1fr; padding: 8px 9px; }
+    .count { width: 100%; margin-left: 0; }
+  }
+</style>
+</head>
+<body id="top">
+<div class="wrap">
+  <header>
+    <h1>Trắc nghiệm HĐH - Chương 2: Quản lý tiến trình</h1>
+    <p class="subtitle">Exam A · 42 câu · đáp án đúng được tô xanh lá · tối ưu đọc trên điện thoại</p>
+    <div class="note">Ghi chú kiểm tra: Câu 26 trong PDF có phần lựa chọn bị lặp do ngắt trang, HTML chỉ hiển thị một bộ A/B/C/D hợp lệ để tránh trùng đáp án. Câu 28 và 29 đã dùng ảnh biểu đồ cắt trực tiếp từ PDF gốc.</div>
+  </header>
+
+  <div class="toolbar">
+    <div class="search-box">
+      <input id="search" type="search" placeholder="Tìm: Câu 1, CPU, SJF, Round Robin, PCB..." autocomplete="off">
+    </div>
+    <div class="btn-row">
+      <button type="button" id="openAll">Mở giải thích</button>
+      <button type="button" id="closeAll">Ẩn giải thích</button>
+      <button type="button" id="clearSearch">Xóa tìm kiếm</button>
+      <span class="count" id="resultCount">Hiển thị 42/42 câu</span>
+    </div>
+  </div>
+
+  <section class="answer-panel" id="answers">
+    <div class="panel-title"><h2>Bảng đáp án nhanh</h2><span>Bấm để nhảy tới câu</span></div>
+    <div class="answers-grid">
+      <a class="ans-jump" href="#q1" title="Nhảy tới câu 1"><span>Câu 1</span><strong>D</strong></a><a class="ans-jump" href="#q2" title="Nhảy tới câu 2"><span>Câu 2</span><strong>A</strong></a><a class="ans-jump" href="#q3" title="Nhảy tới câu 3"><span>Câu 3</span><strong>B</strong></a><a class="ans-jump" href="#q4" title="Nhảy tới câu 4"><span>Câu 4</span><strong>A</strong></a><a class="ans-jump" href="#q5" title="Nhảy tới câu 5"><span>Câu 5</span><strong>B</strong></a><a class="ans-jump" href="#q6" title="Nhảy tới câu 6"><span>Câu 6</span><strong>A</strong></a><a class="ans-jump" href="#q7" title="Nhảy tới câu 7"><span>Câu 7</span><strong>D</strong></a><a class="ans-jump" href="#q8" title="Nhảy tới câu 8"><span>Câu 8</span><strong>B</strong></a><a class="ans-jump" href="#q9" title="Nhảy tới câu 9"><span>Câu 9</span><strong>D</strong></a><a class="ans-jump" href="#q10" title="Nhảy tới câu 10"><span>Câu 10</span><strong>D</strong></a><a class="ans-jump" href="#q11" title="Nhảy tới câu 11"><span>Câu 11</span><strong>A</strong></a><a class="ans-jump" href="#q12" title="Nhảy tới câu 12"><span>Câu 12</span><strong>C</strong></a><a class="ans-jump" href="#q13" title="Nhảy tới câu 13"><span>Câu 13</span><strong>B</strong></a><a class="ans-jump" href="#q14" title="Nhảy tới câu 14"><span>Câu 14</span><strong>A</strong></a><a class="ans-jump" href="#q15" title="Nhảy tới câu 15"><span>Câu 15</span><strong>A</strong></a><a class="ans-jump" href="#q16" title="Nhảy tới câu 16"><span>Câu 16</span><strong>C</strong></a><a class="ans-jump" href="#q17" title="Nhảy tới câu 17"><span>Câu 17</span><strong>C</strong></a><a class="ans-jump" href="#q18" title="Nhảy tới câu 18"><span>Câu 18</span><strong>B</strong></a><a class="ans-jump" href="#q19" title="Nhảy tới câu 19"><span>Câu 19</span><strong>A</strong></a><a class="ans-jump" href="#q20" title="Nhảy tới câu 20"><span>Câu 20</span><strong>B</strong></a><a class="ans-jump" href="#q21" title="Nhảy tới câu 21"><span>Câu 21</span><strong>D</strong></a><a class="ans-jump" href="#q22" title="Nhảy tới câu 22"><span>Câu 22</span><strong>B</strong></a><a class="ans-jump" href="#q23" title="Nhảy tới câu 23"><span>Câu 23</span><strong>D</strong></a><a class="ans-jump" href="#q24" title="Nhảy tới câu 24"><span>Câu 24</span><strong>C</strong></a><a class="ans-jump" href="#q25" title="Nhảy tới câu 25"><span>Câu 25</span><strong>A</strong></a><a class="ans-jump" href="#q26" title="Nhảy tới câu 26"><span>Câu 26</span><strong>B</strong></a><a class="ans-jump" href="#q27" title="Nhảy tới câu 27"><span>Câu 27</span><strong>D</strong></a><a class="ans-jump" href="#q28" title="Nhảy tới câu 28"><span>Câu 28</span><strong>A</strong></a><a class="ans-jump" href="#q29" title="Nhảy tới câu 29"><span>Câu 29</span><strong>B</strong></a><a class="ans-jump" href="#q30" title="Nhảy tới câu 30"><span>Câu 30</span><strong>D</strong></a><a class="ans-jump" href="#q31" title="Nhảy tới câu 31"><span>Câu 31</span><strong>B</strong></a><a class="ans-jump" href="#q32" title="Nhảy tới câu 32"><span>Câu 32</span><strong>C</strong></a><a class="ans-jump" href="#q33" title="Nhảy tới câu 33"><span>Câu 33</span><strong>B</strong></a><a class="ans-jump" href="#q34" title="Nhảy tới câu 34"><span>Câu 34</span><strong>D</strong></a><a class="ans-jump" href="#q35" title="Nhảy tới câu 35"><span>Câu 35</span><strong>C</strong></a><a class="ans-jump" href="#q36" title="Nhảy tới câu 36"><span>Câu 36</span><strong>C</strong></a><a class="ans-jump" href="#q37" title="Nhảy tới câu 37"><span>Câu 37</span><strong>A</strong></a><a class="ans-jump" href="#q38" title="Nhảy tới câu 38"><span>Câu 38</span><strong>C</strong></a><a class="ans-jump" href="#q39" title="Nhảy tới câu 39"><span>Câu 39</span><strong>A</strong></a><a class="ans-jump" href="#q40" title="Nhảy tới câu 40"><span>Câu 40</span><strong>A</strong></a><a class="ans-jump" href="#q41" title="Nhảy tới câu 41"><span>Câu 41</span><strong>D</strong></a><a class="ans-jump" href="#q42" title="Nhảy tới câu 42"><span>Câu 42</span><strong>A</strong></a>
+    </div>
+  </section>
+
+  <main id="questions">
+
+<section class="card" id="q1" data-number="1" data-search="câu 1 tiến trình (process) là gì:  là một đoạn code chương trình là nơi chứa các dữ liệu chương trình là nơi quản lý toàn bộ các bộ nhớ cấp phát trong quá trình hoạt động là một chương trình đang chạy trên máy tính d d đúng vì tiến trình là một chương trình đang được thực thi. a chỉ là mã chương trình, b chỉ nói nơi chứa dữ liệu, c nói về quản lý bộ nhớ nên không định nghĩa đúng tiến trình.">
+  <div class="q-head">
+    <h2>Câu 1</h2>
+    <a href="#answers" class="mini-link">Bảng đáp án</a>
+  </div>
+  <p class="question-text">Tiến trình (process) là gì:</p>
+
+
+  <div class="options" aria-label="Các lựa chọn câu 1">
+    <div class="option"><span class="letter">A.</span><span>là một đoạn code chương trình</span></div><div class="option"><span class="letter">B.</span><span>là nơi chứa các dữ liệu chương trình</span></div><div class="option"><span class="letter">C.</span><span>là nơi quản lý toàn bộ các bộ nhớ cấp phát trong quá trình hoạt động</span></div><div class="option correct"><span class="letter">D.</span><span>là một chương trình đang chạy trên máy tính</span></div>
+  </div>
+  <button class="toggle-one" type="button" aria-expanded="false" aria-controls="exp1">Mở giải thích</button>
+  <div class="explanation" id="exp1" hidden>
+    <div class="ex-title">Giải thích ngắn gọn</div>
+    <p>D đúng vì tiến trình là một chương trình đang được thực thi. A chỉ là mã chương trình, B chỉ nói nơi chứa dữ liệu, C nói về quản lý bộ nhớ nên không định nghĩa đúng tiến trình.</p>
+  </div>
+</section>
+<section class="card" id="q2" data-number="2" data-search="câu 2 người dùng sử dụng ngôn ngữ lập trình để viết (code) một phần mềm. sau đó biên dịch thành các tập tin lưu trữ thành trong đĩa. các tập tin đó được gọi là gì?  chương trình (program) tiến trình (process) tiểu trình (sub-process) luồng (thread) a a đúng vì tập tin sau khi biên dịch và lưu trên đĩa là chương trình. b chỉ xuất hiện khi chương trình được nạp và chạy, c là tiến trình con, d là luồng thực thi trong tiến trình.">
+  <div class="q-head">
+    <h2>Câu 2</h2>
+    <a href="#answers" class="mini-link">Bảng đáp án</a>
+  </div>
+  <p class="question-text">Người dùng sử dụng ngôn ngữ lập trình để viết (code) một phần mềm. Sau đó biên dịch thành các tập tin lưu trữ thành trong đĩa. Các tập tin đó được gọi là gì?</p>
+
+
+  <div class="options" aria-label="Các lựa chọn câu 2">
+    <div class="option correct"><span class="letter">A.</span><span>Chương trình (program)</span></div><div class="option"><span class="letter">B.</span><span>Tiến trình (process)</span></div><div class="option"><span class="letter">C.</span><span>Tiểu trình (sub-process)</span></div><div class="option"><span class="letter">D.</span><span>Luồng (thread)</span></div>
+  </div>
+  <button class="toggle-one" type="button" aria-expanded="false" aria-controls="exp2">Mở giải thích</button>
+  <div class="explanation" id="exp2" hidden>
+    <div class="ex-title">Giải thích ngắn gọn</div>
+    <p>A đúng vì tập tin sau khi biên dịch và lưu trên đĩa là chương trình. B chỉ xuất hiện khi chương trình được nạp và chạy, C là tiến trình con, D là luồng thực thi trong tiến trình.</p>
+  </div>
+</section>
+<section class="card" id="q3" data-number="3" data-search="câu 3 để một chương trình (program) trở thành một tiến trình (process), cần phải làm gì?  biên dịch lại chương trình. nạp chương trình vào bộ nhớ. gán quyền thực thi cho chương trình. nạp chương trình vào cpu. b b đúng vì chương trình phải được nạp vào bộ nhớ để hệ điều hành tạo và quản lý như một tiến trình. a chỉ tạo/chỉnh chương trình, c chỉ liên quan quyền chạy, d không chính xác vì cpu xử lý tiến trình chứ không “nạp chương trình vào cpu”.">
+  <div class="q-head">
+    <h2>Câu 3</h2>
+    <a href="#answers" class="mini-link">Bảng đáp án</a>
+  </div>
+  <p class="question-text">Để một chương trình (program) trở thành một tiến trình (process), cần phải làm gì?</p>
+
+
+  <div class="options" aria-label="Các lựa chọn câu 3">
+    <div class="option"><span class="letter">A.</span><span>Biên dịch lại chương trình.</span></div><div class="option correct"><span class="letter">B.</span><span>Nạp chương trình vào bộ nhớ.</span></div><div class="option"><span class="letter">C.</span><span>Gán quyền thực thi cho chương trình.</span></div><div class="option"><span class="letter">D.</span><span>Nạp chương trình vào CPU.</span></div>
+  </div>
+  <button class="toggle-one" type="button" aria-expanded="false" aria-controls="exp3">Mở giải thích</button>
+  <div class="explanation" id="exp3" hidden>
+    <div class="ex-title">Giải thích ngắn gọn</div>
+    <p>B đúng vì chương trình phải được nạp vào bộ nhớ để hệ điều hành tạo và quản lý như một tiến trình. A chỉ tạo/chỉnh chương trình, C chỉ liên quan quyền chạy, D không chính xác vì CPU xử lý tiến trình chứ không “nạp chương trình vào CPU”.</p>
+  </div>
+</section>
+<section class="card" id="q4" data-number="4" data-search="câu 4 thuật ngữ “cpu-bound process” có nghĩa là gì?  là tiến trình được xử lý bởi cpu. là tiến trình được xử lý bởi thiết bị i/o. là tiến trình được xử lý bởi hệ điều hành. là tiến trình tạo ra bởi cpu. a a đúng vì cpu-bound là tiến trình dành phần lớn thời gian để tính toán/xử lý trên cpu. b là i/o-bound, c quá chung, d sai vì cpu không tạo ra tiến trình.">
+  <div class="q-head">
+    <h2>Câu 4</h2>
+    <a href="#answers" class="mini-link">Bảng đáp án</a>
+  </div>
+  <p class="question-text">Thuật ngữ "CPU-bound process" có nghĩa là gì?</p>
+
+
+  <div class="options" aria-label="Các lựa chọn câu 4">
+    <div class="option correct"><span class="letter">A.</span><span>là tiến trình được xử lý bởi CPU.</span></div><div class="option"><span class="letter">B.</span><span>là tiến trình được xử lý bởi thiết bị I/O.</span></div><div class="option"><span class="letter">C.</span><span>là tiến trình được xử lý bởi Hệ điều hành.</span></div><div class="option"><span class="letter">D.</span><span>là tiến trình tạo ra bởi CPU.</span></div>
+  </div>
+  <button class="toggle-one" type="button" aria-expanded="false" aria-controls="exp4">Mở giải thích</button>
+  <div class="explanation" id="exp4" hidden>
+    <div class="ex-title">Giải thích ngắn gọn</div>
+    <p>A đúng vì CPU-bound là tiến trình dành phần lớn thời gian để tính toán/xử lý trên CPU. B là I/O-bound, C quá chung, D sai vì CPU không tạo ra tiến trình.</p>
+  </div>
+</section>
+<section class="card" id="q5" data-number="5" data-search="câu 5 thuật ngữ “i/o-bound process” có nghĩa là gì?  là tiến trình được xử lý bởi cpu. là tiến trình được xử lý bởi thiết bị i/o. là tiến trình được xử lý bởi hệ điều hành. là tiến trình tạo ra bởi thiết bị i/o. b b đúng vì i/o-bound là tiến trình phụ thuộc nhiều vào thao tác nhập/xuất. a mô tả cpu-bound, c quá chung, d sai vì thiết bị i/o không tạo ra tiến trình.">
+  <div class="q-head">
+    <h2>Câu 5</h2>
+    <a href="#answers" class="mini-link">Bảng đáp án</a>
+  </div>
+  <p class="question-text">Thuật ngữ "I/O-bound process" có nghĩa là gì?</p>
+
+
+  <div class="options" aria-label="Các lựa chọn câu 5">
+    <div class="option"><span class="letter">A.</span><span>là tiến trình được xử lý bởi CPU.</span></div><div class="option correct"><span class="letter">B.</span><span>là tiến trình được xử lý bởi thiết bị I/O.</span></div><div class="option"><span class="letter">C.</span><span>là tiến trình được xử lý bởi Hệ điều hành.</span></div><div class="option"><span class="letter">D.</span><span>là tiến trình tạo ra bởi thiết bị I/O.</span></div>
+  </div>
+  <button class="toggle-one" type="button" aria-expanded="false" aria-controls="exp5">Mở giải thích</button>
+  <div class="explanation" id="exp5" hidden>
+    <div class="ex-title">Giải thích ngắn gọn</div>
+    <p>B đúng vì I/O-bound là tiến trình phụ thuộc nhiều vào thao tác nhập/xuất. A mô tả CPU-bound, C quá chung, D sai vì thiết bị I/O không tạo ra tiến trình.</p>
+  </div>
+</section>
+<section class="card" id="q6" data-number="6" data-search="câu 6 phát biểu nào sau đây là không đúng với khái niệm tiến trình (process)?  tiến trình tự quyết định thời điểm dừng chạy để cpu phục vụ tiến trình khác. tiến trình là một chương trình đang tồn tại trong bộ nhớ. tiến trình là một chương trình đang xử lí. tiến trình sở hữu một không gian bộ nhớ, con trỏ lệnh, tập thanh ghi và stack riêng. a a đúng là phát biểu không đúng, vì việc dừng/chuyển cpu do hệ điều hành và bộ lập lịch quyết định. b, c, d đều mô tả các đặc điểm cơ bản của tiến trình.">
+  <div class="q-head">
+    <h2>Câu 6</h2>
+    <a href="#answers" class="mini-link">Bảng đáp án</a>
+  </div>
+  <p class="question-text">Phát biểu nào sau đây là KHÔNG ĐÚNG với khái niệm tiến trình (process)?</p>
+
+
+  <div class="options" aria-label="Các lựa chọn câu 6">
+    <div class="option correct"><span class="letter">A.</span><span>Tiến trình tự quyết định thời điểm dừng chạy để CPU phục vụ tiến trình khác.</span></div><div class="option"><span class="letter">B.</span><span>Tiến trình là một chương trình đang tồn tại trong bộ nhớ.</span></div><div class="option"><span class="letter">C.</span><span>Tiến trình là một chương trình đang xử lí.</span></div><div class="option"><span class="letter">D.</span><span>Tiến trình sở hữu một không gian bộ nhớ, con trỏ lệnh, tập thanh ghi và stack riêng.</span></div>
+  </div>
+  <button class="toggle-one" type="button" aria-expanded="false" aria-controls="exp6">Mở giải thích</button>
+  <div class="explanation" id="exp6" hidden>
+    <div class="ex-title">Giải thích ngắn gọn</div>
+    <p>A đúng là phát biểu không đúng, vì việc dừng/chuyển CPU do hệ điều hành và bộ lập lịch quyết định. B, C, D đều mô tả các đặc điểm cơ bản của tiến trình.</p>
+  </div>
+</section>
+<section class="card" id="q7" data-number="7" data-search="câu 7 một tiến trình (process) bao gồm các thành phần:  current activity data section &amp; heap text section &amp; stack current activity, data section &amp; heap, text section &amp; stack point d d đúng vì một tiến trình gồm hoạt động hiện tại cùng các vùng text, data, heap và stack. a, b, c chỉ nêu một phần nên chưa đầy đủ.">
+  <div class="q-head">
+    <h2>Câu 7</h2>
+    <a href="#answers" class="mini-link">Bảng đáp án</a>
+  </div>
+  <p class="question-text">Một tiến trình (process) bao gồm các thành phần:</p>
+
+
+  <div class="options" aria-label="Các lựa chọn câu 7">
+    <div class="option"><span class="letter">A.</span><span>Current activity</span></div><div class="option"><span class="letter">B.</span><span>Data section &amp; Heap</span></div><div class="option"><span class="letter">C.</span><span>Text section &amp; Stack</span></div><div class="option correct"><span class="letter">D.</span><span>Current activity, Data section &amp; Heap, Text section &amp; Stack Point</span></div>
+  </div>
+  <button class="toggle-one" type="button" aria-expanded="false" aria-controls="exp7">Mở giải thích</button>
+  <div class="explanation" id="exp7" hidden>
+    <div class="ex-title">Giải thích ngắn gọn</div>
+    <p>D đúng vì một tiến trình gồm hoạt động hiện tại cùng các vùng text, data, heap và stack. A, B, C chỉ nêu một phần nên chưa đầy đủ.</p>
+  </div>
+</section>
+<section class="card" id="q8" data-number="8" data-search="câu 8 hệ điều hành sẽ không cấp phát loại tài nguyên nào cho tiến trình?  mỗi tiến trình sẽ được cấp một không gian bộ nhớ riêng. mỗi tiến trình sẽ được cấp một phân vùng đĩa cứng (partition) riêng. mỗi tiến trình sẽ được cấp một tập các thanh ghi (register) và ngăn xếp (stack) riêng mỗi tiến trình sẽ được cấp một con trỏ lệnh (program counter). b b đúng vì hệ điều hành không cấp riêng một phân vùng đĩa cứng cho mỗi tiến trình. a, c, d là các tài nguyên/trạng thái thường gắn với tiến trình khi chạy.">
+  <div class="q-head">
+    <h2>Câu 8</h2>
+    <a href="#answers" class="mini-link">Bảng đáp án</a>
+  </div>
+  <p class="question-text">Hệ điều hành sẽ KHÔNG cấp phát loại tài nguyên nào cho tiến trình?</p>
+
+
+  <div class="options" aria-label="Các lựa chọn câu 8">
+    <div class="option"><span class="letter">A.</span><span>Mỗi tiến trình sẽ được cấp một không gian bộ nhớ riêng.</span></div><div class="option correct"><span class="letter">B.</span><span>Mỗi tiến trình sẽ được cấp một phân vùng đĩa cứng (partition) riêng.</span></div><div class="option"><span class="letter">C.</span><span>Mỗi tiến trình sẽ được cấp một tập các thanh ghi (Register) và ngăn xếp (stack) riêng</span></div><div class="option"><span class="letter">D.</span><span>Mỗi tiến trình sẽ được cấp một con trỏ lệnh (Program Counter).</span></div>
+  </div>
+  <button class="toggle-one" type="button" aria-expanded="false" aria-controls="exp8">Mở giải thích</button>
+  <div class="explanation" id="exp8" hidden>
+    <div class="ex-title">Giải thích ngắn gọn</div>
+    <p>B đúng vì hệ điều hành không cấp riêng một phân vùng đĩa cứng cho mỗi tiến trình. A, C, D là các tài nguyên/trạng thái thường gắn với tiến trình khi chạy.</p>
+  </div>
+</section>
+<section class="card" id="q9" data-number="9" data-search="câu 9 tiến trình ở trạng thái running có nghĩa là :  tiến trình đang hoạt động trong bộ nhớ. tiến trình nhận được cpu tiến trình đang bắt đầu các xử lí nhận được cpu và bắt đầu các xử lí của mình d d đúng vì running nghĩa là tiến trình đã được cpu cấp phát và đang thực thi. a chỉ nói tồn tại trong bộ nhớ, b chưa đủ ý thực thi, c chưa nói rõ tiến trình đã nhận cpu.">
+  <div class="q-head">
+    <h2>Câu 9</h2>
+    <a href="#answers" class="mini-link">Bảng đáp án</a>
+  </div>
+  <p class="question-text">Tiến trình ở trạng thái Running có nghĩa là :</p>
+
+
+  <div class="options" aria-label="Các lựa chọn câu 9">
+    <div class="option"><span class="letter">A.</span><span>Tiến trình đang hoạt động trong bộ nhớ.</span></div><div class="option"><span class="letter">B.</span><span>Tiến trình nhận được CPU</span></div><div class="option"><span class="letter">C.</span><span>Tiến trình đang bắt đầu các xử lí</span></div><div class="option correct"><span class="letter">D.</span><span>Nhận được CPU và bắt đầu các xử lí của mình</span></div>
+  </div>
+  <button class="toggle-one" type="button" aria-expanded="false" aria-controls="exp9">Mở giải thích</button>
+  <div class="explanation" id="exp9" hidden>
+    <div class="ex-title">Giải thích ngắn gọn</div>
+    <p>D đúng vì Running nghĩa là tiến trình đã được CPU cấp phát và đang thực thi. A chỉ nói tồn tại trong bộ nhớ, B chưa đủ ý thực thi, C chưa nói rõ tiến trình đã nhận CPU.</p>
+  </div>
+</section>
+<section class="card" id="q10" data-number="10" data-search="câu 10 tiến trình ở trạng thái ready có nghĩa là :  tiến trình đang tồn tại trong bộ nhớ. tiến trình nhận được cpu tiến trình đang chờ cpu xử lý. tiến trình đang tồn tại trong bộ nhớ và đang chờ cpu xử lý. d d đúng vì ready là tiến trình đã ở trong bộ nhớ, sẵn sàng chạy nhưng đang chờ cpu. a thiếu ý chờ cpu, b là running, c thiếu điều kiện tồn tại trong bộ nhớ.">
+  <div class="q-head">
+    <h2>Câu 10</h2>
+    <a href="#answers" class="mini-link">Bảng đáp án</a>
+  </div>
+  <p class="question-text">Tiến trình ở trạng thái Ready có nghĩa là :</p>
+
+
+  <div class="options" aria-label="Các lựa chọn câu 10">
+    <div class="option"><span class="letter">A.</span><span>Tiến trình đang tồn tại trong bộ nhớ.</span></div><div class="option"><span class="letter">B.</span><span>Tiến trình nhận được CPU</span></div><div class="option"><span class="letter">C.</span><span>Tiến trình đang chờ CPU xử lý.</span></div><div class="option correct"><span class="letter">D.</span><span>Tiến trình đang tồn tại trong bộ nhớ và đang chờ CPU xử lý.</span></div>
+  </div>
+  <button class="toggle-one" type="button" aria-expanded="false" aria-controls="exp10">Mở giải thích</button>
+  <div class="explanation" id="exp10" hidden>
+    <div class="ex-title">Giải thích ngắn gọn</div>
+    <p>D đúng vì Ready là tiến trình đã ở trong bộ nhớ, sẵn sàng chạy nhưng đang chờ CPU. A thiếu ý chờ CPU, B là Running, C thiếu điều kiện tồn tại trong bộ nhớ.</p>
+  </div>
+</section>
+<section class="card" id="q11" data-number="11" data-search="câu 11 giải thích nào sau đây đúng với trạng thái suspend của tiến trình:  tiến trình đang tồn tại trong bộ nhớ phụ. tiến trình nhận được cpu tiến trình đang chờ cpu xử lý. tiến trình đang tồn tại trong bộ nhớ. a a đúng vì suspended là trạng thái tiến trình bị tạm ngưng và thường được chuyển ra bộ nhớ phụ. b là running, c là ready/waiting cpu, d là tiến trình còn trong bộ nhớ chính.">
+  <div class="q-head">
+    <h2>Câu 11</h2>
+    <a href="#answers" class="mini-link">Bảng đáp án</a>
+  </div>
+  <p class="question-text">Giải thích nào sau đây đúng với trạng thái Suspend của tiến trình:</p>
+
+
+  <div class="options" aria-label="Các lựa chọn câu 11">
+    <div class="option correct"><span class="letter">A.</span><span>Tiến trình đang tồn tại trong bộ nhớ phụ.</span></div><div class="option"><span class="letter">B.</span><span>Tiến trình nhận được CPU</span></div><div class="option"><span class="letter">C.</span><span>Tiến trình đang chờ CPU xử lý.</span></div><div class="option"><span class="letter">D.</span><span>Tiến trình đang tồn tại trong bộ nhớ.</span></div>
+  </div>
+  <button class="toggle-one" type="button" aria-expanded="false" aria-controls="exp11">Mở giải thích</button>
+  <div class="explanation" id="exp11" hidden>
+    <div class="ex-title">Giải thích ngắn gọn</div>
+    <p>A đúng vì Suspended là trạng thái tiến trình bị tạm ngưng và thường được chuyển ra bộ nhớ phụ. B là Running, C là Ready/Waiting CPU, D là tiến trình còn trong bộ nhớ chính.</p>
+  </div>
+</section>
+<section class="card" id="q12" data-number="12" data-search="câu 12 nguyên nhân dẫn đến trạng thái blocked của một process?  process đang chờ nhập xuất. process đang chờ một sự kiện nào đó chưa xảy ra. process đang chờ nhập xuất hoặc là đang chờ một sự kiện chưa xảy ra. không có nguyên nhân nào đúng. c c đúng vì blocked xảy ra khi tiến trình chờ i/o hoặc chờ một sự kiện. a và b chỉ nêu một trường hợp, d sai vì có nguyên nhân đúng.">
+  <div class="q-head">
+    <h2>Câu 12</h2>
+    <a href="#answers" class="mini-link">Bảng đáp án</a>
+  </div>
+  <p class="question-text">Nguyên nhân dẫn đến trạng thái BLOCKED của một process?</p>
+
+
+  <div class="options" aria-label="Các lựa chọn câu 12">
+    <div class="option"><span class="letter">A.</span><span>process đang chờ nhập xuất.</span></div><div class="option"><span class="letter">B.</span><span>process đang chờ một sự kiện nào đó chưa xảy ra.</span></div><div class="option correct"><span class="letter">C.</span><span>process đang chờ nhập xuất hoặc là đang chờ một sự kiện chưa xảy ra.</span></div><div class="option"><span class="letter">D.</span><span>không có nguyên nhân nào đúng.</span></div>
+  </div>
+  <button class="toggle-one" type="button" aria-expanded="false" aria-controls="exp12">Mở giải thích</button>
+  <div class="explanation" id="exp12" hidden>
+    <div class="ex-title">Giải thích ngắn gọn</div>
+    <p>C đúng vì Blocked xảy ra khi tiến trình chờ I/O hoặc chờ một sự kiện. A và B chỉ nêu một trường hợp, D sai vì có nguyên nhân đúng.</p>
+  </div>
+</section>
+<section class="card" id="q13" data-number="13" data-search="câu 13 những trạng thái tiến trình nào liệt kê dưới đây thuộc về loại tiến trình 2 trạng thái?  running &amp; blocked running &amp; not running. new &amp; running new &amp; terminated. b b đúng vì mô hình 2 trạng thái chia tiến trình thành running và not running. a, c, d đưa vào các trạng thái không thuộc cặp cơ bản của mô hình này.">
+  <div class="q-head">
+    <h2>Câu 13</h2>
+    <a href="#answers" class="mini-link">Bảng đáp án</a>
+  </div>
+  <p class="question-text">Những trạng thái tiến trình nào liệt kê dưới đây thuộc về loại tiến trình 2 trạng thái?</p>
+
+
+  <div class="options" aria-label="Các lựa chọn câu 13">
+    <div class="option"><span class="letter">A.</span><span>Running &amp; Blocked</span></div><div class="option correct"><span class="letter">B.</span><span>Running &amp; Not running.</span></div><div class="option"><span class="letter">C.</span><span>New &amp; Running</span></div><div class="option"><span class="letter">D.</span><span>New &amp; Terminated.</span></div>
+  </div>
+  <button class="toggle-one" type="button" aria-expanded="false" aria-controls="exp13">Mở giải thích</button>
+  <div class="explanation" id="exp13" hidden>
+    <div class="ex-title">Giải thích ngắn gọn</div>
+    <p>B đúng vì mô hình 2 trạng thái chia tiến trình thành Running và Not running. A, C, D đưa vào các trạng thái không thuộc cặp cơ bản của mô hình này.</p>
+  </div>
+</section>
+<section class="card" id="q14" data-number="14" data-search="câu 14 những trạng thái tiến trình nào liệt kê dưới đây thuộc về loại tiến trình 3 trạng thái?  ready &amp; running &amp; blocked ready &amp; running &amp; suspend new &amp; running &amp; waiting new &amp; running &amp; blocked a a đúng vì mô hình 3 trạng thái gồm ready, running và blocked. b có suspend, c và d có new nên không phải bộ 3 trạng thái cơ bản này.">
+  <div class="q-head">
+    <h2>Câu 14</h2>
+    <a href="#answers" class="mini-link">Bảng đáp án</a>
+  </div>
+  <p class="question-text">Những trạng thái tiến trình nào liệt kê dưới đây thuộc về loại tiến trình 3 trạng thái?</p>
+
+
+  <div class="options" aria-label="Các lựa chọn câu 14">
+    <div class="option correct"><span class="letter">A.</span><span>Ready &amp; Running &amp; Blocked</span></div><div class="option"><span class="letter">B.</span><span>Ready &amp; Running &amp; Suspend</span></div><div class="option"><span class="letter">C.</span><span>New &amp; Running &amp; Waiting</span></div><div class="option"><span class="letter">D.</span><span>New &amp; Running &amp; Blocked</span></div>
+  </div>
+  <button class="toggle-one" type="button" aria-expanded="false" aria-controls="exp14">Mở giải thích</button>
+  <div class="explanation" id="exp14" hidden>
+    <div class="ex-title">Giải thích ngắn gọn</div>
+    <p>A đúng vì mô hình 3 trạng thái gồm Ready, Running và Blocked. B có Suspend, C và D có New nên không phải bộ 3 trạng thái cơ bản này.</p>
+  </div>
+</section>
+<section class="card" id="q15" data-number="15" data-search="câu 15 những trạng thái tiến trình nào liệt kê dưới đây thuộc về loại tiến trình 4 trạng thái?  ready &amp; running &amp; blocked &amp; suspend new &amp; ready &amp; running &amp; suspend new &amp; running &amp; waiting &amp; blocked running &amp; blocked &amp; suspend &amp; closed a a đúng vì bộ này mở rộng ready, running, blocked với suspend. b thiếu blocked, c có new và waiting không đúng bộ lựa chọn, d có closed không phải trạng thái chuẩn trong bộ này.">
+  <div class="q-head">
+    <h2>Câu 15</h2>
+    <a href="#answers" class="mini-link">Bảng đáp án</a>
+  </div>
+  <p class="question-text">Những trạng thái tiến trình nào liệt kê dưới đây thuộc về loại tiến trình 4 trạng thái?</p>
+
+
+  <div class="options" aria-label="Các lựa chọn câu 15">
+    <div class="option correct"><span class="letter">A.</span><span>Ready &amp; Running &amp; Blocked &amp; Suspend</span></div><div class="option"><span class="letter">B.</span><span>New &amp; Ready &amp; Running &amp; Suspend</span></div><div class="option"><span class="letter">C.</span><span>New &amp; Running &amp; Waiting &amp; Blocked</span></div><div class="option"><span class="letter">D.</span><span>Running &amp; Blocked &amp; Suspend &amp; Closed</span></div>
+  </div>
+  <button class="toggle-one" type="button" aria-expanded="false" aria-controls="exp15">Mở giải thích</button>
+  <div class="explanation" id="exp15" hidden>
+    <div class="ex-title">Giải thích ngắn gọn</div>
+    <p>A đúng vì bộ này mở rộng Ready, Running, Blocked với Suspend. B thiếu Blocked, C có New và Waiting không đúng bộ lựa chọn, D có Closed không phải trạng thái chuẩn trong bộ này.</p>
+  </div>
+</section>
+<section class="card" id="q16" data-number="16" data-search="câu 16 những trạng thái tiến trình nào sau đây không thuộc về loại tiến trình 5 trạng thái?  blocked, blocked-suspend. ready, ready-suspend. running-suspend. running. c c đúng vì running-suspend không thuộc mô hình 5 trạng thái và cũng không phải trạng thái thông dụng. a và b có một trạng thái hợp lệ kèm trạng thái suspend, d là trạng thái running hợp lệ.">
+  <div class="q-head">
+    <h2>Câu 16</h2>
+    <a href="#answers" class="mini-link">Bảng đáp án</a>
+  </div>
+  <p class="question-text">Những trạng thái tiến trình nào sau đây không thuộc về loại tiến trình 5 trạng thái?</p>
+
+
+  <div class="options" aria-label="Các lựa chọn câu 16">
+    <div class="option"><span class="letter">A.</span><span>Blocked, Blocked-Suspend.</span></div><div class="option"><span class="letter">B.</span><span>Ready, Ready-Suspend.</span></div><div class="option correct"><span class="letter">C.</span><span>Running-Suspend.</span></div><div class="option"><span class="letter">D.</span><span>Running.</span></div>
+  </div>
+  <button class="toggle-one" type="button" aria-expanded="false" aria-controls="exp16">Mở giải thích</button>
+  <div class="explanation" id="exp16" hidden>
+    <div class="ex-title">Giải thích ngắn gọn</div>
+    <p>C đúng vì Running-Suspend không thuộc mô hình 5 trạng thái và cũng không phải trạng thái thông dụng. A và B có một trạng thái hợp lệ kèm trạng thái suspend, D là trạng thái Running hợp lệ.</p>
+  </div>
+</section>
+<section class="card" id="q17" data-number="17" data-search="câu 17 đối với loại tiến trình 3 trạng thái. khi tiến trình p yêu cầu tài nguyên r, nhưng tài nguyên r chưa sẵn sàng đáp ứng. do vậy, tiến trình p sẽ chuyển trạng thái:  running -&gt; ready ready -&gt; running. running -&gt; blocked. blocked -&gt; ready. c c đúng vì khi đang chạy mà phải chờ tài nguyên/sự kiện, tiến trình chuyển từ running sang blocked. a là bị thu hồi cpu, b là được cấp cpu, d là khi sự kiện chờ đã xảy ra.">
+  <div class="q-head">
+    <h2>Câu 17</h2>
+    <a href="#answers" class="mini-link">Bảng đáp án</a>
+  </div>
+  <p class="question-text">Đối với loại tiến trình 3 trạng thái. Khi tiến trình P yêu cầu tài nguyên R, nhưng tài nguyên R chưa sẵn sàng đáp ứng. Do vậy, tiến trình P sẽ chuyển trạng thái:</p>
+
+
+  <div class="options" aria-label="Các lựa chọn câu 17">
+    <div class="option"><span class="letter">A.</span><span>Running -&gt; Ready</span></div><div class="option"><span class="letter">B.</span><span>Ready -&gt; Running.</span></div><div class="option correct"><span class="letter">C.</span><span>Running -&gt; Blocked.</span></div><div class="option"><span class="letter">D.</span><span>Blocked -&gt; Ready.</span></div>
+  </div>
+  <button class="toggle-one" type="button" aria-expanded="false" aria-controls="exp17">Mở giải thích</button>
+  <div class="explanation" id="exp17" hidden>
+    <div class="ex-title">Giải thích ngắn gọn</div>
+    <p>C đúng vì khi đang chạy mà phải chờ tài nguyên/sự kiện, tiến trình chuyển từ Running sang Blocked. A là bị thu hồi CPU, B là được cấp CPU, D là khi sự kiện chờ đã xảy ra.</p>
+  </div>
+</section>
+<section class="card" id="q18" data-number="18" data-search="câu 18 đối với loại tiến trình 4 trạng thái. khi tiến trình p đang ở trạng thái blocked khá lâu, để giải phóng bộ nhớ, hệ điều hành sẽ chuyển tiến trình p sang trạng thái nào?  blocked -&gt; ready blocked -&gt; suspend blocked -&gt; running. blocked -&gt; terminated b b đúng vì tiến trình blocked lâu có thể bị tạm ngưng/đưa ra khỏi bộ nhớ để giải phóng bộ nhớ. a chỉ xảy ra khi điều kiện chờ hoàn tất, c không thể từ blocked chạy ngay, d là kết thúc tiến trình.">
+  <div class="q-head">
+    <h2>Câu 18</h2>
+    <a href="#answers" class="mini-link">Bảng đáp án</a>
+  </div>
+  <p class="question-text">Đối với loại tiến trình 4 trạng thái. Khi tiến trình P đang ở trạng thái Blocked khá lâu, để giải phóng bộ nhớ, Hệ điều hành sẽ chuyển tiến trình P sang trạng thái nào?</p>
+
+
+  <div class="options" aria-label="Các lựa chọn câu 18">
+    <div class="option"><span class="letter">A.</span><span>Blocked -&gt; Ready</span></div><div class="option correct"><span class="letter">B.</span><span>Blocked -&gt; suspend</span></div><div class="option"><span class="letter">C.</span><span>Blocked -&gt; Running.</span></div><div class="option"><span class="letter">D.</span><span>Blocked -&gt; Terminated</span></div>
+  </div>
+  <button class="toggle-one" type="button" aria-expanded="false" aria-controls="exp18">Mở giải thích</button>
+  <div class="explanation" id="exp18" hidden>
+    <div class="ex-title">Giải thích ngắn gọn</div>
+    <p>B đúng vì tiến trình Blocked lâu có thể bị tạm ngưng/đưa ra khỏi bộ nhớ để giải phóng bộ nhớ. A chỉ xảy ra khi điều kiện chờ hoàn tất, C không thể từ Blocked chạy ngay, D là kết thúc tiến trình.</p>
+  </div>
+</section>
+<section class="card" id="q19" data-number="19" data-search="câu 19 đối với loại tiến trình 5 trạng thái. khi tiến trình p đang ở trạng thái ready khá lâu, để giải phóng bộ nhớ, hệ điều hành sẽ chuyển tiến trình p sang trạng thái nào?  ready -&gt; ready-suspend. ready -&gt; blocked-suspend. ready -&gt; running-suspend. ready -&gt; terminated. a a đúng vì tiến trình đang ready nếu bị đưa ra bộ nhớ phụ sẽ thành ready-suspend. b dành cho tiến trình bị chặn, c không phải trạng thái hợp lệ, d là kết thúc tiến trình.">
+  <div class="q-head">
+    <h2>Câu 19</h2>
+    <a href="#answers" class="mini-link">Bảng đáp án</a>
+  </div>
+  <p class="question-text">Đối với loại tiến trình 5 trạng thái. Khi tiến trình P đang ở trạng thái Ready khá lâu, để giải phóng bộ nhớ, Hệ điều hành sẽ chuyển tiến trình P sang trạng thái nào?</p>
+
+
+  <div class="options" aria-label="Các lựa chọn câu 19">
+    <div class="option correct"><span class="letter">A.</span><span>Ready -&gt; Ready-suspend.</span></div><div class="option"><span class="letter">B.</span><span>Ready -&gt; Blocked-suspend.</span></div><div class="option"><span class="letter">C.</span><span>Ready -&gt; Running-suspend.</span></div><div class="option"><span class="letter">D.</span><span>Ready -&gt; Terminated.</span></div>
+  </div>
+  <button class="toggle-one" type="button" aria-expanded="false" aria-controls="exp19">Mở giải thích</button>
+  <div class="explanation" id="exp19" hidden>
+    <div class="ex-title">Giải thích ngắn gọn</div>
+    <p>A đúng vì tiến trình đang Ready nếu bị đưa ra bộ nhớ phụ sẽ thành Ready-suspend. B dành cho tiến trình bị chặn, C không phải trạng thái hợp lệ, D là kết thúc tiến trình.</p>
+  </div>
+</section>
+<section class="card" id="q20" data-number="20" data-search="câu 20 khi cpu đang xử lý tiến trình p thì xảy ra interrupt. hệ điều hành sẽ chuyển trạng thái của tiến trình p từ:  running -&gt; waiting running -&gt; ready waiting -&gt; ready kết thúc -&gt; terminates b b đúng vì interrupt có thể làm tiến trình đang chạy bị thu hồi cpu và quay về hàng đợi ready. a là khi tiến trình phải chờ i/o/sự kiện, c là sự kiện chờ hoàn tất, d là kết thúc tiến trình.">
+  <div class="q-head">
+    <h2>Câu 20</h2>
+    <a href="#answers" class="mini-link">Bảng đáp án</a>
+  </div>
+  <p class="question-text">Khi CPU đang xử lý tiến trình P thì xảy ra Interrupt. Hệ điều hành sẽ chuyển trạng thái của tiến trình P từ:</p>
+
+
+  <div class="options" aria-label="Các lựa chọn câu 20">
+    <div class="option"><span class="letter">A.</span><span>running -&gt; waiting</span></div><div class="option correct"><span class="letter">B.</span><span>running -&gt; ready</span></div><div class="option"><span class="letter">C.</span><span>waiting -&gt; ready</span></div><div class="option"><span class="letter">D.</span><span>Kết thúc -&gt; Terminates</span></div>
+  </div>
+  <button class="toggle-one" type="button" aria-expanded="false" aria-controls="exp20">Mở giải thích</button>
+  <div class="explanation" id="exp20" hidden>
+    <div class="ex-title">Giải thích ngắn gọn</div>
+    <p>B đúng vì interrupt có thể làm tiến trình đang chạy bị thu hồi CPU và quay về hàng đợi Ready. A là khi tiến trình phải chờ I/O/sự kiện, C là sự kiện chờ hoàn tất, D là kết thúc tiến trình.</p>
+  </div>
+</section>
+<section class="card" id="q21" data-number="21" data-search="câu 21 mục đích của việc cho nhiều tiến trình hoạt động đồng thời trên một hệ điều hành:  tăng mức độ đa chương tăng mức độ đa nhiệm tăng tốc độ xử lý tăng tốc độ xử lý, đa chương trình và đa nhiệm. d d đúng vì cho nhiều tiến trình hoạt động đồng thời nhằm nâng hiệu quả xử lý tổng thể và hỗ trợ đa chương trình, đa nhiệm. a, b, c chỉ nêu từng phần riêng lẻ nên chưa đầy đủ.">
+  <div class="q-head">
+    <h2>Câu 21</h2>
+    <a href="#answers" class="mini-link">Bảng đáp án</a>
+  </div>
+  <p class="question-text">Mục đích của việc cho nhiều tiến trình hoạt động đồng thời trên một Hệ điều hành:</p>
+
+
+  <div class="options" aria-label="Các lựa chọn câu 21">
+    <div class="option"><span class="letter">A.</span><span>Tăng mức độ đa chương</span></div><div class="option"><span class="letter">B.</span><span>Tăng mức độ đa nhiệm</span></div><div class="option"><span class="letter">C.</span><span>Tăng tốc độ xử lý</span></div><div class="option correct"><span class="letter">D.</span><span>Tăng tốc độ xử lý, đa chương trình và đa nhiệm.</span></div>
+  </div>
+  <button class="toggle-one" type="button" aria-expanded="false" aria-controls="exp21">Mở giải thích</button>
+  <div class="explanation" id="exp21" hidden>
+    <div class="ex-title">Giải thích ngắn gọn</div>
+    <p>D đúng vì cho nhiều tiến trình hoạt động đồng thời nhằm nâng hiệu quả xử lý tổng thể và hỗ trợ đa chương trình, đa nhiệm. A, B, C chỉ nêu từng phần riêng lẻ nên chưa đầy đủ.</p>
+  </div>
+</section>
+<section class="card" id="q22" data-number="22" data-search="câu 22 để có thể chạy được nhiều tiến trình cùng lúc, giải pháp cơ bản của hệ điều hành là gì?  cho mỗi cpu thực thi một tiến trình. điều phối cpu luân phiên thực thi từng tiến trình gộp nhiều tiến trình thành một cho cpu thực thi. hệ điều hành không cho phép chạy nhiều tiến trình cùng lúc b b đúng vì hệ điều hành dùng lập lịch và chia thời gian cpu để luân phiên chạy các tiến trình. a chỉ đúng khi có nhiều cpu và không phải giải pháp cơ bản chung, c sai vì không gộp tiến trình, d trái với đa nhiệm.">
+  <div class="q-head">
+    <h2>Câu 22</h2>
+    <a href="#answers" class="mini-link">Bảng đáp án</a>
+  </div>
+  <p class="question-text">Để có thể chạy được nhiều tiến trình cùng lúc, giải pháp cơ bản của Hệ điều hành là gì?</p>
+
+
+  <div class="options" aria-label="Các lựa chọn câu 22">
+    <div class="option"><span class="letter">A.</span><span>Cho mỗi CPU thực thi một tiến trình.</span></div><div class="option correct"><span class="letter">B.</span><span>Điều phối CPU luân phiên thực thi từng tiến trình</span></div><div class="option"><span class="letter">C.</span><span>Gộp nhiều tiến trình thành một cho CPU thực thi.</span></div><div class="option"><span class="letter">D.</span><span>Hệ điều hành không cho phép chạy nhiều tiến trình cùng lúc</span></div>
+  </div>
+  <button class="toggle-one" type="button" aria-expanded="false" aria-controls="exp22">Mở giải thích</button>
+  <div class="explanation" id="exp22" hidden>
+    <div class="ex-title">Giải thích ngắn gọn</div>
+    <p>B đúng vì hệ điều hành dùng lập lịch và chia thời gian CPU để luân phiên chạy các tiến trình. A chỉ đúng khi có nhiều CPU và không phải giải pháp cơ bản chung, C sai vì không gộp tiến trình, D trái với đa nhiệm.</p>
+  </div>
+</section>
+<section class="card" id="q23" data-number="23" data-search="câu 23 người dùng windows có thể vừa duyệt web, nghe nhạc, chat, chơi game... đồng thời. hệ điều hành windows thực hiện được là do:  máy tính có nhiều cpu. mỗi cpu chạy 1 chương trình máy tính có nhiều ram. máy tính có hdd lớn. tốc độ chuyển đổi xử lý nhiều tiến trình của cpu quá nhanh. d d đúng vì hệ điều hành chuyển đổi cpu giữa các tiến trình rất nhanh nên người dùng thấy như chạy đồng thời. a không bắt buộc, b và c chỉ là tài nguyên lưu trữ/bộ nhớ, không giải thích cơ chế đa nhiệm.">
+  <div class="q-head">
+    <h2>Câu 23</h2>
+    <a href="#answers" class="mini-link">Bảng đáp án</a>
+  </div>
+  <p class="question-text">Người dùng Windows có thể vừa duyệt web, nghe nhạc, chat, chơi game... đồng thời. Hệ điều hành Windows thực hiện được là do:</p>
+
+
+  <div class="options" aria-label="Các lựa chọn câu 23">
+    <div class="option"><span class="letter">A.</span><span>Máy tính có nhiều CPU. Mỗi CPU chạy 1 chương trình</span></div><div class="option"><span class="letter">B.</span><span>Máy tính có nhiều RAM.</span></div><div class="option"><span class="letter">C.</span><span>Máy tính có HDD lớn.</span></div><div class="option correct"><span class="letter">D.</span><span>Tốc độ chuyển đổi xử lý nhiều tiến trình của CPU quá nhanh.</span></div>
+  </div>
+  <button class="toggle-one" type="button" aria-expanded="false" aria-controls="exp23">Mở giải thích</button>
+  <div class="explanation" id="exp23" hidden>
+    <div class="ex-title">Giải thích ngắn gọn</div>
+    <p>D đúng vì hệ điều hành chuyển đổi CPU giữa các tiến trình rất nhanh nên người dùng thấy như chạy đồng thời. A không bắt buộc, B và C chỉ là tài nguyên lưu trữ/bộ nhớ, không giải thích cơ chế đa nhiệm.</p>
+  </div>
+</section>
+<section class="card" id="q24" data-number="24" data-search="câu 24 trong quá trình thực thi, tiến trình a khởi tạo thêm tiến trình b hoạt động song song với a. hình thức đa tiến trình này có tên gọi là:  tiến trình song song độc lập. tiến trình song song có quan hệ thông tin. tiến trình song song phân cấp tiến trình song song đồng mức c c đúng vì a tạo ra b nên có quan hệ cha-con/phân cấp. a là không liên quan, b là có trao đổi thông tin, d là các tiến trình ngang hàng dùng chung tài nguyên.">
+  <div class="q-head">
+    <h2>Câu 24</h2>
+    <a href="#answers" class="mini-link">Bảng đáp án</a>
+  </div>
+  <p class="question-text">Trong quá trình thực thi, tiến trình A khởi tạo thêm tiến trình B hoạt động song song với A. Hình thức đa tiến trình này có tên gọi là:</p>
+
+
+  <div class="options" aria-label="Các lựa chọn câu 24">
+    <div class="option"><span class="letter">A.</span><span>Tiến trình song song độc lập.</span></div><div class="option"><span class="letter">B.</span><span>Tiến trình song song có quan hệ thông tin.</span></div><div class="option correct"><span class="letter">C.</span><span>Tiến trình song song phân cấp</span></div><div class="option"><span class="letter">D.</span><span>Tiến trình song song đồng mức</span></div>
+  </div>
+  <button class="toggle-one" type="button" aria-expanded="false" aria-controls="exp24">Mở giải thích</button>
+  <div class="explanation" id="exp24" hidden>
+    <div class="ex-title">Giải thích ngắn gọn</div>
+    <p>C đúng vì A tạo ra B nên có quan hệ cha-con/phân cấp. A là không liên quan, B là có trao đổi thông tin, D là các tiến trình ngang hàng dùng chung tài nguyên.</p>
+  </div>
+</section>
+<section class="card" id="q25" data-number="25" data-search="câu 25 tiến trình a cùng hoạt động trong hệ điều hành cùng với tiến trình b. cả 2 không có trao đổi thông tin gì cho nhau. hình thức đa tiến trình này có tên gọi là:  tiến trình song song độc lập tiến trình song song có quan hệ thông tin. tiến trình song song phân cấp tiến trình song song đồng mức. a a đúng vì hai tiến trình không trao đổi thông tin là song song độc lập. b sai vì có quan hệ thông tin, c sai vì không nói quan hệ cha-con, d sai vì không nói dùng chung tài nguyên luân phiên.">
+  <div class="q-head">
+    <h2>Câu 25</h2>
+    <a href="#answers" class="mini-link">Bảng đáp án</a>
+  </div>
+  <p class="question-text">Tiến trình A cùng hoạt động trong Hệ điều hành cùng với tiến trình B. Cả 2 không có trao đổi thông tin gì cho nhau. Hình thức đa tiến trình này có tên gọi là:</p>
+
+
+  <div class="options" aria-label="Các lựa chọn câu 25">
+    <div class="option correct"><span class="letter">A.</span><span>Tiến trình song song độc lập</span></div><div class="option"><span class="letter">B.</span><span>Tiến trình song song có quan hệ thông tin.</span></div><div class="option"><span class="letter">C.</span><span>Tiến trình song song phân cấp</span></div><div class="option"><span class="letter">D.</span><span>Tiến trình song song đồng mức.</span></div>
+  </div>
+  <button class="toggle-one" type="button" aria-expanded="false" aria-controls="exp25">Mở giải thích</button>
+  <div class="explanation" id="exp25" hidden>
+    <div class="ex-title">Giải thích ngắn gọn</div>
+    <p>A đúng vì hai tiến trình không trao đổi thông tin là song song độc lập. B sai vì có quan hệ thông tin, C sai vì không nói quan hệ cha-con, D sai vì không nói dùng chung tài nguyên luân phiên.</p>
+  </div>
+</section>
+<section class="card" id="q26" data-number="26" data-search="câu 26 tiến trình a cùng hoạt động trong hệ điều hành cùng với tiến trình b. hai tiến trình này cần trao đổi dữ liệu cho nhau. hình thức đa tiến trình này có tên gọi là:  tiến trình song song độc lập. tiến trình song song có quan hệ thông tin. tiến trình song song phân cấp. tiến trình song song đồng mức. b b đúng vì hai tiến trình cần trao đổi dữ liệu nên có quan hệ thông tin. a là không trao đổi, c là quan hệ cha-con, d là dùng chung tài nguyên theo kiểu ngang hàng/luân phiên.">
+  <div class="q-head">
+    <h2>Câu 26</h2>
+    <a href="#answers" class="mini-link">Bảng đáp án</a>
+  </div>
+  <p class="question-text">Tiến trình A cùng hoạt động trong Hệ điều hành cùng với tiến trình B. Hai tiến trình này cần trao đổi dữ liệu cho nhau. Hình thức đa tiến trình này có tên gọi là:</p>
+
+
+  <div class="options" aria-label="Các lựa chọn câu 26">
+    <div class="option"><span class="letter">A.</span><span>Tiến trình song song độc lập.</span></div><div class="option correct"><span class="letter">B.</span><span>Tiến trình song song có quan hệ thông tin.</span></div><div class="option"><span class="letter">C.</span><span>Tiến trình song song phân cấp.</span></div><div class="option"><span class="letter">D.</span><span>Tiến trình song song đồng mức.</span></div>
+  </div>
+  <button class="toggle-one" type="button" aria-expanded="false" aria-controls="exp26">Mở giải thích</button>
+  <div class="explanation" id="exp26" hidden>
+    <div class="ex-title">Giải thích ngắn gọn</div>
+    <p>B đúng vì hai tiến trình cần trao đổi dữ liệu nên có quan hệ thông tin. A là không trao đổi, C là quan hệ cha-con, D là dùng chung tài nguyên theo kiểu ngang hàng/luân phiên.</p>
+  </div>
+</section>
+<section class="card" id="q27" data-number="27" data-search="câu 27 tiến trình a cùng hoạt động trong hệ điều hành cùng với tiến trình b. cả 2 có sử dụng chung tài nguyên theo nguyên tắc luân phiên. hình thức đa tiến trình này có tên gọi là:  tiến trình song song độc lập. tiến trình song song có quan hệ thông tin tiến trình song song phân cấp tiến trình song song đồng mức d d đúng vì các tiến trình ngang hàng dùng chung tài nguyên theo nguyên tắc luân phiên là song song đồng mức. a không dùng chung/trao đổi, b tập trung vào trao đổi thông tin, c là quan hệ phân cấp.">
+  <div class="q-head">
+    <h2>Câu 27</h2>
+    <a href="#answers" class="mini-link">Bảng đáp án</a>
+  </div>
+  <p class="question-text">Tiến trình A cùng hoạt động trong Hệ điều hành cùng với tiến trình B. Cả 2 có sử dụng chung tài nguyên theo nguyên tắc luân phiên. Hình thức đa tiến trình này có tên gọi là:</p>
+
+
+  <div class="options" aria-label="Các lựa chọn câu 27">
+    <div class="option"><span class="letter">A.</span><span>Tiến trình song song độc lập.</span></div><div class="option"><span class="letter">B.</span><span>Tiến trình song song có quan hệ thông tin</span></div><div class="option"><span class="letter">C.</span><span>Tiến trình song song phân cấp</span></div><div class="option correct"><span class="letter">D.</span><span>Tiến trình song song đồng mức</span></div>
+  </div>
+  <button class="toggle-one" type="button" aria-expanded="false" aria-controls="exp27">Mở giải thích</button>
+  <div class="explanation" id="exp27" hidden>
+    <div class="ex-title">Giải thích ngắn gọn</div>
+    <p>D đúng vì các tiến trình ngang hàng dùng chung tài nguyên theo nguyên tắc luân phiên là song song đồng mức. A không dùng chung/trao đổi, B tập trung vào trao đổi thông tin, C là quan hệ phân cấp.</p>
+  </div>
+</section>
+<section class="card" id="q28" data-number="28" data-search="câu 28 có 3 tiến trình p1, p2, p3 cùng hoạt động song song trong hệ thống máy tính. biểu đồ hoạt động của chúng mô tả theo hình dưới. cho biết hệ thống máy tính này thuộc loại nào? hệ thống uni-processor (đơn cpu) hệ thống multi-processor (đa cpu) hệ thống máy client - server hệ thống phân tán. a a đúng vì biểu đồ cho thấy tại mỗi thời điểm chỉ có một tiến trình được thực thi, đặc trưng của hệ thống một cpu. b cần có các đoạn chạy chồng lấn, c và d là mô hình hệ thống khác, không phù hợp với biểu đồ.">
+  <div class="q-head">
+    <h2>Câu 28</h2>
+    <a href="#answers" class="mini-link">Bảng đáp án</a>
+  </div>
+  <p class="question-text">Có 3 tiến trình P1, P2, P3 cùng hoạt động song song trong hệ thống máy tính. Biểu đồ hoạt động của chúng mô tả theo hình dưới.</p>
+  <div class="diagram-wrap">
+<img class="diagram-img" src="data:image/png;base64,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" alt="Biểu đồ hoạt động P1 P2 P3 theo thời gian - câu 28, cắt từ PDF gốc">
+</div>
+  <p class="after-media">Cho biết hệ thống máy tính này thuộc loại nào?</p>
+  <div class="options" aria-label="Các lựa chọn câu 28">
+    <div class="option correct"><span class="letter">A.</span><span>Hệ thống Uni-Processor (đơn CPU)</span></div><div class="option"><span class="letter">B.</span><span>Hệ thống Multi-Processor (đa CPU)</span></div><div class="option"><span class="letter">C.</span><span>Hệ thống máy Client - Server</span></div><div class="option"><span class="letter">D.</span><span>Hệ thống phân tán.</span></div>
+  </div>
+  <button class="toggle-one" type="button" aria-expanded="false" aria-controls="exp28">Mở giải thích</button>
+  <div class="explanation" id="exp28" hidden>
+    <div class="ex-title">Giải thích ngắn gọn</div>
+    <p>A đúng vì biểu đồ cho thấy tại mỗi thời điểm chỉ có một tiến trình được thực thi, đặc trưng của hệ thống một CPU. B cần có các đoạn chạy chồng lấn, C và D là mô hình hệ thống khác, không phù hợp với biểu đồ.</p>
+  </div>
+</section>
+<section class="card" id="q29" data-number="29" data-search="câu 29 có 3 tiến trình p1, p2, p3 cùng hoạt động song song trong hệ thống máy tính. biểu đồ hoạt động của chúng mô tả theo hình dưới. cho biết hệ thống máy tính này thuộc loại nào? hệ thống uni-processor (đơn cpu). hệ thống multi-processor (đa cpu). hệ thống máy client - server hệ thống phân tán. b b đúng vì biểu đồ có các khoảng thời gian nhiều tiến trình chạy chồng lấn, phù hợp với hệ thống đa cpu. a chỉ chạy một tiến trình tại một thời điểm, c và d không được thể hiện bởi biểu đồ này.">
+  <div class="q-head">
+    <h2>Câu 29</h2>
+    <a href="#answers" class="mini-link">Bảng đáp án</a>
+  </div>
+  <p class="question-text">Có 3 tiến trình P1, P2, P3 cùng hoạt động song song trong hệ thống máy tính. Biểu đồ hoạt động của chúng mô tả theo hình dưới.</p>
+  <div class="diagram-wrap">
+<img class="diagram-img" src="data:image/png;base64,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" alt="Biểu đồ hoạt động P1 P2 P3 theo thời gian - câu 29, cắt từ PDF gốc">
+</div>
+  <p class="after-media">Cho biết hệ thống máy tính này thuộc loại nào?</p>
+  <div class="options" aria-label="Các lựa chọn câu 29">
+    <div class="option"><span class="letter">A.</span><span>Hệ thống Uni-Processor (đơn CPU).</span></div><div class="option correct"><span class="letter">B.</span><span>Hệ thống Multi-Processor (đa CPU).</span></div><div class="option"><span class="letter">C.</span><span>Hệ thống máy Client - Server</span></div><div class="option"><span class="letter">D.</span><span>Hệ thống phân tán.</span></div>
+  </div>
+  <button class="toggle-one" type="button" aria-expanded="false" aria-controls="exp29">Mở giải thích</button>
+  <div class="explanation" id="exp29" hidden>
+    <div class="ex-title">Giải thích ngắn gọn</div>
+    <p>B đúng vì biểu đồ có các khoảng thời gian nhiều tiến trình chạy chồng lấn, phù hợp với hệ thống đa CPU. A chỉ chạy một tiến trình tại một thời điểm, C và D không được thể hiện bởi biểu đồ này.</p>
+  </div>
+</section>
+<section class="card" id="q30" data-number="30" data-search="câu 30 pcb (process control block) là gì ?  là một vùng nhớ là định danh cho tiến trình là khối quản lý thông tin là một vùng nhớ lưu trữ các thông tin quản lý tiến trình d d đúng vì pcb là vùng/khối dữ liệu lưu các thông tin quản lý tiến trình. a quá chung, b chỉ là mã định danh tiến trình, c còn thiếu ý lưu thông tin quản lý của tiến trình cụ thể.">
+  <div class="q-head">
+    <h2>Câu 30</h2>
+    <a href="#answers" class="mini-link">Bảng đáp án</a>
+  </div>
+  <p class="question-text">PCB (Process Control Block) là gì ?</p>
+
+
+  <div class="options" aria-label="Các lựa chọn câu 30">
+    <div class="option"><span class="letter">A.</span><span>Là một vùng nhớ</span></div><div class="option"><span class="letter">B.</span><span>Là định danh cho tiến trình</span></div><div class="option"><span class="letter">C.</span><span>Là khối quản lý thông tin</span></div><div class="option correct"><span class="letter">D.</span><span>Là một vùng nhớ lưu trữ các thông tin quản lý tiến trình</span></div>
+  </div>
+  <button class="toggle-one" type="button" aria-expanded="false" aria-controls="exp30">Mở giải thích</button>
+  <div class="explanation" id="exp30" hidden>
+    <div class="ex-title">Giải thích ngắn gọn</div>
+    <p>D đúng vì PCB là vùng/khối dữ liệu lưu các thông tin quản lý tiến trình. A quá chung, B chỉ là mã định danh tiến trình, C còn thiếu ý lưu thông tin quản lý của tiến trình cụ thể.</p>
+  </div>
+</section>
+<section class="card" id="q31" data-number="31" data-search="câu 31 hệ điều hành sẽ thực hiện hành động nào khi có một process mới sinh ra?  cấp cpu ngay cho process. tạo ngay khối pcb để quản lý process. giao ngay các tài nguyên mà process cần. tạo ngay khối pcb và cấp ngay các tài nguyên mà process cần. b b đúng vì khi tạo process, hệ điều hành lập pcb để quản lý nó. a không phải lúc nào cũng cấp cpu ngay, c và d không đúng vì tài nguyên/cpu còn phụ thuộc lập lịch và yêu cầu cụ thể.">
+  <div class="q-head">
+    <h2>Câu 31</h2>
+    <a href="#answers" class="mini-link">Bảng đáp án</a>
+  </div>
+  <p class="question-text">Hệ điều hành sẽ thực hiện hành động nào khi có một process mới sinh ra?</p>
+
+
+  <div class="options" aria-label="Các lựa chọn câu 31">
+    <div class="option"><span class="letter">A.</span><span>Cấp CPU ngay cho process.</span></div><div class="option correct"><span class="letter">B.</span><span>Tạo ngay khối PCB để quản lý process.</span></div><div class="option"><span class="letter">C.</span><span>Giao ngay các tài nguyên mà process cần.</span></div><div class="option"><span class="letter">D.</span><span>Tạo ngay khối PCB và cấp ngay các tài nguyên mà process cần.</span></div>
+  </div>
+  <button class="toggle-one" type="button" aria-expanded="false" aria-controls="exp31">Mở giải thích</button>
+  <div class="explanation" id="exp31" hidden>
+    <div class="ex-title">Giải thích ngắn gọn</div>
+    <p>B đúng vì khi tạo process, hệ điều hành lập PCB để quản lý nó. A không phải lúc nào cũng cấp CPU ngay, C và D không đúng vì tài nguyên/CPU còn phụ thuộc lập lịch và yêu cầu cụ thể.</p>
+  </div>
+</section>
+<section class="card" id="q32" data-number="32" data-search="câu 32 cpu đang xử lý tiến trình p1, sau đó chuyển sang xử lý tiến trình p2. hệ điều hành sẽ lưu lại tất cả trạng thái của tiến trình p1 vào đâu?  đĩa cứng. bộ nhớ phụ. process control block (pcb). bộ nhớ ngoài. c c đúng vì khi chuyển ngữ cảnh, trạng thái của tiến trình được lưu trong pcb. a, b, d là các nơi lưu trữ chung nhưng không phải cấu trúc chuẩn dùng để lưu trạng thái tiến trình khi context switch.">
+  <div class="q-head">
+    <h2>Câu 32</h2>
+    <a href="#answers" class="mini-link">Bảng đáp án</a>
+  </div>
+  <p class="question-text">CPU đang xử lý tiến trình P1, sau đó chuyển sang xử lý tiến trình P2. Hệ điều hành sẽ lưu lại tất cả trạng thái của tiến trình P1 vào đâu?</p>
+
+
+  <div class="options" aria-label="Các lựa chọn câu 32">
+    <div class="option"><span class="letter">A.</span><span>Đĩa cứng.</span></div><div class="option"><span class="letter">B.</span><span>Bộ nhớ phụ.</span></div><div class="option correct"><span class="letter">C.</span><span>Process Control Block (PCB).</span></div><div class="option"><span class="letter">D.</span><span>Bộ nhớ ngoài.</span></div>
+  </div>
+  <button class="toggle-one" type="button" aria-expanded="false" aria-controls="exp32">Mở giải thích</button>
+  <div class="explanation" id="exp32" hidden>
+    <div class="ex-title">Giải thích ngắn gọn</div>
+    <p>C đúng vì khi chuyển ngữ cảnh, trạng thái của tiến trình được lưu trong PCB. A, B, D là các nơi lưu trữ chung nhưng không phải cấu trúc chuẩn dùng để lưu trạng thái tiến trình khi context switch.</p>
+  </div>
+</section>
+<section class="card" id="q33" data-number="33" data-search="câu 33 process control block (pcb) được tạo ra vào thời điểm nào? cùng với tiến trình và không thay đổi trong suốt thời gian tiến trình tồn tại.  thời điểm tiến trình vào trạng thái sẵn sàng (ready) thời điểm khởi tạo tiến trình (new). thời điểm kết thúc tiến trình (terminated). thời điểm tiến trình vào trạng thái đang chạy (running). b b đúng vì pcb được tạo khi tiến trình được khởi tạo. a và d xảy ra sau khi tiến trình đã có pcb, c là lúc thu hồi/hủy pcb.">
+  <div class="q-head">
+    <h2>Câu 33</h2>
+    <a href="#answers" class="mini-link">Bảng đáp án</a>
+  </div>
+  <p class="question-text">Process Control Block (PCB) được tạo ra vào thời điểm nào? cùng với tiến trình và không thay đổi trong suốt thời gian tiến trình tồn tại.</p>
+
+
+  <div class="options" aria-label="Các lựa chọn câu 33">
+    <div class="option"><span class="letter">A.</span><span>Thời điểm tiến trình vào trạng thái sẵn sàng (Ready)</span></div><div class="option correct"><span class="letter">B.</span><span>Thời điểm khởi tạo tiến trình (New).</span></div><div class="option"><span class="letter">C.</span><span>Thời điểm kết thúc tiến trình (Terminated).</span></div><div class="option"><span class="letter">D.</span><span>Thời điểm tiến trình vào trạng thái đang chạy (Running).</span></div>
+  </div>
+  <button class="toggle-one" type="button" aria-expanded="false" aria-controls="exp33">Mở giải thích</button>
+  <div class="explanation" id="exp33" hidden>
+    <div class="ex-title">Giải thích ngắn gọn</div>
+    <p>B đúng vì PCB được tạo khi tiến trình được khởi tạo. A và D xảy ra sau khi tiến trình đã có PCB, C là lúc thu hồi/hủy PCB.</p>
+  </div>
+</section>
+<section class="card" id="q34" data-number="34" data-search="câu 34 trong process control block (pcb), các thông tin ngữ cảnh của tiến trình gồm có:  các giá trị thanh ghi. trạng thái tiến trình. thông tin quản lý bộ nhớ. trạng thái tiến trình, giá trị các thanh ghi, thông tin bộ nhớ. d d đúng vì pcb lưu nhiều thông tin ngữ cảnh như trạng thái tiến trình, thanh ghi và thông tin bộ nhớ. a, b, c chỉ nêu từng phần riêng lẻ nên chưa đầy đủ.">
+  <div class="q-head">
+    <h2>Câu 34</h2>
+    <a href="#answers" class="mini-link">Bảng đáp án</a>
+  </div>
+  <p class="question-text">Trong Process Control Block (PCB), các thông tin ngữ cảnh của tiến trình gồm có:</p>
+
+
+  <div class="options" aria-label="Các lựa chọn câu 34">
+    <div class="option"><span class="letter">A.</span><span>Các giá trị thanh ghi.</span></div><div class="option"><span class="letter">B.</span><span>Trạng thái tiến trình.</span></div><div class="option"><span class="letter">C.</span><span>Thông tin quản lý bộ nhớ.</span></div><div class="option correct"><span class="letter">D.</span><span>Trạng thái tiến trình, giá trị các thanh ghi, thông tin bộ nhớ.</span></div>
+  </div>
+  <button class="toggle-one" type="button" aria-expanded="false" aria-controls="exp34">Mở giải thích</button>
+  <div class="explanation" id="exp34" hidden>
+    <div class="ex-title">Giải thích ngắn gọn</div>
+    <p>D đúng vì PCB lưu nhiều thông tin ngữ cảnh như trạng thái tiến trình, thanh ghi và thông tin bộ nhớ. A, B, C chỉ nêu từng phần riêng lẻ nên chưa đầy đủ.</p>
+  </div>
+</section>
+<section class="card" id="q35" data-number="35" data-search="câu 35 khi hệ điều hành cho cpu quay lại xử lý tiến trình, cpu cần nạp lại các thông tin trạng thái của tiến trình đó để nó tiếp tục xử lý. những thông tin đó được nạp lại từ đâu?  disk. memory. pcb kernel. c c đúng vì trạng thái tiến trình được lưu trong pcb và được nạp lại khi tiếp tục thực thi. a, b là nơi lưu trữ chung, d là nhân hệ điều hành chứ không phải nơi chứa trực tiếp bộ trạng thái của tiến trình.">
+  <div class="q-head">
+    <h2>Câu 35</h2>
+    <a href="#answers" class="mini-link">Bảng đáp án</a>
+  </div>
+  <p class="question-text">Khi Hệ điều hành cho CPU quay lại xử lý tiến trình, CPU cần nạp lại các thông tin trạng thái của tiến trình đó để nó tiếp tục xử lý. Những thông tin đó được nạp lại từ đâu?</p>
+
+
+  <div class="options" aria-label="Các lựa chọn câu 35">
+    <div class="option"><span class="letter">A.</span><span>disk.</span></div><div class="option"><span class="letter">B.</span><span>memory.</span></div><div class="option correct"><span class="letter">C.</span><span>PCB</span></div><div class="option"><span class="letter">D.</span><span>Kernel.</span></div>
+  </div>
+  <button class="toggle-one" type="button" aria-expanded="false" aria-controls="exp35">Mở giải thích</button>
+  <div class="explanation" id="exp35" hidden>
+    <div class="ex-title">Giải thích ngắn gọn</div>
+    <p>C đúng vì trạng thái tiến trình được lưu trong PCB và được nạp lại khi tiếp tục thực thi. A, B là nơi lưu trữ chung, D là nhân hệ điều hành chứ không phải nơi chứa trực tiếp bộ trạng thái của tiến trình.</p>
+  </div>
+</section>
+<section class="card" id="q36" data-number="36" data-search="câu 36 khi tiến trình kết thúc, hệ thống sẽ:  thu hồi lại pcb của tiến trình. thu hồi lại tài nguyên của tiến trình. thu hồi lại pcb và tài nguyên của tiến trình. loại nó ra khỏi hàng đợi ready queue. c c đúng vì khi tiến trình kết thúc, hệ thống phải thu hồi cả pcb và các tài nguyên đã cấp. a và b chỉ nêu một phần, d chỉ đúng trong một tình huống hẹp và không đầy đủ.">
+  <div class="q-head">
+    <h2>Câu 36</h2>
+    <a href="#answers" class="mini-link">Bảng đáp án</a>
+  </div>
+  <p class="question-text">Khi tiến trình kết thúc, hệ thống sẽ:</p>
+
+
+  <div class="options" aria-label="Các lựa chọn câu 36">
+    <div class="option"><span class="letter">A.</span><span>Thu hồi lại PCB của tiến trình.</span></div><div class="option"><span class="letter">B.</span><span>Thu hồi lại tài nguyên của tiến trình.</span></div><div class="option correct"><span class="letter">C.</span><span>Thu hồi lại PCB và tài nguyên của tiến trình.</span></div><div class="option"><span class="letter">D.</span><span>Loại nó ra khỏi hàng đợi Ready Queue.</span></div>
+  </div>
+  <button class="toggle-one" type="button" aria-expanded="false" aria-controls="exp36">Mở giải thích</button>
+  <div class="explanation" id="exp36" hidden>
+    <div class="ex-title">Giải thích ngắn gọn</div>
+    <p>C đúng vì khi tiến trình kết thúc, hệ thống phải thu hồi cả PCB và các tài nguyên đã cấp. A và B chỉ nêu một phần, D chỉ đúng trong một tình huống hẹp và không đầy đủ.</p>
+  </div>
+</section>
+<section class="card" id="q37" data-number="37" data-search="câu 37 đặc điểm của phương pháp liên lạc giữa các tiến trình qua vùng nhớ chia sẻ (shared memory) là gì?  nhanh nhất để trao đổi dữ liệu. hiệu quả nhất cho các hệ phân tán. an toàn nhất để bảo vệ dữ liệu. bảo vệ phần cứng máy tính. a a đúng vì shared memory cho các tiến trình trao đổi dữ liệu trực tiếp qua vùng nhớ chung nên rất nhanh. b thường phù hợp hơn với truyền thông điệp qua mạng, c không hẳn an toàn nhất vì cần đồng bộ, d không liên quan.">
+  <div class="q-head">
+    <h2>Câu 37</h2>
+    <a href="#answers" class="mini-link">Bảng đáp án</a>
+  </div>
+  <p class="question-text">Đặc điểm của phương pháp liên lạc giữa các tiến trình qua vùng nhớ chia sẻ (shared memory) là gì?</p>
+
+
+  <div class="options" aria-label="Các lựa chọn câu 37">
+    <div class="option correct"><span class="letter">A.</span><span>Nhanh nhất để trao đổi dữ liệu.</span></div><div class="option"><span class="letter">B.</span><span>Hiệu quả nhất cho các hệ phân tán.</span></div><div class="option"><span class="letter">C.</span><span>An toàn nhất để bảo vệ dữ liệu.</span></div><div class="option"><span class="letter">D.</span><span>Bảo vệ phần cứng máy tính.</span></div>
+  </div>
+  <button class="toggle-one" type="button" aria-expanded="false" aria-controls="exp37">Mở giải thích</button>
+  <div class="explanation" id="exp37" hidden>
+    <div class="ex-title">Giải thích ngắn gọn</div>
+    <p>A đúng vì shared memory cho các tiến trình trao đổi dữ liệu trực tiếp qua vùng nhớ chung nên rất nhanh. B thường phù hợp hơn với truyền thông điệp qua mạng, C không hẳn an toàn nhất vì cần đồng bộ, D không liên quan.</p>
+  </div>
+</section>
+<section class="card" id="q38" data-number="38" data-search="câu 38 điều kiện để liên lạc bằng thông điệp kiểu gián tiếp giữa các tiến trình:  mỗi tiến trình phải có một cổng riêng. các tiến trình có chung vùng nhớ. các tiến trình có một cổng dùng chung. các tiến trình lưu trữ chung. c c đúng vì liên lạc thông điệp gián tiếp thường thông qua mailbox/cổng dùng chung. a không tạo điểm trao đổi chung, b là shared memory chứ không phải message passing, d không phải điều kiện liên lạc.">
+  <div class="q-head">
+    <h2>Câu 38</h2>
+    <a href="#answers" class="mini-link">Bảng đáp án</a>
+  </div>
+  <p class="question-text">Điều kiện để liên lạc bằng thông điệp kiểu gián tiếp giữa các tiến trình:</p>
+
+
+  <div class="options" aria-label="Các lựa chọn câu 38">
+    <div class="option"><span class="letter">A.</span><span>Mỗi tiến trình phải có một cổng riêng.</span></div><div class="option"><span class="letter">B.</span><span>Các tiến trình có chung vùng nhớ.</span></div><div class="option correct"><span class="letter">C.</span><span>Các tiến trình có một cổng dùng chung.</span></div><div class="option"><span class="letter">D.</span><span>Các tiến trình lưu trữ chung.</span></div>
+  </div>
+  <button class="toggle-one" type="button" aria-expanded="false" aria-controls="exp38">Mở giải thích</button>
+  <div class="explanation" id="exp38" hidden>
+    <div class="ex-title">Giải thích ngắn gọn</div>
+    <p>C đúng vì liên lạc thông điệp gián tiếp thường thông qua mailbox/cổng dùng chung. A không tạo điểm trao đổi chung, B là shared memory chứ không phải message passing, D không phải điều kiện liên lạc.</p>
+  </div>
+</section>
+<section class="card" id="q39" data-number="39" data-search="câu 39 một tiến trình (process) có nhiều luồng (threads). thành phần nào dưới đây là dùng chung giữa tiến trình (process) và các luồng (threads) của nó?  không gian bộ nhớ. con trỏ lệnh. các thanh ghi và ngăn xếp. thanh ghi và con trỏ lệnh. a a đúng vì các luồng trong cùng một tiến trình dùng chung không gian bộ nhớ. b, c, d sai vì mỗi luồng thường có con trỏ lệnh, thanh ghi và ngăn xếp riêng.">
+  <div class="q-head">
+    <h2>Câu 39</h2>
+    <a href="#answers" class="mini-link">Bảng đáp án</a>
+  </div>
+  <p class="question-text">Một tiến trình (process) có nhiều luồng (threads). Thành phần nào dưới đây là DÙNG CHUNG giữa tiến trình (Process) và các luồng (Threads) của nó?</p>
+
+
+  <div class="options" aria-label="Các lựa chọn câu 39">
+    <div class="option correct"><span class="letter">A.</span><span>không gian bộ nhớ.</span></div><div class="option"><span class="letter">B.</span><span>con trỏ lệnh.</span></div><div class="option"><span class="letter">C.</span><span>các thanh ghi và ngăn xếp.</span></div><div class="option"><span class="letter">D.</span><span>Thanh ghi và con trỏ lệnh.</span></div>
+  </div>
+  <button class="toggle-one" type="button" aria-expanded="false" aria-controls="exp39">Mở giải thích</button>
+  <div class="explanation" id="exp39" hidden>
+    <div class="ex-title">Giải thích ngắn gọn</div>
+    <p>A đúng vì các luồng trong cùng một tiến trình dùng chung không gian bộ nhớ. B, C, D sai vì mỗi luồng thường có con trỏ lệnh, thanh ghi và ngăn xếp riêng.</p>
+  </div>
+</section>
+<section class="card" id="q40" data-number="40" data-search="câu 40 phát biểu nào sau đây là đúng về quan hệ giữa user thread và kernel thread?  phải có quan hệ ánh xạ. hai luồng hoàn toàn độc lập nhau. không cần có quan hệ ánh xạ. luồng nhân được ưu tiên xử lý trước. a a đúng vì user thread cần được ánh xạ/liên hệ với kernel thread để được hệ điều hành lập lịch thực thi. b và c phủ nhận quan hệ này, d không phải phát biểu đúng về bản chất ánh xạ.">
+  <div class="q-head">
+    <h2>Câu 40</h2>
+    <a href="#answers" class="mini-link">Bảng đáp án</a>
+  </div>
+  <p class="question-text">Phát biểu nào sau đây là ĐÚNG về quan hệ giữa User thread và Kernel thread?</p>
+
+
+  <div class="options" aria-label="Các lựa chọn câu 40">
+    <div class="option correct"><span class="letter">A.</span><span>Phải có quan hệ ánh xạ.</span></div><div class="option"><span class="letter">B.</span><span>Hai luồng hoàn toàn độc lập nhau.</span></div><div class="option"><span class="letter">C.</span><span>Không cần có quan hệ ánh xạ.</span></div><div class="option"><span class="letter">D.</span><span>Luồng nhân được ưu tiên xử lý trước.</span></div>
+  </div>
+  <button class="toggle-one" type="button" aria-expanded="false" aria-controls="exp40">Mở giải thích</button>
+  <div class="explanation" id="exp40" hidden>
+    <div class="ex-title">Giải thích ngắn gọn</div>
+    <p>A đúng vì user thread cần được ánh xạ/liên hệ với kernel thread để được hệ điều hành lập lịch thực thi. B và C phủ nhận quan hệ này, D không phải phát biểu đúng về bản chất ánh xạ.</p>
+  </div>
+</section>
+<section class="card" id="q41" data-number="41" data-search="câu 41 trong cùng một tiến trình, các luồng (thread) có thể chia sẻ cho nhau thành phần nào?  code section data section các resources khác của os code section, data section, các resources khác của os d d đúng vì các luồng trong cùng tiến trình có thể chia sẻ mã lệnh, vùng dữ liệu và các tài nguyên của tiến trình. a, b, c chỉ nêu một phần nên chưa đầy đủ.">
+  <div class="q-head">
+    <h2>Câu 41</h2>
+    <a href="#answers" class="mini-link">Bảng đáp án</a>
+  </div>
+  <p class="question-text">Trong cùng một tiến trình, các luồng (thread) có thể chia sẻ cho nhau thành phần nào?</p>
+
+
+  <div class="options" aria-label="Các lựa chọn câu 41">
+    <div class="option"><span class="letter">A.</span><span>code section</span></div><div class="option"><span class="letter">B.</span><span>data section</span></div><div class="option"><span class="letter">C.</span><span>các resources khác của OS</span></div><div class="option correct"><span class="letter">D.</span><span>code section, data section, các resources khác của OS</span></div>
+  </div>
+  <button class="toggle-one" type="button" aria-expanded="false" aria-controls="exp41">Mở giải thích</button>
+  <div class="explanation" id="exp41" hidden>
+    <div class="ex-title">Giải thích ngắn gọn</div>
+    <p>D đúng vì các luồng trong cùng tiến trình có thể chia sẻ mã lệnh, vùng dữ liệu và các tài nguyên của tiến trình. A, B, C chỉ nêu một phần nên chưa đầy đủ.</p>
+  </div>
+</section>
+<section class="card" id="q42" data-number="42" data-search="câu 42 để được cpu thực thi, các luồng người dùng (user thread) cần phải:  được ánh xạ vào một luồng nhân (kernel thread) tương ứng. được đưa vào hàng đợi cpu. được đưa vào hàng đợi công việc (job queue). được gán một chỉ số thực thi luồng (thread). a a đúng vì user thread cần được ánh xạ tới kernel thread/lwp để hệ điều hành có thể lập lịch trên cpu. b, c là hàng đợi chung không mô tả quan hệ user-kernel thread, d không phải điều kiện để cpu thực thi.">
+  <div class="q-head">
+    <h2>Câu 42</h2>
+    <a href="#answers" class="mini-link">Bảng đáp án</a>
+  </div>
+  <p class="question-text">Để được CPU thực thi, các luồng người dùng (user thread) cần phải:</p>
+
+
+  <div class="options" aria-label="Các lựa chọn câu 42">
+    <div class="option correct"><span class="letter">A.</span><span>được ánh xạ vào một luồng nhân (kernel thread) tương ứng.</span></div><div class="option"><span class="letter">B.</span><span>được đưa vào hàng đợi CPU.</span></div><div class="option"><span class="letter">C.</span><span>được đưa vào hàng đợi công việc (Job queue).</span></div><div class="option"><span class="letter">D.</span><span>được gán một chỉ số thực thi luồng (thread).</span></div>
+  </div>
+  <button class="toggle-one" type="button" aria-expanded="false" aria-controls="exp42">Mở giải thích</button>
+  <div class="explanation" id="exp42" hidden>
+    <div class="ex-title">Giải thích ngắn gọn</div>
+    <p>A đúng vì user thread cần được ánh xạ tới kernel thread/LWP để hệ điều hành có thể lập lịch trên CPU. B, C là hàng đợi chung không mô tả quan hệ user-kernel thread, D không phải điều kiện để CPU thực thi.</p>
+  </div>
+</section>
+  </main>
+</div>
+<a href="#top" class="top-btn" aria-label="Quay về đầu trang">↑ Đầu trang</a>
+<script>
+(function() {
+  const search = document.getElementById('search');
+  const clearSearch = document.getElementById('clearSearch');
+  const resultCount = document.getElementById('resultCount');
+  const cards = Array.from(document.querySelectorAll('.card'));
+
+  function setExplanation(card, open) {
+    const exp = card.querySelector('.explanation');
+    const btn = card.querySelector('.toggle-one');
+    exp.hidden = !open;
+    btn.textContent = open ? 'Ẩn giải thích' : 'Mở giải thích';
+    btn.setAttribute('aria-expanded', String(open));
+  }
+
+  document.querySelectorAll('.toggle-one').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const card = btn.closest('.card');
+      const exp = card.querySelector('.explanation');
+      setExplanation(card, exp.hidden);
+    });
+  });
+
+  document.getElementById('openAll').addEventListener('click', () => cards.forEach(c => setExplanation(c, true)));
+  document.getElementById('closeAll').addEventListener('click', () => cards.forEach(c => setExplanation(c, false)));
+
+  function normalize(str) {
+    return (str || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/đ/g, 'd').trim();
+  }
+
+  function filterCards() {
+    const raw = search.value.trim();
+    const q = normalize(raw);
+    const exact = q.match(/^cau\s*(\d+)$/);
+    let visible = 0;
+    cards.forEach(card => {
+      let ok;
+      if (!q) {
+        ok = true;
+      } else if (exact) {
+        ok = card.dataset.number === exact[1];
+      } else {
+        ok = normalize(card.dataset.search).includes(q);
+      }
+      card.classList.toggle('hidden-by-search', !ok);
+      if (ok) visible++;
+    });
+    resultCount.textContent = `Hiển thị ${visible}/${cards.length} câu`;
+  }
+  search.addEventListener('input', filterCards);
+  clearSearch.addEventListener('click', () => { search.value = ''; filterCards(); search.focus(); });
+  filterCards();
+})();
+</script>
+</body>
+</html>

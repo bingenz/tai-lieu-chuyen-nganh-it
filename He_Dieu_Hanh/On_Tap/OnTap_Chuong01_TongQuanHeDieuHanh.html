@@ -1,0 +1,963 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Trắc nghiệm HĐH - Chương 1</title>
+<style>
+  :root {
+    --bg: #f3f4f6;
+    --card: #ffffff;
+    --text: #111827;
+    --muted: #6b7280;
+    --line: #e5e7eb;
+    --green-bg: #dcfce7;
+    --green-border: #22c55e;
+    --green-text: #14532d;
+    --blue: #2563eb;
+    --shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    font-size: 14px;
+    line-height: 1.45;
+  }
+  .wrap {
+    width: min(920px, 100%);
+    margin: 0 auto;
+    padding: 12px 10px 80px;
+  }
+  .hero {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    padding: 14px;
+    box-shadow: var(--shadow);
+    margin-bottom: 12px;
+  }
+  .hero h1 {
+    margin: 0 0 4px;
+    font-size: 18px;
+    line-height: 1.25;
+    color: #1d4ed8;
+  }
+  .sub {
+    margin: 0;
+    color: var(--muted);
+    font-size: 12.5px;
+  }
+  .toolbar {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: rgba(243, 244, 246, 0.94);
+    backdrop-filter: blur(10px);
+    padding: 8px 0;
+  }
+  .search-box {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+  input[type="search"] {
+    width: 100%;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 10px 12px;
+    font-size: 14px;
+    outline: none;
+    background: #fff;
+  }
+  input[type="search"]:focus { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(37, 99, 235, .12); }
+  .action-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-top: 8px;
+  }
+  button, .mini-link, .quick-btn {
+    -webkit-tap-highlight-color: transparent;
+  }
+  .btn {
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    background: #fff;
+    color: var(--text);
+    padding: 9px 10px;
+    font-weight: 650;
+    font-size: 13px;
+  }
+  .btn:active, .quick-btn:active, .toggle-one:active { transform: translateY(1px); }
+  .answer-panel {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: 12px;
+    margin: 10px 0 12px;
+  }
+  .answer-panel h2 {
+    margin: 0 0 8px;
+    font-size: 15px;
+  }
+  .quick-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 7px;
+  }
+  .quick-btn {
+    text-decoration: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 4px;
+    border: 1px solid var(--line);
+    background: #fff;
+    border-radius: 10px;
+    min-height: 34px;
+    color: var(--text);
+    font-size: 12px;
+  }
+  .quick-btn strong { color: var(--green-text); }
+  .count-line {
+    margin: 8px 0 0;
+    font-size: 12.5px;
+    color: var(--muted);
+  }
+  .card {
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: 12px;
+    margin: 10px 0;
+    box-shadow: 0 3px 14px rgba(15, 23, 42, 0.05);
+    scroll-margin-top: 116px;
+  }
+  .question-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 8px;
+  }
+  .question-top h2 {
+    margin: 0;
+    font-size: 15.5px;
+  }
+  .mini-link {
+    font-size: 12px;
+    color: var(--blue);
+    text-decoration: none;
+    white-space: nowrap;
+  }
+  .question-text {
+    margin: 8px 0 10px;
+    font-weight: 560;
+  }
+  .choices { display: grid; gap: 7px; }
+  .choice {
+    display: grid;
+    grid-template-columns: 26px 1fr;
+    gap: 7px;
+    align-items: start;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 8px 9px;
+    background: #fff;
+  }
+  .choice-letter {
+    font-weight: 750;
+    color: #374151;
+  }
+  .choice.correct {
+    background: var(--green-bg);
+    border-color: var(--green-border);
+    color: var(--green-text);
+  }
+  .choice.correct .choice-letter { color: var(--green-text); }
+  .toggle-one {
+    margin-top: 10px;
+    width: 100%;
+    border: 1px solid var(--line);
+    background: #f9fafb;
+    border-radius: 12px;
+    padding: 9px 10px;
+    font-size: 13px;
+    font-weight: 650;
+    color: #111827;
+  }
+  .explanation {
+    margin-top: 10px;
+    border-top: 1px dashed var(--line);
+    padding-top: 9px;
+  }
+  .explanation h3 {
+    margin: 0 0 5px;
+    font-size: 13.5px;
+  }
+  .explanation p {
+    margin: 0;
+    color: #374151;
+  }
+  .hidden { display: none !important; }
+  .not-found {
+    display: none;
+    text-align: center;
+    color: var(--muted);
+    background: #fff;
+    border: 1px dashed var(--line);
+    border-radius: 14px;
+    padding: 18px 12px;
+    margin: 12px 0;
+  }
+  .to-top {
+    position: fixed;
+    right: 14px;
+    bottom: 16px;
+    z-index: 20;
+    border: none;
+    border-radius: 999px;
+    padding: 10px 12px;
+    background: #111827;
+    color: #fff;
+    font-weight: 750;
+    font-size: 13px;
+    box-shadow: 0 8px 22px rgba(0,0,0,.18);
+    display: none;
+  }
+  .to-top.show { display: inline-flex; }
+  @media (min-width: 520px) {
+    body { font-size: 15px; }
+    .quick-grid { grid-template-columns: repeat(10, 1fr); }
+    .wrap { padding-left: 14px; padding-right: 14px; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap" id="top">
+  <section class="hero">
+    <h1>Trắc nghiệm HĐH - Chương 1: Tổng quan Hệ điều hành</h1>
+    <p class="sub">Exam A · 40 câu · Đáp án đúng được tô xanh lá trong từng câu.</p>
+  </section>
+
+  <div class="toolbar">
+    <div class="search-box">
+      <input id="searchInput" type="search" placeholder="Tìm: Câu 1, Kernel, Shell, Round Robin, System call..." autocomplete="off">
+    </div>
+    <div class="action-row">
+      <button class="btn" id="openAll" type="button">Mở giải thích</button>
+      <button class="btn" id="closeAll" type="button">Ẩn giải thích</button>
+    </div>
+  </div>
+
+  <section class="answer-panel">
+    <h2>Bảng đáp án nhanh</h2>
+    <div class="quick-grid">
+      <a class="quick-btn" href="#q1" title="Nhảy tới Câu 1"><span>1</span><strong>B</strong></a><a class="quick-btn" href="#q2" title="Nhảy tới Câu 2"><span>2</span><strong>C</strong></a><a class="quick-btn" href="#q3" title="Nhảy tới Câu 3"><span>3</span><strong>C</strong></a><a class="quick-btn" href="#q4" title="Nhảy tới Câu 4"><span>4</span><strong>B</strong></a><a class="quick-btn" href="#q5" title="Nhảy tới Câu 5"><span>5</span><strong>C</strong></a><a class="quick-btn" href="#q6" title="Nhảy tới Câu 6"><span>6</span><strong>D</strong></a><a class="quick-btn" href="#q7" title="Nhảy tới Câu 7"><span>7</span><strong>A</strong></a><a class="quick-btn" href="#q8" title="Nhảy tới Câu 8"><span>8</span><strong>C</strong></a><a class="quick-btn" href="#q9" title="Nhảy tới Câu 9"><span>9</span><strong>A</strong></a><a class="quick-btn" href="#q10" title="Nhảy tới Câu 10"><span>10</span><strong>B</strong></a><a class="quick-btn" href="#q11" title="Nhảy tới Câu 11"><span>11</span><strong>C</strong></a><a class="quick-btn" href="#q12" title="Nhảy tới Câu 12"><span>12</span><strong>D</strong></a><a class="quick-btn" href="#q13" title="Nhảy tới Câu 13"><span>13</span><strong>D</strong></a><a class="quick-btn" href="#q14" title="Nhảy tới Câu 14"><span>14</span><strong>D</strong></a><a class="quick-btn" href="#q15" title="Nhảy tới Câu 15"><span>15</span><strong>C</strong></a><a class="quick-btn" href="#q16" title="Nhảy tới Câu 16"><span>16</span><strong>C</strong></a><a class="quick-btn" href="#q17" title="Nhảy tới Câu 17"><span>17</span><strong>A</strong></a><a class="quick-btn" href="#q18" title="Nhảy tới Câu 18"><span>18</span><strong>B</strong></a><a class="quick-btn" href="#q19" title="Nhảy tới Câu 19"><span>19</span><strong>B</strong></a><a class="quick-btn" href="#q20" title="Nhảy tới Câu 20"><span>20</span><strong>D</strong></a><a class="quick-btn" href="#q21" title="Nhảy tới Câu 21"><span>21</span><strong>D</strong></a><a class="quick-btn" href="#q22" title="Nhảy tới Câu 22"><span>22</span><strong>D</strong></a><a class="quick-btn" href="#q23" title="Nhảy tới Câu 23"><span>23</span><strong>D</strong></a><a class="quick-btn" href="#q24" title="Nhảy tới Câu 24"><span>24</span><strong>C</strong></a><a class="quick-btn" href="#q25" title="Nhảy tới Câu 25"><span>25</span><strong>D</strong></a><a class="quick-btn" href="#q26" title="Nhảy tới Câu 26"><span>26</span><strong>A</strong></a><a class="quick-btn" href="#q27" title="Nhảy tới Câu 27"><span>27</span><strong>B</strong></a><a class="quick-btn" href="#q28" title="Nhảy tới Câu 28"><span>28</span><strong>A</strong></a><a class="quick-btn" href="#q29" title="Nhảy tới Câu 29"><span>29</span><strong>B</strong></a><a class="quick-btn" href="#q30" title="Nhảy tới Câu 30"><span>30</span><strong>C</strong></a><a class="quick-btn" href="#q31" title="Nhảy tới Câu 31"><span>31</span><strong>B</strong></a><a class="quick-btn" href="#q32" title="Nhảy tới Câu 32"><span>32</span><strong>A</strong></a><a class="quick-btn" href="#q33" title="Nhảy tới Câu 33"><span>33</span><strong>B</strong></a><a class="quick-btn" href="#q34" title="Nhảy tới Câu 34"><span>34</span><strong>C</strong></a><a class="quick-btn" href="#q35" title="Nhảy tới Câu 35"><span>35</span><strong>D</strong></a><a class="quick-btn" href="#q36" title="Nhảy tới Câu 36"><span>36</span><strong>B</strong></a><a class="quick-btn" href="#q37" title="Nhảy tới Câu 37"><span>37</span><strong>C</strong></a><a class="quick-btn" href="#q38" title="Nhảy tới Câu 38"><span>38</span><strong>D</strong></a><a class="quick-btn" href="#q39" title="Nhảy tới Câu 39"><span>39</span><strong>A</strong></a><a class="quick-btn" href="#q40" title="Nhảy tới Câu 40"><span>40</span><strong>D</strong></a>
+    </div>
+    <p class="count-line" id="resultCount">Đang hiển thị 40/40 câu.</p>
+  </section>
+
+  <main id="questions">
+
+    <article class="card question-card" id="q1" data-search="câu 1 phát biểu nào dưới đây không đúng về hệ điều hành? hệ điều hành quản lý các phần cứng máy tính. hệ điều hành trực tiếp điều khiển hoạt động cho từng thiết bị phần cứng. hệ điều hành hỗ trợ phần mềm giao tiếp phần cứng trên máy tính. hệ điều hành hỗ trợ người dùng điều hành máy tính. b hệ điều hành quản lý và điều phối tài nguyên phần cứng, nhưng không trực tiếp điều khiển chi tiết mọi thiết bị theo cách riêng lẻ; việc đó thường thông qua trình điều khiển thiết bị. a, c, d đều mô tả đúng vai trò quản lý, trung gian và hỗ trợ người dùng của hệ điều hành.">
+      <div class="question-top">
+        <h2>Câu 1</h2>
+        <a class="mini-link" href="#top">Đầu trang</a>
+      </div>
+      <p class="question-text">Phát biểu nào dưới đây KHÔNG ĐÚNG về Hệ điều hành?</p>
+      <div class="choices">
+        <div class="choice"><span class="choice-letter">A</span><span>Hệ điều hành quản lý các phần cứng máy tính.</span></div><div class="choice correct"><span class="choice-letter">B</span><span>Hệ điều hành trực tiếp điều khiển hoạt động cho từng thiết bị phần cứng.</span></div><div class="choice"><span class="choice-letter">C</span><span>Hệ điều hành hỗ trợ phần mềm giao tiếp phần cứng trên máy tính.</span></div><div class="choice"><span class="choice-letter">D</span><span>Hệ điều hành hỗ trợ người dùng điều hành máy tính.</span></div>
+      </div>
+      <button class="toggle-one" type="button" aria-expanded="false">Mở giải thích</button>
+      <div class="explanation" hidden>
+        <h3>Giải thích ngắn gọn</h3>
+        <p>Hệ điều hành quản lý và điều phối tài nguyên phần cứng, nhưng không trực tiếp điều khiển chi tiết mọi thiết bị theo cách riêng lẻ; việc đó thường thông qua trình điều khiển thiết bị. A, C, D đều mô tả đúng vai trò quản lý, trung gian và hỗ trợ người dùng của hệ điều hành.</p>
+      </div>
+    </article>
+
+    <article class="card question-card" id="q2" data-search="câu 2 điều gì là đúng khi một máy tính không có hệ điều hành các ứng dụng vẫn chạy bình thường trên máy tính đó. cpu vẫn tiếp nhận và thực thi các lệnh từ người dùng. các ứng dụng và lệnh người dùng không thể thực thi trên máy tính. người dùng vẫn cài đặt phần mềm vào máy tính như bình thường. c không có hệ điều hành thì người dùng và ứng dụng không có môi trường chuẩn để nạp, chạy lệnh, quản lý thiết bị và tệp. a, b, d sai vì đều giả định máy vẫn hoạt động bình thường như khi có hệ điều hành.">
+      <div class="question-top">
+        <h2>Câu 2</h2>
+        <a class="mini-link" href="#top">Đầu trang</a>
+      </div>
+      <p class="question-text">Điều gì là đúng khi một máy tính không có Hệ điều hành</p>
+      <div class="choices">
+        <div class="choice"><span class="choice-letter">A</span><span>Các ứng dụng vẫn chạy bình thường trên máy tính đó.</span></div><div class="choice"><span class="choice-letter">B</span><span>CPU vẫn tiếp nhận và thực thi các lệnh từ người dùng.</span></div><div class="choice correct"><span class="choice-letter">C</span><span>Các ứng dụng và lệnh người dùng không thể thực thi trên máy tính.</span></div><div class="choice"><span class="choice-letter">D</span><span>Người dùng vẫn cài đặt phần mềm vào máy tính như bình thường.</span></div>
+      </div>
+      <button class="toggle-one" type="button" aria-expanded="false">Mở giải thích</button>
+      <div class="explanation" hidden>
+        <h3>Giải thích ngắn gọn</h3>
+        <p>Không có hệ điều hành thì người dùng và ứng dụng không có môi trường chuẩn để nạp, chạy lệnh, quản lý thiết bị và tệp. A, B, D sai vì đều giả định máy vẫn hoạt động bình thường như khi có hệ điều hành.</p>
+      </div>
+    </article>
+
+    <article class="card question-card" id="q3" data-search="câu 3 trong phân lớp hệ thống máy tính, hệ điều hành thuộc vị trí nào hệ điều hành thuộc lớp cuối cùng, kế trên là lớp phần cứng. hệ điều hành thuộc lớp trên cùng, kế dưới là lớp ứng dụng. hệ điều hành nằm giữa lớp phần cứng và lớp ứng dụng. hệ điều hành nằm giữa lớp phần cứng và lớp người dùng. c trong mô hình phân lớp cơ bản, phần cứng ở dưới, hệ điều hành ở giữa và ứng dụng ở phía trên. a, b sai vị trí; d nói gần đúng nhưng bỏ qua lớp ứng dụng nên không chính xác bằng c.">
+      <div class="question-top">
+        <h2>Câu 3</h2>
+        <a class="mini-link" href="#top">Đầu trang</a>
+      </div>
+      <p class="question-text">Trong phân lớp hệ thống máy tính, Hệ điều hành thuộc vị trí nào</p>
+      <div class="choices">
+        <div class="choice"><span class="choice-letter">A</span><span>Hệ điều hành thuộc lớp cuối cùng, kế trên là lớp phần cứng.</span></div><div class="choice"><span class="choice-letter">B</span><span>Hệ điều hành thuộc lớp trên cùng, kế dưới là lớp ứng dụng.</span></div><div class="choice correct"><span class="choice-letter">C</span><span>Hệ điều hành nằm giữa lớp phần cứng và lớp ứng dụng.</span></div><div class="choice"><span class="choice-letter">D</span><span>Hệ điều hành nằm giữa lớp phần cứng và lớp người dùng.</span></div>
+      </div>
+      <button class="toggle-one" type="button" aria-expanded="false">Mở giải thích</button>
+      <div class="explanation" hidden>
+        <h3>Giải thích ngắn gọn</h3>
+        <p>Trong mô hình phân lớp cơ bản, phần cứng ở dưới, hệ điều hành ở giữa và ứng dụng ở phía trên. A, B sai vị trí; D nói gần đúng nhưng bỏ qua lớp ứng dụng nên không chính xác bằng C.</p>
+      </div>
+    </article>
+
+    <article class="card question-card" id="q4" data-search="câu 4 dưới góc độ cơ bản, hệ điều hành được định nghĩa là: là một phần mềm chạy trên máy tính là một chương trình quản lý phần cứng máy tính. là một chương trình bảo vệ phần cứng máy tính là một phần mềm quản lý các phần mềm khác. b định nghĩa cơ bản thường xem hệ điều hành là chương trình quản lý phần cứng và tài nguyên máy tính. a quá chung vì mọi phần mềm đều chạy trên máy tính; c chỉ nói bảo vệ phần cứng; d chỉ nói đến quản lý phần mềm nên chưa đủ.">
+      <div class="question-top">
+        <h2>Câu 4</h2>
+        <a class="mini-link" href="#top">Đầu trang</a>
+      </div>
+      <p class="question-text">Dưới góc độ cơ bản, Hệ điều hành được định nghĩa là:</p>
+      <div class="choices">
+        <div class="choice"><span class="choice-letter">A</span><span>là một phần mềm chạy trên máy tính</span></div><div class="choice correct"><span class="choice-letter">B</span><span>là một chương trình quản lý phần cứng máy tính.</span></div><div class="choice"><span class="choice-letter">C</span><span>là một chương trình bảo vệ phần cứng máy tính</span></div><div class="choice"><span class="choice-letter">D</span><span>là một phần mềm quản lý các phần mềm khác.</span></div>
+      </div>
+      <button class="toggle-one" type="button" aria-expanded="false">Mở giải thích</button>
+      <div class="explanation" hidden>
+        <h3>Giải thích ngắn gọn</h3>
+        <p>Định nghĩa cơ bản thường xem hệ điều hành là chương trình quản lý phần cứng và tài nguyên máy tính. A quá chung vì mọi phần mềm đều chạy trên máy tính; C chỉ nói bảo vệ phần cứng; D chỉ nói đến quản lý phần mềm nên chưa đủ.</p>
+      </div>
+    </article>
+
+    <article class="card question-card" id="q5" data-search="câu 5 trong các thành phần của hệ thống máy tính, thành phần nào trực tiếp quản lý các tài nguyên phần cứng: người dùng các phần mềm hệ điều hành dữ liệu c hệ điều hành chịu trách nhiệm quản lý cpu, bộ nhớ, thiết bị vào/ra và các tài nguyên phần cứng khác. người dùng, phần mềm ứng dụng và dữ liệu không trực tiếp quản lý tài nguyên phần cứng.">
+      <div class="question-top">
+        <h2>Câu 5</h2>
+        <a class="mini-link" href="#top">Đầu trang</a>
+      </div>
+      <p class="question-text">Trong các thành phần của hệ thống máy tính, thành phần nào trực tiếp quản lý các tài nguyên phần cứng:</p>
+      <div class="choices">
+        <div class="choice"><span class="choice-letter">A</span><span>Người dùng</span></div><div class="choice"><span class="choice-letter">B</span><span>Các phần mềm</span></div><div class="choice correct"><span class="choice-letter">C</span><span>Hệ điều hành</span></div><div class="choice"><span class="choice-letter">D</span><span>Dữ liệu</span></div>
+      </div>
+      <button class="toggle-one" type="button" aria-expanded="false">Mở giải thích</button>
+      <div class="explanation" hidden>
+        <h3>Giải thích ngắn gọn</h3>
+        <p>Hệ điều hành chịu trách nhiệm quản lý CPU, bộ nhớ, thiết bị vào/ra và các tài nguyên phần cứng khác. Người dùng, phần mềm ứng dụng và dữ liệu không trực tiếp quản lý tài nguyên phần cứng.</p>
+      </div>
+    </article>
+
+    <article class="card question-card" id="q6" data-search="câu 6 chức năng của hệ điều hành là gì? cấp phát tài nguyên phần cứng cho các ứng dụng. điều khiển, định thời thực thi các chương trình. hỗ trợ người dùng giao tiếp với máy tính. tất cả các tính năng trên. d hệ điều hành vừa cấp phát tài nguyên, vừa điều khiển/định thời chương trình, vừa cung cấp giao diện để người dùng làm việc với máy tính. vì vậy a, b, c đều đúng và d là lựa chọn tổng hợp.">
+      <div class="question-top">
+        <h2>Câu 6</h2>
+        <a class="mini-link" href="#top">Đầu trang</a>
+      </div>
+      <p class="question-text">Chức năng của Hệ điều hành là gì?</p>
+      <div class="choices">
+        <div class="choice"><span class="choice-letter">A</span><span>Cấp phát tài nguyên phần cứng cho các ứng dụng.</span></div><div class="choice"><span class="choice-letter">B</span><span>Điều khiển, định thời thực thi các chương trình.</span></div><div class="choice"><span class="choice-letter">C</span><span>Hỗ trợ người dùng giao tiếp với máy tính.</span></div><div class="choice correct"><span class="choice-letter">D</span><span>tất cả các tính năng trên.</span></div>
+      </div>
+      <button class="toggle-one" type="button" aria-expanded="false">Mở giải thích</button>
+      <div class="explanation" hidden>
+        <h3>Giải thích ngắn gọn</h3>
+        <p>Hệ điều hành vừa cấp phát tài nguyên, vừa điều khiển/định thời chương trình, vừa cung cấp giao diện để người dùng làm việc với máy tính. Vì vậy A, B, C đều đúng và D là lựa chọn tổng hợp.</p>
+      </div>
+    </article>
+
+    <article class="card question-card" id="q7" data-search="câu 7 kernel của hệ điều hành là gì? là lớp nhân quản lý, điều phối các chương trình, phần cứng. là các chương trình điều khiển thiết bị phần cứng. là các ứng dụng. là trình biên dịch. a kernel là phần lõi của hệ điều hành, quản lý và điều phối chương trình, bộ nhớ, cpu và phần cứng. b chỉ là driver, c là ứng dụng, d là trình biên dịch nên không phải kernel.">
+      <div class="question-top">
+        <h2>Câu 7</h2>
+        <a class="mini-link" href="#top">Đầu trang</a>
+      </div>
+      <p class="question-text">Kernel của Hệ điều hành là gì?</p>
+      <div class="choices">
+        <div class="choice correct"><span class="choice-letter">A</span><span>là lớp nhân quản lý, điều phối các chương trình, phần cứng.</span></div><div class="choice"><span class="choice-letter">B</span><span>là các chương trình điều khiển thiết bị phần cứng.</span></div><div class="choice"><span class="choice-letter">C</span><span>là các ứng dụng.</span></div><div class="choice"><span class="choice-letter">D</span><span>là trình biên dịch.</span></div>
+      </div>
+      <button class="toggle-one" type="button" aria-expanded="false">Mở giải thích</button>
+      <div class="explanation" hidden>
+        <h3>Giải thích ngắn gọn</h3>
+        <p>Kernel là phần lõi của hệ điều hành, quản lý và điều phối chương trình, bộ nhớ, CPU và phần cứng. B chỉ là driver, C là ứng dụng, D là trình biên dịch nên không phải kernel.</p>
+      </div>
+    </article>
+
+    <article class="card question-card" id="q8" data-search="câu 8 shell của hệ điều hành là gì? là lớp nhân quản lý, điều phối các chương trình, phần cứng. là các chương trình điều khiển thiết bị phần cứng. là lớp chương trình hỗ trợ giao tiếp của người dùng với kernel. là trình biên dịch. c shell là lớp giao tiếp giúp người dùng đưa lệnh tới kernel và nhận kết quả. a mô tả kernel, b mô tả driver, d là compiler nên không đúng.">
+      <div class="question-top">
+        <h2>Câu 8</h2>
+        <a class="mini-link" href="#top">Đầu trang</a>
+      </div>
+      <p class="question-text">Shell của Hệ điều hành là gì?</p>
+      <div class="choices">
+        <div class="choice"><span class="choice-letter">A</span><span>là lớp nhân quản lý, điều phối các chương trình, phần cứng.</span></div><div class="choice"><span class="choice-letter">B</span><span>là các chương trình điều khiển thiết bị phần cứng.</span></div><div class="choice correct"><span class="choice-letter">C</span><span>là lớp chương trình hỗ trợ giao tiếp của người dùng với Kernel.</span></div><div class="choice"><span class="choice-letter">D</span><span>là trình biên dịch.</span></div>
+      </div>
+      <button class="toggle-one" type="button" aria-expanded="false">Mở giải thích</button>
+      <div class="explanation" hidden>
+        <h3>Giải thích ngắn gọn</h3>
+        <p>Shell là lớp giao tiếp giúp người dùng đưa lệnh tới kernel và nhận kết quả. A mô tả kernel, B mô tả driver, D là compiler nên không đúng.</p>
+      </div>
+    </article>
+
+    <article class="card question-card" id="q9" data-search="câu 9 trong hệ thống máy tính, người dùng phát lệnh cho hệ điều hành thực thi thông qua lớp nào? lớp shell. lớp driver. lớp kernel. lớp hardware. a người dùng thường nhập lệnh hoặc thao tác qua shell/giao diện để yêu cầu hệ điều hành thực thi. driver, kernel và phần cứng không phải lớp giao tiếp trực tiếp chính cho người dùng.">
+      <div class="question-top">
+        <h2>Câu 9</h2>
+        <a class="mini-link" href="#top">Đầu trang</a>
+      </div>
+      <p class="question-text">Trong hệ thống máy tính, người dùng phát lệnh cho Hệ điều hành thực thi thông qua lớp nào?</p>
+      <div class="choices">
+        <div class="choice correct"><span class="choice-letter">A</span><span>Lớp Shell.</span></div><div class="choice"><span class="choice-letter">B</span><span>Lớp Driver.</span></div><div class="choice"><span class="choice-letter">C</span><span>Lớp Kernel.</span></div><div class="choice"><span class="choice-letter">D</span><span>Lớp Hardware.</span></div>
+      </div>
+      <button class="toggle-one" type="button" aria-expanded="false">Mở giải thích</button>
+      <div class="explanation" hidden>
+        <h3>Giải thích ngắn gọn</h3>
+        <p>Người dùng thường nhập lệnh hoặc thao tác qua shell/giao diện để yêu cầu hệ điều hành thực thi. Driver, kernel và phần cứng không phải lớp giao tiếp trực tiếp chính cho người dùng.</p>
+      </div>
+    </article>
+
+    <article class="card question-card" id="q10" data-search="câu 10 vai trò của trình biên dịch (compilers) bên trong một hệ điều hành là gì? biên dịch các lệnh của driver để điều khiển phần cứng, biên dịch các lệnh của applications để cpu thực thi, biên dịch các lệnh của kernel để quản lý ứng dụng. biên dịch các lệnh của users để điều khiển phần cứng. b compiler chuyển mã/lệnh của chương trình ứng dụng sang dạng máy có thể thực thi. a, c, d không phù hợp vì compiler không phải công cụ trực tiếp điều khiển driver, kernel hay lệnh người dùng theo nghĩa đó.">
+      <div class="question-top">
+        <h2>Câu 10</h2>
+        <a class="mini-link" href="#top">Đầu trang</a>
+      </div>
+      <p class="question-text">Vai trò của trình biên dịch (Compilers) bên trong một Hệ điều hành là gì?</p>
+      <div class="choices">
+        <div class="choice"><span class="choice-letter">A</span><span>Biên dịch các lệnh của Driver để điều khiển phần cứng,</span></div><div class="choice correct"><span class="choice-letter">B</span><span>Biên dịch các lệnh của Applications để CPU thực thi,</span></div><div class="choice"><span class="choice-letter">C</span><span>Biên dịch các lệnh của Kernel để quản lý ứng dụng.</span></div><div class="choice"><span class="choice-letter">D</span><span>Biên dịch các lệnh của Users để điều khiển phần cứng.</span></div>
+      </div>
+      <button class="toggle-one" type="button" aria-expanded="false">Mở giải thích</button>
+      <div class="explanation" hidden>
+        <h3>Giải thích ngắn gọn</h3>
+        <p>Compiler chuyển mã/lệnh của chương trình ứng dụng sang dạng máy có thể thực thi. A, C, D không phù hợp vì compiler không phải công cụ trực tiếp điều khiển driver, kernel hay lệnh người dùng theo nghĩa đó.</p>
+      </div>
+    </article>
+
+    <article class="card question-card" id="q11" data-search="câu 11 để đáp ứng vai trò của hệ điều hành, kiến trúc cơ bản của hệ điều hành gồm các thành phần: nhân, vỏ, giao diện người dùng. bộ khởi động, nhân, bộ lập trình vỏ. bộ cấp tài nguyên, chương trình kiểm soát, nhân (kernel). nhân, vỏ, hệ thống vector ngắt, bộ định thời. c các thành phần/khía cạnh cốt lõi để hệ điều hành thực hiện vai trò là cấp phát tài nguyên, kiểm soát hoạt động và phần nhân kernel. a nghiêng về lớp giao tiếp, b và d lẫn các thành phần không phải bộ ba vai trò cơ bản của hệ điều hành.">
+      <div class="question-top">
+        <h2>Câu 11</h2>
+        <a class="mini-link" href="#top">Đầu trang</a>
+      </div>
+      <p class="question-text">Để đáp ứng vai trò của Hệ điều hành, kiến trúc cơ bản của Hệ điều hành gồm các thành phần:</p>
+      <div class="choices">
+        <div class="choice"><span class="choice-letter">A</span><span>Nhân, vỏ, giao diện người dùng.</span></div><div class="choice"><span class="choice-letter">B</span><span>Bộ khởi động, nhân, bộ lập trình vỏ.</span></div><div class="choice correct"><span class="choice-letter">C</span><span>Bộ cấp tài nguyên, chương trình kiểm soát, nhân (kernel).</span></div><div class="choice"><span class="choice-letter">D</span><span>Nhân, vỏ, hệ thống vector ngắt, bộ định thời.</span></div>
+      </div>
+      <button class="toggle-one" type="button" aria-expanded="false">Mở giải thích</button>
+      <div class="explanation" hidden>
+        <h3>Giải thích ngắn gọn</h3>
+        <p>Các thành phần/khía cạnh cốt lõi để hệ điều hành thực hiện vai trò là cấp phát tài nguyên, kiểm soát hoạt động và phần nhân kernel. A nghiêng về lớp giao tiếp, B và D lẫn các thành phần không phải bộ ba vai trò cơ bản của hệ điều hành.</p>
+      </div>
+    </article>
+
+    <article class="card question-card" id="q12" data-search="câu 12 command prompt trong hệ điều hành windows là dạng gì? là lớp shell đặt trong kernel. là lớp kernel dưới dạng ứng dụng. là lớp kernel đặt trong shell. là lớp shell dưới dạng một ứng dụng. d command prompt là chương trình dòng lệnh để người dùng giao tiếp với hệ điều hành, tức shell ở dạng ứng dụng. a, b, c sai vì gán shell/kernel vào sai vị trí.">
+      <div class="question-top">
+        <h2>Câu 12</h2>
+        <a class="mini-link" href="#top">Đầu trang</a>
+      </div>
+      <p class="question-text">Command Prompt trong Hệ điều hành Windows là dạng gì?</p>
+      <div class="choices">
+        <div class="choice"><span class="choice-letter">A</span><span>là lớp Shell đặt trong Kernel.</span></div><div class="choice"><span class="choice-letter">B</span><span>là lớp Kernel dưới dạng ứng dụng.</span></div><div class="choice"><span class="choice-letter">C</span><span>là lớp Kernel đặt trong Shell.</span></div><div class="choice correct"><span class="choice-letter">D</span><span>là lớp Shell dưới dạng một ứng dụng.</span></div>
+      </div>
+      <button class="toggle-one" type="button" aria-expanded="false">Mở giải thích</button>
+      <div class="explanation" hidden>
+        <h3>Giải thích ngắn gọn</h3>
+        <p>Command Prompt là chương trình dòng lệnh để người dùng giao tiếp với hệ điều hành, tức shell ở dạng ứng dụng. A, B, C sai vì gán shell/kernel vào sai vị trí.</p>
+      </div>
+    </article>
+
+    <article class="card question-card" id="q13" data-search="câu 13 command prompt trong hệ điều hành ms-dos là dạng gì? là lớp shell đặt trong kernel. là lớp kernel dưới dạng ứng dụng. là lớp kernel đặt trong shell. là lớp shell dưới dạng một ứng dụng. d command prompt/command interpreter của ms-dos đóng vai trò shell để nhận lệnh người dùng. nó không phải kernel, cũng không phải kernel nằm trong shell nên a, b, c không phù hợp.">
+      <div class="question-top">
+        <h2>Câu 13</h2>
+        <a class="mini-link" href="#top">Đầu trang</a>
+      </div>
+      <p class="question-text">Command Prompt trong Hệ điều hành MS-DOS là dạng gì?</p>
+      <div class="choices">
+        <div class="choice"><span class="choice-letter">A</span><span>là lớp Shell đặt trong Kernel.</span></div><div class="choice"><span class="choice-letter">B</span><span>là lớp Kernel dưới dạng ứng dụng.</span></div><div class="choice"><span class="choice-letter">C</span><span>là lớp Kernel đặt trong Shell.</span></div><div class="choice correct"><span class="choice-letter">D</span><span>là lớp Shell dưới dạng một ứng dụng.</span></div>
+      </div>
+      <button class="toggle-one" type="button" aria-expanded="false">Mở giải thích</button>
+      <div class="explanation" hidden>
+        <h3>Giải thích ngắn gọn</h3>
+        <p>Command Prompt/command interpreter của MS-DOS đóng vai trò shell để nhận lệnh người dùng. Nó không phải kernel, cũng không phải kernel nằm trong shell nên A, B, C không phù hợp.</p>
+      </div>
+    </article>
+
+    <article class="card question-card" id="q14" data-search="câu 14 terminal trong hệ điều hành linux là dạng gì? là lớp shell đặt trong kernel. là lớp kernel dưới dạng ứng dụng. là lớp kernel đặt trong shell. là lớp shell dưới dạng một ứng dụng. d terminal/shell trên linux là chương trình người dùng dùng để nhập lệnh và giao tiếp với hệ điều hành. nó không nằm trong kernel và không phải kernel, nên a, b, c sai.">
+      <div class="question-top">
+        <h2>Câu 14</h2>
+        <a class="mini-link" href="#top">Đầu trang</a>
+      </div>
+      <p class="question-text">Terminal trong Hệ điều hành Linux là dạng gì?</p>
+      <div class="choices">
+        <div class="choice"><span class="choice-letter">A</span><span>là lớp Shell đặt trong Kernel.</span></div><div class="choice"><span class="choice-letter">B</span><span>là lớp Kernel dưới dạng ứng dụng.</span></div><div class="choice"><span class="choice-letter">C</span><span>là lớp Kernel đặt trong Shell.</span></div><div class="choice correct"><span class="choice-letter">D</span><span>là lớp Shell dưới dạng một ứng dụng.</span></div>
+      </div>
+      <button class="toggle-one" type="button" aria-expanded="false">Mở giải thích</button>
+      <div class="explanation" hidden>
+        <h3>Giải thích ngắn gọn</h3>
+        <p>Terminal/shell trên Linux là chương trình người dùng dùng để nhập lệnh và giao tiếp với hệ điều hành. Nó không nằm trong kernel và không phải kernel, nên A, B, C sai.</p>
+      </div>
+    </article>
+
+    <article class="card question-card" id="q15" data-search="câu 15 hệ điều hành windows 10 cung cấp giao diện người dùng (user interface) theo dạng nào? command line interface (cli). graphic user interface (gui) cả 2 dạng gui và cli window user interface (wui) c windows 10 có giao diện đồ họa gui và cũng có công cụ dòng lệnh như command prompt/powershell. a và b chỉ nêu một dạng, d không phải cách phân loại chuẩn trong câu hỏi.">
+      <div class="question-top">
+        <h2>Câu 15</h2>
+        <a class="mini-link" href="#top">Đầu trang</a>
+      </div>
+      <p class="question-text">Hệ điều hành Windows 10 cung cấp giao diện người dùng (User interface) theo dạng nào?</p>
+      <div class="choices">
+        <div class="choice"><span class="choice-letter">A</span><span>Command line interface (CLI).</span></div><div class="choice"><span class="choice-letter">B</span><span>Graphic User Interface (GUI)</span></div><div class="choice correct"><span class="choice-letter">C</span><span>Cả 2 dạng GUI và CLI</span></div><div class="choice"><span class="choice-letter">D</span><span>Window User Interface (WUI)</span></div>
+      </div>
+      <button class="toggle-one" type="button" aria-expanded="false">Mở giải thích</button>
+      <div class="explanation" hidden>
+        <h3>Giải thích ngắn gọn</h3>
+        <p>Windows 10 có giao diện đồ họa GUI và cũng có công cụ dòng lệnh như Command Prompt/PowerShell. A và B chỉ nêu một dạng, D không phải cách phân loại chuẩn trong câu hỏi.</p>
+      </div>
+    </article>
+
+    <article class="card question-card" id="q16" data-search="câu 16 lịch sử phát triển của hệ điều hành bùng nổ trong theo thời đại công nghệ điện tử nào? công nghệ điện tử dùng đèn chân không (vacuum công nghệ điện tử dùng bán dẫn (transistors) công nghệ điện tử dùng mạch tích hợp (integrated circuits – ic) công nghệ điện tử dùng vlsi (very large-scale integration) c giai đoạn mạch tích hợp ic gắn với sự phát triển mạnh của hệ điều hành, đa chương và chia sẻ thời gian. a là giai đoạn rất sớm, b chủ yếu gắn với batch system ban đầu, d là giai đoạn máy tính cá nhân/vi xử lý phát triển sau đó.">
+      <div class="question-top">
+        <h2>Câu 16</h2>
+        <a class="mini-link" href="#top">Đầu trang</a>
+      </div>
+      <p class="question-text">Lịch sử phát triển của Hệ điều hành bùng nổ trong theo thời đại công nghệ điện tử nào?</p>
+      <div class="choices">
+        <div class="choice"><span class="choice-letter">A</span><span>công nghệ điện tử dùng đèn chân không (vacuum</span></div><div class="choice"><span class="choice-letter">B</span><span>công nghệ điện tử dùng bán dẫn (transistors)</span></div><div class="choice correct"><span class="choice-letter">C</span><span>công nghệ điện tử dùng mạch tích hợp (Integrated Circuits – IC)</span></div><div class="choice"><span class="choice-letter">D</span><span>công nghệ điện tử dùng VLSI (Very large-scale integration)</span></div>
+      </div>
+      <button class="toggle-one" type="button" aria-expanded="false">Mở giải thích</button>
+      <div class="explanation" hidden>
+        <h3>Giải thích ngắn gọn</h3>
+        <p>Giai đoạn mạch tích hợp IC gắn với sự phát triển mạnh của hệ điều hành, đa chương và chia sẻ thời gian. A là giai đoạn rất sớm, B chủ yếu gắn với batch system ban đầu, D là giai đoạn máy tính cá nhân/vi xử lý phát triển sau đó.</p>
+      </div>
+    </article>
+
+    <article class="card question-card" id="q17" data-search="câu 17 hệ điều hành thực hiện các tác vụ lần lượt theo những chỉ thị đã được xác định trước. tên gọi của hệ điều hành đó là: hệ điều hành xử lý theo lô đơn giản hệ điều hành xử lý đa chương hệ điều hành chia sẻ thời gian hệ điều hành xử lý thời gian thực a xử lý theo lô đơn giản thực hiện các công việc theo trình tự đã chuẩn bị trước. b liên quan nhiều chương trình trong bộ nhớ, c chia sẻ cpu theo lát thời gian, d chú trọng đáp ứng thời gian thực.">
+      <div class="question-top">
+        <h2>Câu 17</h2>
+        <a class="mini-link" href="#top">Đầu trang</a>
+      </div>
+      <p class="question-text">Hệ điều hành thực hiện các tác vụ lần lượt theo những chỉ thị đã được xác định trước. Tên gọi của Hệ điều hành đó là:</p>
+      <div class="choices">
+        <div class="choice correct"><span class="choice-letter">A</span><span>Hệ điều hành xử lý theo lô đơn giản</span></div><div class="choice"><span class="choice-letter">B</span><span>Hệ điều hành xử lý đa chương</span></div><div class="choice"><span class="choice-letter">C</span><span>Hệ điều hành chia sẻ thời gian</span></div><div class="choice"><span class="choice-letter">D</span><span>Hệ điều hành xử lý thời gian thực</span></div>
+      </div>
+      <button class="toggle-one" type="button" aria-expanded="false">Mở giải thích</button>
+      <div class="explanation" hidden>
+        <h3>Giải thích ngắn gọn</h3>
+        <p>Xử lý theo lô đơn giản thực hiện các công việc theo trình tự đã chuẩn bị trước. B liên quan nhiều chương trình trong bộ nhớ, C chia sẻ CPU theo lát thời gian, D chú trọng đáp ứng thời gian thực.</p>
+      </div>
+    </article>
+
+    <article class="card question-card" id="q18" data-search="câu 18 đâu là ưu điểm chính của hệ thống xử lý đa chương (multiprogramming system)? chương trình khi nạp vào bộ nhớ sẽ được xử lý hoàn thành ngay lập tức hệ thống chạy được nhiều chương trình cùng lúc. không cần thiết lập định thời công việc (job scheduling) và quản lý bộ nhớ tối ưu sử dụng bộ nhớ b đa chương cho phép nhiều chương trình cùng tồn tại/chạy xen kẽ để tận dụng cpu. a sai vì không đảm bảo hoàn thành ngay; c sai vì vẫn cần định thời và quản lý bộ nhớ; d chỉ là lợi ích phụ, không phải ưu điểm chính bằng b.">
+      <div class="question-top">
+        <h2>Câu 18</h2>
+        <a class="mini-link" href="#top">Đầu trang</a>
+      </div>
+      <p class="question-text">Đâu là ưu điểm chính của Hệ thống xử lý đa chương (multiprogramming system)?</p>
+      <div class="choices">
+        <div class="choice"><span class="choice-letter">A</span><span>Chương trình khi nạp vào bộ nhớ sẽ được xử lý hoàn thành ngay lập tức</span></div><div class="choice correct"><span class="choice-letter">B</span><span>Hệ thống chạy được nhiều chương trình cùng lúc.</span></div><div class="choice"><span class="choice-letter">C</span><span>Không cần thiết lập định thời công việc (job scheduling) và quản lý bộ nhớ</span></div><div class="choice"><span class="choice-letter">D</span><span>Tối ưu sử dụng bộ nhớ</span></div>
+      </div>
+      <button class="toggle-one" type="button" aria-expanded="false">Mở giải thích</button>
+      <div class="explanation" hidden>
+        <h3>Giải thích ngắn gọn</h3>
+        <p>Đa chương cho phép nhiều chương trình cùng tồn tại/chạy xen kẽ để tận dụng CPU. A sai vì không đảm bảo hoàn thành ngay; C sai vì vẫn cần định thời và quản lý bộ nhớ; D chỉ là lợi ích phụ, không phải ưu điểm chính bằng B.</p>
+      </div>
+    </article>
+
+    <article class="card question-card" id="q19" data-search="câu 19 mục đích chính của hệ thống xử lý đa chương (multiprogramming system) là gì? thực hiện đồng thời nhiều chương trình. tận dụng thời gian nhàn rỗi của cpu. chia sẻ thời gian giữa các chương trình. tận dụng ram, rom khi đọc ghi b mục tiêu chính của multiprogramming là giữ cpu bận bằng cách chuyển sang chương trình khác khi một chương trình chờ i/o. a là biểu hiện, c nghiêng về time-sharing, d không đúng trọng tâm.">
+      <div class="question-top">
+        <h2>Câu 19</h2>
+        <a class="mini-link" href="#top">Đầu trang</a>
+      </div>
+      <p class="question-text">Mục đích chính của Hệ thống xử lý đa chương (multiprogramming system) là gì?</p>
+      <div class="choices">
+        <div class="choice"><span class="choice-letter">A</span><span>Thực hiện đồng thời nhiều chương trình.</span></div><div class="choice correct"><span class="choice-letter">B</span><span>Tận dụng thời gian nhàn rỗi của CPU.</span></div><div class="choice"><span class="choice-letter">C</span><span>Chia sẻ thời gian giữa các chương trình.</span></div><div class="choice"><span class="choice-letter">D</span><span>Tận dụng RAM, ROM khi đọc ghi</span></div>
+      </div>
+      <button class="toggle-one" type="button" aria-expanded="false">Mở giải thích</button>
+      <div class="explanation" hidden>
+        <h3>Giải thích ngắn gọn</h3>
+        <p>Mục tiêu chính của multiprogramming là giữ CPU bận bằng cách chuyển sang chương trình khác khi một chương trình chờ I/O. A là biểu hiện, C nghiêng về time-sharing, D không đúng trọng tâm.</p>
+      </div>
+    </article>
+
+    <article class="card question-card" id="q20" data-search="câu 20 điều kiện nào sau đây không cần cho hoạt động đa chương của hệ điều hành? định thời cpu (cpu scheduling). quản lý bộ nhớ (memory management). cấp phát tài nguyên (đĩa, máy in…). ứng dụng được lập trình đa nhiệm. d đa chương là cơ chế của hệ điều hành nên cần định thời cpu, quản lý bộ nhớ và cấp phát tài nguyên. ứng dụng không bắt buộc phải tự được lập trình đa nhiệm để hệ điều hành chạy nhiều chương trình xen kẽ.">
+      <div class="question-top">
+        <h2>Câu 20</h2>
+        <a class="mini-link" href="#top">Đầu trang</a>
+      </div>
+      <p class="question-text">Điều kiện nào sau đây KHÔNG CẦN cho hoạt động đa chương của hệ điều hành?</p>
+      <div class="choices">
+        <div class="choice"><span class="choice-letter">A</span><span>Định thời CPU (CPU scheduling).</span></div><div class="choice"><span class="choice-letter">B</span><span>Quản lý bộ nhớ (memory management).</span></div><div class="choice"><span class="choice-letter">C</span><span>Cấp phát tài nguyên (đĩa, máy in…).</span></div><div class="choice correct"><span class="choice-letter">D</span><span>Ứng dụng được lập trình đa nhiệm.</span></div>
+      </div>
+      <button class="toggle-one" type="button" aria-expanded="false">Mở giải thích</button>
+      <div class="explanation" hidden>
+        <h3>Giải thích ngắn gọn</h3>
+        <p>Đa chương là cơ chế của hệ điều hành nên cần định thời CPU, quản lý bộ nhớ và cấp phát tài nguyên. Ứng dụng không bắt buộc phải tự được lập trình đa nhiệm để hệ điều hành chạy nhiều chương trình xen kẽ.</p>
+      </div>
+    </article>
+
+    <article class="card question-card" id="q21" data-search="câu 21 phát biểu nào sau đây không đúng với hệ thống chia sẻ thời gian (time-sharing)? time-sharing là một hệ thống đa nhiệm (multi-tasking). time-sharing yêu cầu thời gian chuyển đổi giữa các tác vụ rất ngắn. time-sharing yêu cầu phải định thời cpu. time-sharing yêu cầu hoàn thành xong nhiệm vụ 1 mới chia sẻ cho nhiệm vụ 2. d time-sharing chia cpu thành các lát thời gian ngắn để nhiều tác vụ/người dùng được phục vụ xen kẽ, không chờ xong hẳn nhiệm vụ 1 mới chuyển. a, b, c đều là đặc điểm đúng của time-sharing.">
+      <div class="question-top">
+        <h2>Câu 21</h2>
+        <a class="mini-link" href="#top">Đầu trang</a>
+      </div>
+      <p class="question-text">Phát biểu nào sau đây không đúng với hệ thống chia sẻ thời gian (time-sharing)?</p>
+      <div class="choices">
+        <div class="choice"><span class="choice-letter">A</span><span>time-sharing là một hệ thống đa nhiệm (multi-tasking).</span></div><div class="choice"><span class="choice-letter">B</span><span>time-sharing yêu cầu thời gian chuyển đổi giữa các tác vụ rất ngắn.</span></div><div class="choice"><span class="choice-letter">C</span><span>time-sharing yêu cầu phải định thời CPU.</span></div><div class="choice correct"><span class="choice-letter">D</span><span>time-sharing yêu cầu hoàn thành xong nhiệm vụ 1 mới chia sẻ cho nhiệm vụ 2.</span></div>
+      </div>
+      <button class="toggle-one" type="button" aria-expanded="false">Mở giải thích</button>
+      <div class="explanation" hidden>
+        <h3>Giải thích ngắn gọn</h3>
+        <p>Time-sharing chia CPU thành các lát thời gian ngắn để nhiều tác vụ/người dùng được phục vụ xen kẽ, không chờ xong hẳn nhiệm vụ 1 mới chuyển. A, B, C đều là đặc điểm đúng của time-sharing.</p>
+      </div>
+    </article>
+
+    <article class="card question-card" id="q22" data-search="câu 22 hệ điều hành nào sau đây đòi hỏi phải thực hiện đầy đủ các tác vụ: quản lý tiến trình, định thời cpu, quản lý bộ nhớ, quản lý cấp phát tài nguyên, quản lý file? hệ điều hành xử lý đơn chương. hệ điều hành xử lý theo lô đơn giản hệ điều hành xử lý đa chương. hệ điều hành xử lý chia sẻ thời gian (time-sharing). d time-sharing cần đầy đủ quản lý tiến trình, định thời cpu, bộ nhớ, tài nguyên và file để phục vụ nhiều tác vụ/người dùng tương tác. a và b đơn giản hơn; c có nhiều yêu cầu nhưng chưa thể hiện đầy đủ mức tương tác của time-sharing.">
+      <div class="question-top">
+        <h2>Câu 22</h2>
+        <a class="mini-link" href="#top">Đầu trang</a>
+      </div>
+      <p class="question-text">Hệ điều hành nào sau đây đòi hỏi phải thực hiện đầy đủ các tác vụ: Quản lý tiến trình, Định thời CPU, Quản lý bộ nhớ, Quản lý cấp phát tài nguyên, Quản lý file?</p>
+      <div class="choices">
+        <div class="choice"><span class="choice-letter">A</span><span>Hệ điều hành xử lý đơn chương.</span></div><div class="choice"><span class="choice-letter">B</span><span>Hệ điều hành xử lý theo lô đơn giản</span></div><div class="choice"><span class="choice-letter">C</span><span>Hệ điều hành xử lý đa chương.</span></div><div class="choice correct"><span class="choice-letter">D</span><span>Hệ điều hành xử lý chia sẻ thời gian (Time-sharing).</span></div>
+      </div>
+      <button class="toggle-one" type="button" aria-expanded="false">Mở giải thích</button>
+      <div class="explanation" hidden>
+        <h3>Giải thích ngắn gọn</h3>
+        <p>Time-sharing cần đầy đủ quản lý tiến trình, định thời CPU, bộ nhớ, tài nguyên và file để phục vụ nhiều tác vụ/người dùng tương tác. A và B đơn giản hơn; C có nhiều yêu cầu nhưng chưa thể hiện đầy đủ mức tương tác của time-sharing.</p>
+      </div>
+    </article>
+
+    <article class="card question-card" id="q23" data-search="câu 23 trong hệ thống xử lý đa nhiệm (multitasking), việc chuyển đổi giữa các công việc diễn ra: sau một khoảng thời gian tùy theo công việc yêu cầu. chuyển đổi khi có công việc khác cần xử lý. luân phiên xoay vòng hoàn thành từng công việc. luân phiên xoay vòng, không đợi công việc hoàn thành. d đa nhiệm chuyển đổi giữa các công việc theo cơ chế luân phiên/lát thời gian mà không cần đợi một công việc hoàn thành. a, b chưa nêu đúng cơ chế chung; c sai vì đợi hoàn thành từng công việc.">
+      <div class="question-top">
+        <h2>Câu 23</h2>
+        <a class="mini-link" href="#top">Đầu trang</a>
+      </div>
+      <p class="question-text">Trong hệ thống xử lý đa nhiệm (multitasking), việc chuyển đổi giữa các công việc diễn ra:</p>
+      <div class="choices">
+        <div class="choice"><span class="choice-letter">A</span><span>Sau một khoảng thời gian tùy theo công việc yêu cầu.</span></div><div class="choice"><span class="choice-letter">B</span><span>Chuyển đổi khi có công việc khác cần xử lý.</span></div><div class="choice"><span class="choice-letter">C</span><span>Luân phiên xoay vòng hoàn thành từng công việc.</span></div><div class="choice correct"><span class="choice-letter">D</span><span>Luân phiên xoay vòng, không đợi công việc hoàn thành.</span></div>
+      </div>
+      <button class="toggle-one" type="button" aria-expanded="false">Mở giải thích</button>
+      <div class="explanation" hidden>
+        <h3>Giải thích ngắn gọn</h3>
+        <p>Đa nhiệm chuyển đổi giữa các công việc theo cơ chế luân phiên/lát thời gian mà không cần đợi một công việc hoàn thành. A, B chưa nêu đúng cơ chế chung; C sai vì đợi hoàn thành từng công việc.</p>
+      </div>
+    </article>
+
+    <article class="card question-card" id="q24" data-search="câu 24 trong các mô hình hệ điều hành dưới đây, loại dùng cho hệ thống có nhiều bộ xử lí cùng chia sẻ hệ thống đường truyền, dữ liệu, bộ nhớ, các thiết bị ngoại vi? hệ thống xử lí đa chương hệ thống xử lí đa nhiệm hệ thống xử lí song song hệ thống xử lí thời gian thực c hệ thống xử lí song song dùng nhiều bộ xử lí cùng chia sẻ tài nguyên để xử lí công việc. a là nhiều chương trình, b là nhiều tác vụ, d là yêu cầu đáp ứng thời gian thực nên không đúng mô tả trong câu.">
+      <div class="question-top">
+        <h2>Câu 24</h2>
+        <a class="mini-link" href="#top">Đầu trang</a>
+      </div>
+      <p class="question-text">Trong các mô hình hệ điều hành dưới đây, loại dùng cho hệ thống có nhiều bộ xử lí cùng chia sẻ hệ thống đường truyền, dữ liệu, bộ nhớ, các thiết bị ngoại vi?</p>
+      <div class="choices">
+        <div class="choice"><span class="choice-letter">A</span><span>Hệ thống xử lí đa chương</span></div><div class="choice"><span class="choice-letter">B</span><span>Hệ thống xử lí đa nhiệm</span></div><div class="choice correct"><span class="choice-letter">C</span><span>Hệ thống xử lí song song</span></div><div class="choice"><span class="choice-letter">D</span><span>Hệ thống xử lí thời gian thực</span></div>
+      </div>
+      <button class="toggle-one" type="button" aria-expanded="false">Mở giải thích</button>
+      <div class="explanation" hidden>
+        <h3>Giải thích ngắn gọn</h3>
+        <p>Hệ thống xử lí song song dùng nhiều bộ xử lí cùng chia sẻ tài nguyên để xử lí công việc. A là nhiều chương trình, B là nhiều tác vụ, D là yêu cầu đáp ứng thời gian thực nên không đúng mô tả trong câu.</p>
+      </div>
+    </article>
+
+    <article class="card question-card" id="q25" data-search="câu 25 phát biểu nào sau đây không đúng với hệ điều hành xử lý song song? hệ điều hành có khả năng xử lý 2 hay nhiều tiến trình cùng lúc. hệ điều hành dùng cho máy có 2 hoặc nhiều bộ xử lý (cpu). hệ điều hành dùng cho nhiều bộ xử lý cùng chia sẻ một bộ nhớ. hệ điều hành dùng cho nhiều bộ xử lý cùng chia sẻ nhiều tiến trình. d hệ thống xử lý song song chia sẻ tài nguyên như bộ nhớ/hệ thống bus để xử lý đồng thời, nhưng không diễn đạt là các bộ xử lý “chia sẻ nhiều tiến trình” như một tài nguyên. a, b, c đều phù hợp với mô hình xử lý song song.">
+      <div class="question-top">
+        <h2>Câu 25</h2>
+        <a class="mini-link" href="#top">Đầu trang</a>
+      </div>
+      <p class="question-text">Phát biểu nào sau đây không đúng với Hệ điều hành xử lý song song?</p>
+      <div class="choices">
+        <div class="choice"><span class="choice-letter">A</span><span>Hệ điều hành có khả năng xử lý 2 hay nhiều tiến trình cùng lúc.</span></div><div class="choice"><span class="choice-letter">B</span><span>Hệ điều hành dùng cho máy có 2 hoặc nhiều bộ xử lý (CPU).</span></div><div class="choice"><span class="choice-letter">C</span><span>Hệ điều hành dùng cho nhiều bộ xử lý cùng chia sẻ một bộ nhớ.</span></div><div class="choice correct"><span class="choice-letter">D</span><span>Hệ điều hành dùng cho nhiều bộ xử lý cùng chia sẻ nhiều tiến trình.</span></div>
+      </div>
+      <button class="toggle-one" type="button" aria-expanded="false">Mở giải thích</button>
+      <div class="explanation" hidden>
+        <h3>Giải thích ngắn gọn</h3>
+        <p>Hệ thống xử lý song song chia sẻ tài nguyên như bộ nhớ/hệ thống bus để xử lý đồng thời, nhưng không diễn đạt là các bộ xử lý “chia sẻ nhiều tiến trình” như một tài nguyên. A, B, C đều phù hợp với mô hình xử lý song song.</p>
+      </div>
+    </article>
+
+    <article class="card question-card" id="q26" data-search="câu 26 hệ thống đa bộ xử lý (multi-processors) có đặc điểm: xử lý các công việc thực sự đồng thời. mỗi bộ xử lý có bộ nhớ riêng. mỗi bộ xử lý có đường truyền dữ liệu riêng. xếp hàng xử lý các công việc. a nhiều bộ xử lý cho phép thực hiện công việc thật sự đồng thời. b và c phù hợp hơn với hệ phân tán/kiến trúc riêng rẽ; d là cách xử lý tuần tự nên không phải đặc điểm chính của multiprocessors.">
+      <div class="question-top">
+        <h2>Câu 26</h2>
+        <a class="mini-link" href="#top">Đầu trang</a>
+      </div>
+      <p class="question-text">Hệ thống đa bộ xử lý (multi-processors) có đặc điểm:</p>
+      <div class="choices">
+        <div class="choice correct"><span class="choice-letter">A</span><span>Xử lý các công việc thực sự đồng thời.</span></div><div class="choice"><span class="choice-letter">B</span><span>Mỗi bộ xử lý có bộ nhớ riêng.</span></div><div class="choice"><span class="choice-letter">C</span><span>Mỗi bộ xử lý có đường truyền dữ liệu riêng.</span></div><div class="choice"><span class="choice-letter">D</span><span>Xếp hàng xử lý các công việc.</span></div>
+      </div>
+      <button class="toggle-one" type="button" aria-expanded="false">Mở giải thích</button>
+      <div class="explanation" hidden>
+        <h3>Giải thích ngắn gọn</h3>
+        <p>Nhiều bộ xử lý cho phép thực hiện công việc thật sự đồng thời. B và C phù hợp hơn với hệ phân tán/kiến trúc riêng rẽ; D là cách xử lý tuần tự nên không phải đặc điểm chính của multiprocessors.</p>
+      </div>
+    </article>
+
+    <article class="card question-card" id="q27" data-search="câu 27 hệ thống đa bộ xử lý (multi-processors) được phân loại thành các hệ thống: đồng bộ và bất đồng bộ. đối xứng và bất đối xứng. kết hợp và không kết hợp. không phân loại. b hệ đa bộ xử lý thường được phân loại thành đối xứng và bất đối xứng. các cặp ở a, c không phải phân loại chuẩn trong ngữ cảnh này; d sai vì có phân loại.">
+      <div class="question-top">
+        <h2>Câu 27</h2>
+        <a class="mini-link" href="#top">Đầu trang</a>
+      </div>
+      <p class="question-text">Hệ thống đa bộ xử lý (multi-processors) được phân loại thành các hệ thống:</p>
+      <div class="choices">
+        <div class="choice"><span class="choice-letter">A</span><span>Đồng bộ và bất đồng bộ.</span></div><div class="choice correct"><span class="choice-letter">B</span><span>Đối xứng và bất đối xứng.</span></div><div class="choice"><span class="choice-letter">C</span><span>Kết hợp và không kết hợp.</span></div><div class="choice"><span class="choice-letter">D</span><span>Không phân loại.</span></div>
+      </div>
+      <button class="toggle-one" type="button" aria-expanded="false">Mở giải thích</button>
+      <div class="explanation" hidden>
+        <h3>Giải thích ngắn gọn</h3>
+        <p>Hệ đa bộ xử lý thường được phân loại thành đối xứng và bất đối xứng. Các cặp ở A, C không phải phân loại chuẩn trong ngữ cảnh này; D sai vì có phân loại.</p>
+      </div>
+    </article>
+
+    <article class="card question-card" id="q28" data-search="câu 28 hệ thống xử lý phân tán có đặc điểm: mỗi bộ xử lý có bộ nhớ riêng. các bộ xử lý độc lập không liên hệ nhau. một công việc chia đều cho các bộ xử lý. dùng chung bộ nhớ kết nối thành mạng. a trong hệ phân tán, các bộ xử lý/máy thường có bộ nhớ riêng và liên lạc qua mạng. b sai vì vẫn có liên hệ qua mạng; c nghiêng về xử lý song song; d sai vì hệ phân tán không dùng chung bộ nhớ theo nghĩa chặt chẽ.">
+      <div class="question-top">
+        <h2>Câu 28</h2>
+        <a class="mini-link" href="#top">Đầu trang</a>
+      </div>
+      <p class="question-text">Hệ thống xử lý phân tán có đặc điểm:</p>
+      <div class="choices">
+        <div class="choice correct"><span class="choice-letter">A</span><span>Mỗi bộ xử lý có bộ nhớ riêng.</span></div><div class="choice"><span class="choice-letter">B</span><span>Các bộ xử lý độc lập không liên hệ nhau.</span></div><div class="choice"><span class="choice-letter">C</span><span>Một công việc chia đều cho các bộ xử lý.</span></div><div class="choice"><span class="choice-letter">D</span><span>Dùng chung bộ nhớ kết nối thành mạng.</span></div>
+      </div>
+      <button class="toggle-one" type="button" aria-expanded="false">Mở giải thích</button>
+      <div class="explanation" hidden>
+        <h3>Giải thích ngắn gọn</h3>
+        <p>Trong hệ phân tán, các bộ xử lý/máy thường có bộ nhớ riêng và liên lạc qua mạng. B sai vì vẫn có liên hệ qua mạng; C nghiêng về xử lý song song; D sai vì hệ phân tán không dùng chung bộ nhớ theo nghĩa chặt chẽ.</p>
+      </div>
+    </article>
+
+    <article class="card question-card" id="q29" data-search="câu 29 hệ thống xử lý phân tán được phân loại: đồng bộ và bất đồng bộ. peer-to-peer và client-server. kết hợp và không kết hợp. đối xứng và bất đối xứng. b hệ phân tán thường được tổ chức theo mô hình peer-to-peer hoặc client-server. a, c, d không phải cách phân loại chính được hỏi ở đây.">
+      <div class="question-top">
+        <h2>Câu 29</h2>
+        <a class="mini-link" href="#top">Đầu trang</a>
+      </div>
+      <p class="question-text">Hệ thống xử lý phân tán được phân loại:</p>
+      <div class="choices">
+        <div class="choice"><span class="choice-letter">A</span><span>Đồng bộ và bất đồng bộ.</span></div><div class="choice correct"><span class="choice-letter">B</span><span>Peer-to-peer và client-server.</span></div><div class="choice"><span class="choice-letter">C</span><span>Kết hợp và không kết hợp.</span></div><div class="choice"><span class="choice-letter">D</span><span>Đối xứng và bất đối xứng.</span></div>
+      </div>
+      <button class="toggle-one" type="button" aria-expanded="false">Mở giải thích</button>
+      <div class="explanation" hidden>
+        <h3>Giải thích ngắn gọn</h3>
+        <p>Hệ phân tán thường được tổ chức theo mô hình peer-to-peer hoặc client-server. A, C, D không phải cách phân loại chính được hỏi ở đây.</p>
+      </div>
+    </article>
+
+    <article class="card question-card" id="q30" data-search="câu 30 trong các cấu trúc của hệ điều hành sau đây, cấu trúc nào tương thích dễ dàng với mô hình hệ thống phân tán? cấu trúc phân lớp. cấu trúc máy ảo. cấu trúc client-server. cấu trúc đơn giản. c mô hình client-server phù hợp tự nhiên với hệ phân tán vì dịch vụ và máy khách có thể nằm trên các nút khác nhau. a, b, d không trực tiếp tương thích bằng client-server.">
+      <div class="question-top">
+        <h2>Câu 30</h2>
+        <a class="mini-link" href="#top">Đầu trang</a>
+      </div>
+      <p class="question-text">Trong các cấu trúc của hệ điều hành sau đây, cấu trúc nào tương thích dễ dàng với mô hình hệ thống phân tán?</p>
+      <div class="choices">
+        <div class="choice"><span class="choice-letter">A</span><span>Cấu trúc phân lớp.</span></div><div class="choice"><span class="choice-letter">B</span><span>Cấu trúc máy ảo.</span></div><div class="choice correct"><span class="choice-letter">C</span><span>Cấu trúc client-server.</span></div><div class="choice"><span class="choice-letter">D</span><span>Cấu trúc đơn giản.</span></div>
+      </div>
+      <button class="toggle-one" type="button" aria-expanded="false">Mở giải thích</button>
+      <div class="explanation" hidden>
+        <h3>Giải thích ngắn gọn</h3>
+        <p>Mô hình client-server phù hợp tự nhiên với hệ phân tán vì dịch vụ và máy khách có thể nằm trên các nút khác nhau. A, B, D không trực tiếp tương thích bằng client-server.</p>
+      </div>
+    </article>
+
+    <article class="card question-card" id="q31" data-search="câu 31 khi nào cần sử dụng đến system call (lời gọi hệ thống)? khi một người dùng yêu cầu dịch vụ nào đó từ kernel của hệ điều hành. khi một chương trình yêu cầu dịch vụ nào đó từ kernel của hệ điều hành. khi hệ điều hành cần trợ giúp từ chương trình. khi hệ điều hành cần trợ giúp từ người dùng. b system call là cơ chế để chương trình yêu cầu dịch vụ từ kernel, ví dụ đọc file, tạo tiến trình hoặc dùng thiết bị. a nói người dùng trực tiếp nên chưa chính xác; c và d đảo ngược quan hệ yêu cầu.">
+      <div class="question-top">
+        <h2>Câu 31</h2>
+        <a class="mini-link" href="#top">Đầu trang</a>
+      </div>
+      <p class="question-text">Khi nào cần sử dụng đến System call (Lời gọi hệ thống)?</p>
+      <div class="choices">
+        <div class="choice"><span class="choice-letter">A</span><span>Khi một người dùng yêu cầu dịch vụ nào đó từ Kernel của Hệ điều hành.</span></div><div class="choice correct"><span class="choice-letter">B</span><span>Khi một chương trình yêu cầu dịch vụ nào đó từ Kernel của Hệ điều hành.</span></div><div class="choice"><span class="choice-letter">C</span><span>Khi Hệ điều hành cần trợ giúp từ chương trình.</span></div><div class="choice"><span class="choice-letter">D</span><span>Khi Hệ điều hành cần trợ giúp từ người dùng.</span></div>
+      </div>
+      <button class="toggle-one" type="button" aria-expanded="false">Mở giải thích</button>
+      <div class="explanation" hidden>
+        <h3>Giải thích ngắn gọn</h3>
+        <p>System call là cơ chế để chương trình yêu cầu dịch vụ từ kernel, ví dụ đọc file, tạo tiến trình hoặc dùng thiết bị. A nói người dùng trực tiếp nên chưa chính xác; C và D đảo ngược quan hệ yêu cầu.</p>
+      </div>
+    </article>
+
+    <article class="card question-card" id="q32" data-search="câu 32 lời gọi hệ thống loại “process control” thực hiện những tác vụ nào? load, execute, create process, terminate process. request device, release device, read from device, write to device. create / delete, open / close, read, write. create messages, delete messages, send messages, receive messages. a process control liên quan đến nạp, thực thi, tạo và kết thúc tiến trình. b là quản lý thiết bị, c là quản lý file, d là giao tiếp/thông điệp.">
+      <div class="question-top">
+        <h2>Câu 32</h2>
+        <a class="mini-link" href="#top">Đầu trang</a>
+      </div>
+      <p class="question-text">Lời gọi hệ thống loại “Process control” thực hiện những tác vụ nào?</p>
+      <div class="choices">
+        <div class="choice correct"><span class="choice-letter">A</span><span>load, execute, create process, terminate process.</span></div><div class="choice"><span class="choice-letter">B</span><span>request device, release device, read from device, write to device.</span></div><div class="choice"><span class="choice-letter">C</span><span>create / delete, open / close, read, write.</span></div><div class="choice"><span class="choice-letter">D</span><span>create messages, delete messages, send messages, receive messages.</span></div>
+      </div>
+      <button class="toggle-one" type="button" aria-expanded="false">Mở giải thích</button>
+      <div class="explanation" hidden>
+        <h3>Giải thích ngắn gọn</h3>
+        <p>Process control liên quan đến nạp, thực thi, tạo và kết thúc tiến trình. B là quản lý thiết bị, C là quản lý file, D là giao tiếp/thông điệp.</p>
+      </div>
+    </article>
+
+    <article class="card question-card" id="q33" data-search="câu 33 lời gọi hệ thống loại “device management” thực hiện những tác vụ nào? load, execute, create process, terminate process. request device, release device, read from device, write to device. create / delete, open / close, read, write. create messages, delete messages, send messages, receive messages. b device management xử lý yêu cầu thiết bị, giải phóng thiết bị và đọc/ghi thiết bị. a thuộc process control, c thuộc file management, d thuộc communication.">
+      <div class="question-top">
+        <h2>Câu 33</h2>
+        <a class="mini-link" href="#top">Đầu trang</a>
+      </div>
+      <p class="question-text">Lời gọi hệ thống loại “Device management” thực hiện những tác vụ nào?</p>
+      <div class="choices">
+        <div class="choice"><span class="choice-letter">A</span><span>load, execute, create process, terminate process.</span></div><div class="choice correct"><span class="choice-letter">B</span><span>request device, release device, read from device, write to device.</span></div><div class="choice"><span class="choice-letter">C</span><span>create / delete, open / close, read, write.</span></div><div class="choice"><span class="choice-letter">D</span><span>create messages, delete messages, send messages, receive messages.</span></div>
+      </div>
+      <button class="toggle-one" type="button" aria-expanded="false">Mở giải thích</button>
+      <div class="explanation" hidden>
+        <h3>Giải thích ngắn gọn</h3>
+        <p>Device management xử lý yêu cầu thiết bị, giải phóng thiết bị và đọc/ghi thiết bị. A thuộc process control, C thuộc file management, D thuộc communication.</p>
+      </div>
+    </article>
+
+    <article class="card question-card" id="q34" data-search="câu 34 lời gọi hệ thống loại “file management” thực hiện những tác vụ nào? load, execute, create process, terminate process. request device, release device, read from device, write to device. create / delete, open / close, read, write. create messages, delete messages, send messages, receive messages c file management gồm tạo/xóa file, mở/đóng file, đọc và ghi file. a là điều khiển tiến trình, b là quản lý thiết bị, d là giao tiếp bằng thông điệp.">
+      <div class="question-top">
+        <h2>Câu 34</h2>
+        <a class="mini-link" href="#top">Đầu trang</a>
+      </div>
+      <p class="question-text">Lời gọi hệ thống loại “File management” thực hiện những tác vụ nào?</p>
+      <div class="choices">
+        <div class="choice"><span class="choice-letter">A</span><span>load, execute, create process, terminate process.</span></div><div class="choice"><span class="choice-letter">B</span><span>request device, release device, read from device, write to device.</span></div><div class="choice correct"><span class="choice-letter">C</span><span>create / delete, open / close, read, write.</span></div><div class="choice"><span class="choice-letter">D</span><span>create messages, delete messages, send messages, receive messages</span></div>
+      </div>
+      <button class="toggle-one" type="button" aria-expanded="false">Mở giải thích</button>
+      <div class="explanation" hidden>
+        <h3>Giải thích ngắn gọn</h3>
+        <p>File management gồm tạo/xóa file, mở/đóng file, đọc và ghi file. A là điều khiển tiến trình, B là quản lý thiết bị, D là giao tiếp bằng thông điệp.</p>
+      </div>
+    </article>
+
+    <article class="card question-card" id="q35" data-search="câu 35 lời gọi hệ thống loại “communication” thực hiện những tác vụ nào? load, execute, create process, terminate process. request device, release device, read from device, write to device. create / delete, open / close, read, write. create messages, delete messages, send messages, receive messages d communication liên quan đến tạo, xóa, gửi và nhận thông điệp giữa các tiến trình/hệ thống. a là process control, b là device management, c là file management.">
+      <div class="question-top">
+        <h2>Câu 35</h2>
+        <a class="mini-link" href="#top">Đầu trang</a>
+      </div>
+      <p class="question-text">Lời gọi hệ thống loại “Communication” thực hiện những tác vụ nào?</p>
+      <div class="choices">
+        <div class="choice"><span class="choice-letter">A</span><span>load, execute, create process, terminate process.</span></div><div class="choice"><span class="choice-letter">B</span><span>request device, release device, read from device, write to device.</span></div><div class="choice"><span class="choice-letter">C</span><span>create / delete, open / close, read, write.</span></div><div class="choice correct"><span class="choice-letter">D</span><span>create messages, delete messages, send messages, receive messages</span></div>
+      </div>
+      <button class="toggle-one" type="button" aria-expanded="false">Mở giải thích</button>
+      <div class="explanation" hidden>
+        <h3>Giải thích ngắn gọn</h3>
+        <p>Communication liên quan đến tạo, xóa, gửi và nhận thông điệp giữa các tiến trình/hệ thống. A là process control, B là device management, C là file management.</p>
+      </div>
+    </article>
+
+    <article class="card question-card" id="q36" data-search="câu 36 cho biết tên gọi của kiến trúc hệ điều hành mà tất cả các modules chức năng của nó được gom hết vào kernel. simple os. monolithic os. layered os. microkernel os b monolithic os gom nhiều module chức năng vào trong kernel. simple os không nhấn mạnh gom module vào kernel, layered os chia lớp, microkernel os tách bớt chức năng ra ngoài kernel.">
+      <div class="question-top">
+        <h2>Câu 36</h2>
+        <a class="mini-link" href="#top">Đầu trang</a>
+      </div>
+      <p class="question-text">Cho biết tên gọi của kiến trúc Hệ điều hành mà tất cả các modules chức năng của nó được gom hết vào Kernel.</p>
+      <div class="choices">
+        <div class="choice"><span class="choice-letter">A</span><span>Simple OS.</span></div><div class="choice correct"><span class="choice-letter">B</span><span>Monolithic OS.</span></div><div class="choice"><span class="choice-letter">C</span><span>Layered OS.</span></div><div class="choice"><span class="choice-letter">D</span><span>Microkernel OS</span></div>
+      </div>
+      <button class="toggle-one" type="button" aria-expanded="false">Mở giải thích</button>
+      <div class="explanation" hidden>
+        <h3>Giải thích ngắn gọn</h3>
+        <p>Monolithic OS gom nhiều module chức năng vào trong kernel. Simple OS không nhấn mạnh gom module vào kernel, Layered OS chia lớp, Microkernel OS tách bớt chức năng ra ngoài kernel.</p>
+      </div>
+    </article>
+
+    <article class="card question-card" id="q37" data-search="câu 37 cho biết tên gọi của kiến trúc hệ điều hành mà các modules chức năng của nó được phân chia thành từng lớp giao tiếp với kernel. simple os. monolithic os. layered os. microkernel os. c layered os tổ chức các module thành từng lớp, mỗi lớp có vai trò và giao tiếp theo tầng. a không phải mô hình phân lớp, b gom nhiều chức năng vào kernel, d tách phần lớn dịch vụ ra ngoài kernel.">
+      <div class="question-top">
+        <h2>Câu 37</h2>
+        <a class="mini-link" href="#top">Đầu trang</a>
+      </div>
+      <p class="question-text">Cho biết tên gọi của kiến trúc Hệ điều hành mà các modules chức năng của nó được phân chia thành từng lớp giao tiếp với Kernel.</p>
+      <div class="choices">
+        <div class="choice"><span class="choice-letter">A</span><span>Simple OS.</span></div><div class="choice"><span class="choice-letter">B</span><span>Monolithic OS.</span></div><div class="choice correct"><span class="choice-letter">C</span><span>Layered OS.</span></div><div class="choice"><span class="choice-letter">D</span><span>Microkernel OS.</span></div>
+      </div>
+      <button class="toggle-one" type="button" aria-expanded="false">Mở giải thích</button>
+      <div class="explanation" hidden>
+        <h3>Giải thích ngắn gọn</h3>
+        <p>Layered OS tổ chức các module thành từng lớp, mỗi lớp có vai trò và giao tiếp theo tầng. A không phải mô hình phân lớp, B gom nhiều chức năng vào kernel, D tách phần lớn dịch vụ ra ngoài kernel.</p>
+      </div>
+    </article>
+
+    <article class="card question-card" id="q38" data-search="câu 38 cho biết tên gọi của kiến trúc hệ điều hành mà hầu hết các modules chức năng của nó được tách ra ngoài? kernel chỉ có 2 chức năng chính: quản lý bộ nhớ và liên lạc giữa các tiến trình simple os monolithic os layered os microkernel os. d microkernel os giữ kernel nhỏ, chủ yếu làm quản lý bộ nhớ tối thiểu và giao tiếp liên tiến trình, còn nhiều dịch vụ chạy ngoài kernel. a, b, c không phù hợp với mô tả tách module ra ngoài.">
+      <div class="question-top">
+        <h2>Câu 38</h2>
+        <a class="mini-link" href="#top">Đầu trang</a>
+      </div>
+      <p class="question-text">Cho biết tên gọi của kiến trúc Hệ điều hành mà hầu hết các modules chức năng của nó được tách ra ngoài? Kernel chỉ có 2 chức năng chính: quản lý bộ nhớ và liên lạc giữa các tiến trình</p>
+      <div class="choices">
+        <div class="choice"><span class="choice-letter">A</span><span>Simple OS</span></div><div class="choice"><span class="choice-letter">B</span><span>Monolithic OS</span></div><div class="choice"><span class="choice-letter">C</span><span>Layered OS</span></div><div class="choice correct"><span class="choice-letter">D</span><span>Microkernel OS.</span></div>
+      </div>
+      <button class="toggle-one" type="button" aria-expanded="false">Mở giải thích</button>
+      <div class="explanation" hidden>
+        <h3>Giải thích ngắn gọn</h3>
+        <p>Microkernel OS giữ kernel nhỏ, chủ yếu làm quản lý bộ nhớ tối thiểu và giao tiếp liên tiến trình, còn nhiều dịch vụ chạy ngoài kernel. A, B, C không phù hợp với mô tả tách module ra ngoài.</p>
+      </div>
+    </article>
+
+    <article class="card question-card" id="q39" data-search="câu 39 kiến trúc hệ điều hành microkernel, nhân (kernel) của hệ điều hành giữ vai trò gì? quản lý bộ nhớ và liên lạc giữa các tiến trình. điều phối tiến trình và quản lý bộ nhớ điều phối tiến trình và lời gọi hệ thống. quản lý bộ nhớ và quản lý xuất nhập a trong microkernel, kernel giữ phần tối thiểu như quản lý bộ nhớ và liên lạc giữa các tiến trình. b, c, d thêm các chức năng không đúng với mô tả tối giản ở câu hỏi.">
+      <div class="question-top">
+        <h2>Câu 39</h2>
+        <a class="mini-link" href="#top">Đầu trang</a>
+      </div>
+      <p class="question-text">Kiến trúc Hệ điều hành Microkernel, nhân (kernel) của Hệ điều hành giữ vai trò gì?</p>
+      <div class="choices">
+        <div class="choice correct"><span class="choice-letter">A</span><span>quản lý bộ nhớ và liên lạc giữa các tiến trình.</span></div><div class="choice"><span class="choice-letter">B</span><span>điều phối tiến trình và quản lý bộ nhớ</span></div><div class="choice"><span class="choice-letter">C</span><span>điều phối tiến trình và lời gọi hệ thống.</span></div><div class="choice"><span class="choice-letter">D</span><span>quản lý bộ nhớ và quản lý xuất nhập</span></div>
+      </div>
+      <button class="toggle-one" type="button" aria-expanded="false">Mở giải thích</button>
+      <div class="explanation" hidden>
+        <h3>Giải thích ngắn gọn</h3>
+        <p>Trong microkernel, kernel giữ phần tối thiểu như quản lý bộ nhớ và liên lạc giữa các tiến trình. B, C, D thêm các chức năng không đúng với mô tả tối giản ở câu hỏi.</p>
+      </div>
+    </article>
+
+    <article class="card question-card" id="q40" data-search="câu 40 kiến trúc hệ điều hành monolithic, module chức năng nào hỗ trợ các ứng dụng giao tiếp với nhân (kernel) của hệ điều hành? memory manager. process scheduler. input / output manager system calls d system calls là giao diện để ứng dụng yêu cầu dịch vụ từ kernel. memory manager, process scheduler và input/output manager là các module chức năng bên trong hệ điều hành chứ không phải giao diện gọi dịch vụ chung cho ứng dụng.">
+      <div class="question-top">
+        <h2>Câu 40</h2>
+        <a class="mini-link" href="#top">Đầu trang</a>
+      </div>
+      <p class="question-text">Kiến trúc Hệ điều hành Monolithic, module chức năng nào hỗ trợ các ứng dụng giao tiếp với nhân (kernel) của Hệ điều hành?</p>
+      <div class="choices">
+        <div class="choice"><span class="choice-letter">A</span><span>Memory manager.</span></div><div class="choice"><span class="choice-letter">B</span><span>Process Scheduler.</span></div><div class="choice"><span class="choice-letter">C</span><span>Input / Output manager</span></div><div class="choice correct"><span class="choice-letter">D</span><span>System Calls</span></div>
+      </div>
+      <button class="toggle-one" type="button" aria-expanded="false">Mở giải thích</button>
+      <div class="explanation" hidden>
+        <h3>Giải thích ngắn gọn</h3>
+        <p>System Calls là giao diện để ứng dụng yêu cầu dịch vụ từ kernel. Memory manager, Process Scheduler và Input/Output manager là các module chức năng bên trong hệ điều hành chứ không phải giao diện gọi dịch vụ chung cho ứng dụng.</p>
+      </div>
+    </article>
+
+  </main>
+  <div class="not-found" id="notFound">Không tìm thấy câu phù hợp.</div>
+</div>
+<button class="to-top" id="toTop" type="button">↑ Đầu trang</button>
+<script>
+(() => {
+  const searchInput = document.getElementById('searchInput');
+  const cards = Array.from(document.querySelectorAll('.question-card'));
+  const resultCount = document.getElementById('resultCount');
+  const notFound = document.getElementById('notFound');
+  const toTop = document.getElementById('toTop');
+
+  function setExplanation(card, open) {
+    const exp = card.querySelector('.explanation');
+    const btn = card.querySelector('.toggle-one');
+    exp.hidden = !open;
+    btn.textContent = open ? 'Ẩn giải thích' : 'Mở giải thích';
+    btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+  }
+
+  cards.forEach(card => {
+    const btn = card.querySelector('.toggle-one');
+    btn.addEventListener('click', () => {
+      const exp = card.querySelector('.explanation');
+      setExplanation(card, exp.hidden);
+    });
+  });
+
+  document.getElementById('openAll').addEventListener('click', () => cards.forEach(card => setExplanation(card, true)));
+  document.getElementById('closeAll').addEventListener('click', () => cards.forEach(card => setExplanation(card, false)));
+
+  function normalize(str) {
+    return str.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
+  }
+
+  function filterCards() {
+    const raw = searchInput.value.trim();
+    const term = normalize(raw);
+    let shown = 0;
+    cards.forEach(card => {
+      const haystack = normalize(card.dataset.search || card.textContent);
+      const visible = !term || haystack.includes(term);
+      card.classList.toggle('hidden', !visible);
+      if (visible) shown++;
+    });
+    resultCount.textContent = `Đang hiển thị ${shown}/40 câu.`;
+    notFound.style.display = shown === 0 ? 'block' : 'none';
+  }
+
+  searchInput.addEventListener('input', filterCards);
+  window.addEventListener('scroll', () => {
+    toTop.classList.toggle('show', window.scrollY > 500);
+  }, { passive: true });
+  toTop.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+})();
+</script>
+</body>
+</html>

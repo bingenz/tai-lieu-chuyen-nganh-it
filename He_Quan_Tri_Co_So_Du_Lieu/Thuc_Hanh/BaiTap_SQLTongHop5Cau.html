@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bài tập SQL - Hệ quản trị CSDL</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: #f1f5f9;
+      color: #111827;
+      font-family: "Times New Roman", Times, serif;
+      line-height: 1.45;
+    }
+
+    .page {
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 14px;
+    }
+
+    .paper {
+      background: #fff;
+      border: 1px solid #d1d5db;
+      border-radius: 12px;
+      padding: 18px;
+      box-shadow: 0 8px 22px rgba(15, 23, 42, 0.08);
+    }
+
+    h1 {
+      text-align: center;
+      font-size: 22px;
+      margin: 0 0 6px;
+      text-transform: uppercase;
+    }
+
+    .sub {
+      text-align: center;
+      font-size: 15px;
+      margin-bottom: 18px;
+    }
+
+    .schema {
+      border: 1px solid #cbd5e1;
+      border-radius: 10px;
+      padding: 12px;
+      margin-bottom: 18px;
+      background: #f8fafc;
+      font-family: Arial, sans-serif;
+      font-size: 15px;
+      line-height: 1.65;
+    }
+
+    .schema b {
+      font-weight: 800;
+    }
+
+    .pk {
+      font-weight: 700;
+      font-style: italic;
+      text-decoration: underline;
+    }
+
+    .note {
+      font-size: 15px;
+      padding: 10px 12px;
+      background: #fff7ed;
+      border-left: 4px solid #f97316;
+      border-radius: 8px;
+      margin-bottom: 18px;
+    }
+
+    .question {
+      margin: 18px 0 24px;
+      padding-bottom: 18px;
+      border-bottom: 1px dashed #cbd5e1;
+    }
+
+    .question:last-child {
+      border-bottom: none;
+      padding-bottom: 0;
+    }
+
+    .q-title {
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .q-text {
+      font-size: 18px;
+      margin-bottom: 10px;
+    }
+
+    .answer-label {
+      font-size: 17px;
+      font-weight: 700;
+      margin: 8px 0 6px;
+    }
+
+    pre {
+      margin: 0;
+      padding: 12px;
+      border-radius: 10px;
+      background: #f8fafc;
+      border: 1px solid #dbe3ef;
+      overflow-x: auto;
+      white-space: pre;
+      font-family: "Consolas", "Courier New", monospace;
+      font-size: 14px;
+      line-height: 1.55;
+    }
+
+    .explain {
+      font-size: 15px;
+      margin-top: 8px;
+      color: #374151;
+    }
+
+    .small {
+      font-size: 14px;
+      color: #4b5563;
+    }
+
+    @media (max-width: 520px) {
+      .page {
+        padding: 8px;
+      }
+
+      .paper {
+        padding: 14px;
+        border-radius: 10px;
+      }
+
+      h1 {
+        font-size: 19px;
+      }
+
+      .schema {
+        font-size: 13px;
+        padding: 10px;
+      }
+
+      .q-title,
+      .q-text {
+        font-size: 16px;
+      }
+
+      pre {
+        font-size: 12.5px;
+        padding: 10px;
+      }
+    }
+
+    @media print {
+      body {
+        background: #fff;
+      }
+
+      .page {
+        max-width: none;
+        padding: 0;
+      }
+
+      .paper {
+        border: none;
+        box-shadow: none;
+        border-radius: 0;
+      }
+
+      .question {
+        break-inside: avoid;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <div class="paper">
+      <h1>Bài tập SQL</h1>
+      <div class="sub">Môn: Hệ quản trị cơ sở dữ liệu</div>
+
+      <div class="schema">
+        <div><b>SINHVIEN</b> (<span class="pk">MSSV</span>, HOLOT, TEN, PHAI, NGAYSINH, QUEQUAN, DIACHI, MALOP)</div>
+        <div><b>DSLOP</b> (<span class="pk">MALOP</span>, TENLOP, SISO, MAKHOA)</div>
+        <div><b>DSKHOA</b> (<span class="pk">MAKHOA</span>, TENKHOA)</div>
+        <div><b>MONHOC</b> (<span class="pk">MAMH</span>, TENMH, SOTC)</div>
+        <div><b>KETQUA</b> (<span class="pk">MSSV</span>, <span class="pk">MAMH</span>, DIEM)</div>
+      </div>
+
+      <div class="note">
+        Quy ước trong bài làm: sinh viên đạt môn khi <b>DIEM &gt;= 5</b>.
+        Nếu thầy/cô quy định đạt là 6 điểm thì đổi <b>DIEM &gt;= 5</b> thành <b>DIEM &gt;= 6</b>.
+      </div>
+
+      <div class="question">
+        <div class="q-title">Câu 1:</div>
+        <div class="q-text">In ra điểm trung bình của từng sinh viên gồm MSSV, Holot, Ten, DTB có DTB &gt;= 6.</div>
+        <div class="answer-label">Bài làm:</div>
+<pre>SELECT SV.MSSV, SV.HOLOT, SV.TEN, AVG(KQ.DIEM) AS DTB
+FROM SINHVIEN SV
+JOIN KETQUA KQ ON SV.MSSV = KQ.MSSV
+GROUP BY SV.MSSV, SV.HOLOT, SV.TEN
+HAVING AVG(KQ.DIEM) &gt;= 6;</pre>
+        <div class="explain">Dùng <b>GROUP BY</b> để gom theo từng sinh viên, dùng <b>AVG</b> tính điểm trung bình, dùng <b>HAVING</b> để lọc DTB sau khi tính.</div>
+      </div>
+
+      <div class="question">
+        <div class="q-title">Câu 2:</div>
+        <div class="q-text">In ra điểm trung bình của từng sinh viên gồm MSSV, Holot, Ten, DTB có DTB &gt;= 6, không tính những môn chưa đạt.</div>
+        <div class="answer-label">Bài làm:</div>
+<pre>SELECT SV.MSSV, SV.HOLOT, SV.TEN, AVG(KQ.DIEM) AS DTB
+FROM SINHVIEN SV
+JOIN KETQUA KQ ON SV.MSSV = KQ.MSSV
+WHERE KQ.DIEM &gt;= 5
+GROUP BY SV.MSSV, SV.HOLOT, SV.TEN
+HAVING AVG(KQ.DIEM) &gt;= 6;</pre>
+        <div class="explain">Dùng <b>WHERE KQ.DIEM &gt;= 5</b> để bỏ các môn chưa đạt trước khi tính điểm trung bình.</div>
+      </div>
+
+      <div class="question">
+        <div class="q-title">Câu 3:</div>
+        <div class="q-text">In ra những sinh viên gồm MSSV đã đạt môn CTDL.</div>
+        <div class="answer-label">Bài làm:</div>
+<pre>SELECT DISTINCT KQ.MSSV
+FROM KETQUA KQ
+WHERE KQ.MAMH = 'CTDL'
+  AND KQ.DIEM &gt;= 5;</pre>
+        <div class="explain">Dùng <b>DISTINCT</b> để tránh trùng MSSV nếu dữ liệu có nhiều dòng kết quả.</div>
+      </div>
+
+      <div class="question">
+        <div class="q-title">Câu 4:</div>
+        <div class="q-text">In ra những sinh viên mà khoa CNTT cần học môn CTDL, tức là chưa học hoặc học rồi nhưng không đạt.</div>
+        <div class="answer-label">Bài làm:</div>
+<pre>SELECT SV.MSSV, SV.HOLOT, SV.TEN
+FROM SINHVIEN SV
+JOIN DSLOP L ON SV.MALOP = L.MALOP
+WHERE L.MAKHOA = 'CNTT'
+  AND NOT EXISTS (
+      SELECT *
+      FROM KETQUA KQ
+      WHERE KQ.MSSV = SV.MSSV
+        AND KQ.MAMH = 'CTDL'
+        AND KQ.DIEM &gt;= 5
+  );</pre>
+        <div class="explain">Dùng <b>NOT EXISTS</b> để lấy sinh viên không có dòng kết quả đạt môn CTDL. Như vậy sẽ bao gồm cả trường hợp chưa học và học rồi nhưng chưa đạt.</div>
+      </div>
+
+
+      <div class="question">
+        <div class="q-title">Câu 5:</div>
+        <div class="q-text">In ra những sinh viên khoa CNTT cần học môn CTDL, tức là chưa học hoặc học rồi nhưng không đạt, và đã học KTLT.</div>
+        <div class="answer-label">Bài làm:</div>
+<pre>SELECT SV.MSSV, SV.HOLOT, SV.TEN
+FROM SINHVIEN SV
+JOIN DSLOP L ON SV.MALOP = L.MALOP
+WHERE L.MAKHOA = 'CNTT'
+  AND NOT EXISTS (
+      SELECT *
+      FROM KETQUA KQ
+      WHERE KQ.MSSV = SV.MSSV
+        AND KQ.MAMH = 'CTDL'
+        AND KQ.DIEM &gt;= 5
+  )
+  AND EXISTS (
+      SELECT *
+      FROM KETQUA KQ2
+      WHERE KQ2.MSSV = SV.MSSV
+        AND KQ2.MAMH = 'KTLT'
+  );</pre>
+        <div class="explain">Điều kiện <b>NOT EXISTS</b> dùng để tìm sinh viên chưa đạt CTDL hoặc chưa học CTDL. Điều kiện <b>EXISTS</b> dùng để kiểm tra sinh viên đã có học KTLT.</div>
+      </div>
+
+      <p class="small">
+        Ghi chú: Các chữ SV, KQ, L là bí danh của bảng, giúp câu lệnh ngắn và rõ hơn khi JOIN nhiều bảng.
+      </p>
+    </div>
+  </div>
+</body>
+</html>
